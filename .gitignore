@@ -38,3 +38,6 @@ coverage
 
 # Vitest
 __screenshots__/
+
+# Data
+/data/*
