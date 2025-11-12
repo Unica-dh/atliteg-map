@@ -1,6 +1,26 @@
 # Dashboard Linguistico ATLITEG
 
-Dashboard interattiva per la visualizzazione e l'analisi di dati linguistici con mappe geografiche, treemap delle categorie e tabelle dettagliate.
+**Atliteg** (acronimo di **Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità**) è un applicativo web e progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana, dall'età medievale fino all'Unità d'Italia (1861).
+
+## 🏛️ Fondamenti Scientifici
+
+L'applicativo si basa sul **"Vocabolario storico della lingua italiana della gastronomia (VoSLIG)"**, offrendo un'interfaccia visuale e interattiva per esplorare i dati lessicografici raccolti in questo vocabolario specialistico.
+
+## 🤝 Collaborazioni
+
+Il progetto è realizzato in collaborazione con il **Labgeo "Giuseppe Caraci"** dell'**Università Roma Tre**, laboratorio specializzato in geografia e cartografia.
+
+## 🎓 Finanziamento
+
+Atliteg è finanziato nell'ambito del **PRIN (Progetti di Ricerca di Interesse Nazionale) 2017**, sotto la responsabilità scientifica della professoressa **Giovanna Frosini** dell'**Università per Stranieri di Siena**.
+
+## ✨ Funzionalità Principali
+
+- **Mappe interattive geografiche**: Visualizzazione della diffusione geografica di termini gastronomici (piatti, ingredienti, tecniche di cottura) in diverse epoche
+- **Visualizzazioni cronologiche**: Tracciamento della comparsa e dell'evoluzione di parole e concetti nel tempo
+- **Analisi testuale**: Esplorazione di testi storici (ricettari, trattati di cucina) che costituiscono le fonti della cultura gastronomica italiana
+- **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche
+- **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati
 
 ## Tecnologie Utilizzate
 
