@@ -4,10 +4,28 @@
 
 Il file `Lemmi_forme_atliteg.csv` è il dataset principale del progetto ATLITEG (Atlante Lessicale dell'Italiano Tardo-antico e Medievale della Gastronomia). Contiene dati strutturati sulla terminologia gastronomica italiana storica, tracciando l'evoluzione lessicale nel tempo e nello spazio geografico.
 
+### Caratteristica distintiva: Variazione diatopica
+
+Il dataset documenta la **relazione tra LEMMA (forma base normalizzata) e FORMA (variante attestata) in funzione della GEOGRAFIA**. Questa relazione rivela pattern di variazione dialettale e diffusione lessicale attraverso l'Italia storica:
+
+- **Forme locali** (72,2%): varianti attestate solo in città specifiche (es. `aggiada` solo a Genova)
+- **Forme regionali** (6,3%): varianti attestate solo in regioni (es. `brasole` in Lazio e Toscana)
+- **Forme macro-areali** (5,4%): varianti in ambiti sovra-regionali (es. `brasciola` in Italia meridionale intermedia)
+- **Forme trasversali** (4,1%): varianti panitaliane attestate a tutti i livelli geografici (es. `agliata`)
+
+Questa struttura permette di analizzare **isoglosse storiche**, **diffusione di forme di prestigio**, e **persistenza di varianti dialettali**.
+
 ### Statistiche generali
+
 - **Totale record**: 6.236 righe (escludendo l'intestazione)
 - **Lemmi unici**: 365
-- **Forme uniche**: 1.871
+- **Forme uniche**: 1.871 (media 5,1 forme per lemma)
+- **Distribuzione geografica forme**:
+  - 1.411 forme solo locali (città)
+  - 154 forme locale+regionale
+  - 123 forme solo regionali
+  - 81 forme trasversali (tutti i livelli)
+- **Lemmi con alta variabilità geografica**: 165 (45,2%) hanno forme su più livelli geografici
 - **Periodo temporale**: 1314 - 1899 (circa 585 anni)
 - **Separatore**: punto e virgola (`;`)
 - **Codifica**: UTF-8 (con problemi di encoding su caratteri accentati)
@@ -64,15 +82,15 @@ Il file `Lemmi_forme_atliteg.csv` è il dataset principale del progetto ATLITEG 
 ---
 
 ### 2.3 Forma (String)
-**Descrizione**: Variante grafica attestata del lemma nelle fonti storiche
+**Descrizione**: Variante grafica/fonetica attestata del lemma nelle fonti storiche
 
 **Caratteristiche**:
 - Tipo: Stringa
 - 1.871 forme uniche per 365 lemmi (media ~5 forme per lemma)
 - Include varianti dialettali, grafiche e morfologiche
-- Riflette l'evoluzione ortografica storica
+- Riflette l'evoluzione ortografica storica e la variazione diatopica (geografica)
 
-**Esempi per il lemma `agliata`:
+**Esempi per il lemma `agliata`**:
 - `alleata` (Napoli, 1314)
 - `alleatam` (forma latina)
 - `aggiada` (Genova, 1893)
@@ -84,10 +102,16 @@ Il file `Lemmi_forme_atliteg.csv` è il dataset principale del progetto ATLITEG 
 - Un lemma può avere molte forme (1:N)
 - La stessa forma può apparire in contesti diversi (spazio-temporali)
 
+**Relazione Forma-Geografia** (vedi sezione 3.4):
+- **72,2%** delle forme sono attestate **solo a livello locale** (città specifiche)
+- **7,9%** sono forme **condivise tra città e regioni**
+- **4,1%** sono forme **trasversali** (attestate a tutti i livelli geografici: città, regioni, macro-aree)
+
 **Uso nel frontend**:
 - Visualizzazione dettagli varianti
 - Analisi evoluzione ortografica
 - Filtri di ricerca avanzata
+- **Mappa distribuzione geografica delle forme dialettali**
 
 ---
 
@@ -389,6 +413,180 @@ Il dataset ha granularità a livello di **attestazione singola**:
 
 ---
 
+### 3.4 Relazione Lemma-Forma-Geografia: Variazione Diatopica
+
+**Concetto chiave**: Il dataset documenta la **variazione diatopica** (geografica) del lessico gastronomico italiano storico. La relazione tra **Lemma** (termine base normalizzato) e **Forma** (variante attestata) è strettamente correlata alla **granularità geografica** dell'attestazione.
+
+#### 3.4.1 Pattern di distribuzione geografica
+
+**Analisi statistica delle 1.954 coppie forma-geografia uniche**:
+
+| Pattern di distribuzione | N. forme | % | Descrizione |
+|--------------------------|----------|---|-------------|
+| **Solo locale** (città) | 1.411 | 72,2% | Forme attestate esclusivamente in contesti urbani specifici |
+| **Locale + Regionale** | 154 | 7,9% | Forme condivise tra città e regioni |
+| **Solo regionale** | 123 | 6,3% | Forme attestate solo a livello regionale |
+| **Solo macro-area** | 105 | 5,4% | Forme attestate solo in ambiti sub/sovra-regionali |
+| **Trasversali** (tutti i livelli) | 81 | 4,1% | Forme attestate in città, regioni E macro-aree |
+| **Locale + Macro** | 54 | 2,8% | Forme in città e macro-aree (ma non regioni) |
+| **Regionale + Macro** | 26 | 1,3% | Forme in regioni e macro-aree (ma non città) |
+
+#### 3.4.2 Interpretazione linguistica
+
+**Forme locali (72,2%)**:
+- Rappresentano **varianti dialettali** strettamente legate a un centro urbano
+- Riflettono particolarità grafiche/fonetiche di scriptae locali
+- Esempi: `aggiada` (Genova), `aggiadda` (Genova) per il lemma `agliata`
+
+**Forme regionali**:
+- Indicano **koinè regionali** o forme standardizzate a livello di regione storica
+- Possono rappresentare forme di prestigio regionale
+- Esempi: `brasole` (Lazio, Toscana) per il lemma `braciola`
+
+**Forme macro-areali**:
+- Documentano **isoglosse** sovra-regionali
+- Riflettono aree linguistiche omogenee (es. Italia mediana, Italia meridionale intermedia)
+- Esempi: `brasciola` (Italia meridionale intermedia) per il lemma `braciola`
+
+**Forme trasversali (4,1%)**:
+- Rappresentano **forme panitaliane** o standardizzate
+- Attestate a tutti i livelli geografici, spesso la forma più conservativa
+- Esempi: `agliata`, `agresta`, `agresto`, `amido`
+
+#### 3.4.3 Distribuzione delle forme per lemma
+
+**Analisi di 365 lemmi**:
+- **189 lemmi** (51,8%) hanno forme attestate **solo a livello città**
+- **165 lemmi** (45,2%) hanno forme su **più livelli geografici**
+- **142 lemmi** (38,9%) hanno forme sia in città che in regioni
+- **6 lemmi** (1,6%) hanno forme attestate **solo a livello regionale**
+
+**Lemmi con alta variazione geografica** (esempi):
+
+1. **`pane`**: 50 forme distinte
+   - 49 forme a livello città: `pain`, `pains`, `pambollito`, `pan azimo`, `pan bagnato`, ecc.
+   - 6 forme a livello regione: `pan`, `panata`, `pane`, ecc.
+   - 4 forme macro-areali: `pane`, `panello`, ecc.
+
+2. **`cacio`**: 30 forme distinte
+   - 24 forme a livello città: `caccio`, `cacio`, `caciola`, `cascetto`, ecc.
+   - 11 forme a livello regione: `cacio`, `cascio`, `caseo`, ecc.
+   - 7 forme macro-areali: `casci`, `casciata`, ecc.
+
+3. **`braciola`**: 28 forme distinte
+   - 27 forme a livello città: `braciola`, `bracioletta`, `braciolettine`, ecc.
+   - 4 forme a livello regione: `braciole`, `brasciole`, `brasole`, `braxolle`
+   - 1 forma macro-areale: `brasciola` (Italia meridionale intermedia)
+
+4. **`frittella`**: 30 forme distinte
+   - 23 forme città, 8 forme regione, 8 forme macro-areali
+   - Forte variazione grafica: `affrittellano`, `afrittellate`, `frictella`, ecc.
+
+#### 3.4.4 Gerarchia semantico-geografica
+
+Il dataset permette di ricostruire una **gerarchia di diffusione**:
+
+```
+LEMMA (concetto astratto)
+  │
+  ├─── FORMA STANDARD/TRASVERSALE (panitaliana)
+  │     ├─ Attestata in macro-aree
+  │     ├─ Attestata in regioni
+  │     └─ Attestata in città
+  │
+  ├─── FORMA REGIONALE (koinè)
+  │     ├─ Attestata in regioni specifiche
+  │     └─ A volte estesa a città della regione
+  │
+  └─── FORMA LOCALE (dialettale)
+        └─ Attestata solo in città specifica
+```
+
+**Esempio pratico - Lemma `agliata`**:
+
+```
+agliata (lemma base - salsa all'aglio)
+  │
+  ├─ "agliata" [TRASVERSALE]
+  │   ├─ Toscana sud-orientale (ambito sub-regionale)
+  │   ├─ Italia mediana (ambito sovra-regionale)
+  │   ├─ Lazio, Toscana, Lombardia (regioni)
+  │   └─ Venezia, Napoli, Roma, Firenze, Ferrara (città)
+  │
+  ├─ "alleata" [LOCALE - variante napoletana medievale]
+  │   └─ Napoli (1314, 1366)
+  │
+  ├─ "alleatam" [LOCALE - forma latina]
+  │   └─ Napoli, Bolzano (XIV-XV sec.)
+  │
+  ├─ "aggiada" [LOCALE - variante genovese]
+  │   └─ Genova (1893)
+  │
+  └─ "aggiadda" [LOCALE - ulteriore variante genovese]
+      └─ Genova (1893)
+```
+
+#### 3.4.5 Implicazioni per il frontend
+
+**Visualizzazioni consigliate**:
+
+1. **Mappa coropletica stratificata**:
+   - Livello 1 (zoom out): macro-aree con forme sovra-regionali
+   - Livello 2 (zoom medio): regioni con forme regionali
+   - Livello 3 (zoom in): città con forme locali specifiche
+
+2. **Grafo relazionale Lemma-Forme**:
+   - Nodo centrale: lemma
+   - Nodi satelliti: forme
+   - Colore nodi: tipo geografico (città=blu, regione=verde, macro=arancione)
+   - Dimensione nodi: frequenza
+
+3. **Timeline evoluzione forme per area**:
+   - Asse X: tempo (Anno)
+   - Asse Y: livello geografico (città, regione, macro-area)
+   - Punti: attestazioni di forme specifiche
+   - Colori: forme diverse
+
+4. **Heatmap variazione dialettale**:
+   - Righe: lemmi
+   - Colonne: aree geografiche
+   - Calore: numero forme distinte
+   - Identifica lemmi con alta variabilità geografica
+
+**Filtri avanzati**:
+
+- **Per pattern geografico**: "Mostra solo forme locali", "Mostra solo forme trasversali"
+- **Per variabilità**: "Lemmi con >10 forme", "Lemmi con forme in tutte le regioni"
+- **Per conservatività**: "Forme attestate solo nel periodo X ma in geografia Y"
+
+**Metriche derivate**:
+
+```javascript
+// Indice di variabilità geografica di un lemma
+function calcolaIndiceVariabilitaGeografica(lemma) {
+  const forme = getFormeLemma(lemma);
+  const tipiGeo = new Set(forme.map(f => f.tipoGeografico));
+  const localitaUniche = new Set(forme.map(f => f.localita));
+  
+  return {
+    numeroForme: forme.length,
+    livellGeografici: tipiGeo.size,
+    localitaCoperte: localitaUniche.size,
+    indice: (forme.length * tipiGeo.size) / localitaUniche.size
+  };
+}
+
+// Identifica forme "marker" di un'area
+function identificaFormeMarker(area) {
+  return forme.filter(f => 
+    f.localita === area && 
+    !f.attestataAltrove
+  );
+}
+```
+
+---
+
 ## 4. Problematiche e anomalie
 
 ### 4.1 Problemi di encoding
@@ -478,6 +676,7 @@ IDPeriodo: 1
 2. **Trim stringhe**: rimuovere spazi irregolari
 3. **Parsing categorie**: split multi-valore in array
 4. **Normalizzazione località**: mapping per geocoding
+5. **Aggregazione forme per livello geografico**: calcolare metriche di variazione diatopica
 
 **Esempio codice parsing**:
 ```javascript
@@ -496,6 +695,73 @@ function parseCSVRow(row) {
     frequenza: parseInt(row.Frequenza),
     url: row.URL
   };
+}
+
+// Funzione per classificare livello geografico
+function classificaLivelloGeografico(tipoLocalita) {
+  if (tipoLocalita.includes('Citt')) return 'locale';
+  if (tipoLocalita === 'Regione') return 'regionale';
+  if (tipoLocalita.includes('sub')) return 'sub-regionale';
+  if (tipoLocalita.includes('sovra')) return 'sovra-regionale';
+  return 'altro';
+}
+
+// Funzione per aggregare forme per lemma e geografia
+function aggregaFormePerGeografia(attestazioni) {
+  const lemmi = {};
+  
+  attestazioni.forEach(att => {
+    if (!lemmi[att.idLemma]) {
+      lemmi[att.idLemma] = {
+        lemma: att.lemma,
+        formeLocali: new Set(),
+        formeRegionali: new Set(),
+        formeSubRegionali: new Set(),
+        formeSovraRegionali: new Set(),
+        formeTrasversali: new Set()
+      };
+    }
+    
+    const livello = classificaLivelloGeografico(att.tipoLocalita);
+    
+    switch(livello) {
+      case 'locale':
+        lemmi[att.idLemma].formeLocali.add(att.forma);
+        break;
+      case 'regionale':
+        lemmi[att.idLemma].formeRegionali.add(att.forma);
+        break;
+      case 'sub-regionale':
+        lemmi[att.idLemma].formeSubRegionali.add(att.forma);
+        break;
+      case 'sovra-regionale':
+        lemmi[att.idLemma].formeSovraRegionali.add(att.forma);
+        break;
+    }
+  });
+  
+  // Identifica forme trasversali
+  Object.values(lemmi).forEach(lemma => {
+    const alleForme = new Set([
+      ...lemma.formeLocali,
+      ...lemma.formeRegionali,
+      ...lemma.formeSubRegionali,
+      ...lemma.formeSovraRegionali
+    ]);
+    
+    alleForme.forEach(forma => {
+      let presenzeLivelli = 0;
+      if (lemma.formeLocali.has(forma)) presenzeLivelli++;
+      if (lemma.formeRegionali.has(forma)) presenzeLivelli++;
+      if (lemma.formeSubRegionali.has(forma) || lemma.formeSovraRegionali.has(forma)) presenzeLivelli++;
+      
+      if (presenzeLivelli >= 3) {
+        lemma.formeTrasversali.add(forma);
+      }
+    });
+  });
+  
+  return lemmi;
 }
 ```
 
@@ -708,6 +974,131 @@ const categoriePeriodo = attestazioni
   }, {});
 ```
 
+### Query 5: Analisi variazione geografica per lemma
+```javascript
+// Calcola indice di variabilità geografica
+function analizzaVariazioneGeografica(idLemma) {
+  const attestazioni = getAttestazioniLemma(idLemma);
+  
+  const formePerLivello = {
+    locale: new Set(),
+    regionale: new Set(),
+    subRegionale: new Set(),
+    sovraRegionale: new Set()
+  };
+  
+  const formePerLocalita = {};
+  
+  attestazioni.forEach(att => {
+    const livello = classificaLivelloGeografico(att.tipoLocalita);
+    
+    if (livello === 'locale') formePerLivello.locale.add(att.forma);
+    if (livello === 'regionale') formePerLivello.regionale.add(att.forma);
+    if (livello.includes('sub')) formePerLivello.subRegionale.add(att.forma);
+    if (livello.includes('sovra')) formePerLivello.sovraRegionale.add(att.forma);
+    
+    if (!formePerLocalita[att.localita]) {
+      formePerLocalita[att.localita] = new Set();
+    }
+    formePerLocalita[att.localita].add(att.forma);
+  });
+  
+  return {
+    totaleFormeUniche: new Set(attestazioni.map(a => a.forma)).size,
+    formeLocali: formePerLivello.locale.size,
+    formeRegionali: formePerLivello.regionale.size,
+    formeSubRegionali: formePerLivello.subRegionale.size,
+    formeSovraRegionali: formePerLivello.sovraRegionale.size,
+    localitaConFormeUniche: Object.entries(formePerLocalita)
+      .filter(([_, forme]) => forme.size === 1)
+      .map(([loc, _]) => loc),
+    indiceVariabilita: (
+      formePerLivello.locale.size + 
+      formePerLivello.regionale.size + 
+      formePerLivello.subRegionale.size + 
+      formePerLivello.sovraRegionale.size
+    ) / Object.keys(formePerLocalita).length
+  };
+}
+```
+
+### Query 6: Identificazione forme marker di un'area
+```javascript
+// Trova forme attestate esclusivamente in una specifica area geografica
+function identificaFormeMarker(areaGeografica, tipoArea = 'Città') {
+  const formeArea = attestazioni
+    .filter(a => a.localita === areaGeografica && a.tipoLocalita === tipoArea)
+    .map(a => ({ forma: a.forma, lemma: a.lemma, idLemma: a.idLemma }));
+  
+  const formeMarker = [];
+  
+  formeArea.forEach(({ forma, lemma, idLemma }) => {
+    const attestazioniForma = attestazioni.filter(a => 
+      a.idLemma === idLemma && a.forma === forma
+    );
+    
+    const soloInQuestArea = attestazioniForma.every(a => 
+      a.localita === areaGeografica
+    );
+    
+    if (soloInQuestArea) {
+      formeMarker.push({
+        lemma,
+        forma,
+        frequenzaTotale: attestazioniForma.reduce((sum, a) => sum + a.frequenza, 0),
+        periodoInizio: Math.min(...attestazioniForma.map(a => a.anno)),
+        periodoFine: Math.max(...attestazioniForma.map(a => a.anno))
+      });
+    }
+  });
+  
+  return formeMarker.sort((a, b) => b.frequenzaTotale - a.frequenzaTotale);
+}
+
+// Esempio di utilizzo
+const formeGenovesi = identificaFormeMarker('Genova', 'Città');
+// Risultato: forme come "aggiada", "aggiadda" per il lemma "agliata"
+```
+
+### Query 7: Evoluzione spazio-temporale di una forma
+```javascript
+// Traccia la diffusione geografica di una forma nel tempo
+function tracciaEvoluzioneForma(idLemma, forma) {
+  const attestazioniForma = attestazioni
+    .filter(a => a.idLemma === idLemma && a.forma === forma)
+    .sort((a, b) => a.anno - b.anno);
+  
+  const timeline = attestazioniForma.map(att => ({
+    anno: att.anno,
+    localita: att.localita,
+    tipoLocalita: att.tipoLocalita,
+    livelloGeografico: classificaLivelloGeografico(att.tipoLocalita),
+    frequenza: att.frequenza
+  }));
+  
+  // Analizza pattern di espansione geografica
+  const livelli = [...new Set(timeline.map(t => t.livelloGeografico))];
+  const espansioneGeografica = livelli.length > 1;
+  
+  const direzioneDiffusione = espansioneGeografica
+    ? (livelli.includes('locale') && livelli.includes('regionale') 
+        ? 'dal_locale_al_regionale' 
+        : 'pattern_complesso')
+    : 'stabile';
+  
+  return {
+    forma,
+    timeline,
+    primaAttestazione: timeline[0],
+    ultimaAttestazione: timeline[timeline.length - 1],
+    durataDiffusione: timeline[timeline.length - 1].anno - timeline[0].anno,
+    livelliGeografici: livelli,
+    direzioneDiffusione,
+    localitaRaggiunta: [...new Set(timeline.map(t => t.localita))]
+  };
+}
+```
+
 ---
 
 ## 9. Checklist implementazione
@@ -748,14 +1139,40 @@ const categoriePeriodo = attestazioni
 
 ## 10. Glossario
 
-- **Lemma**: Forma normalizzata/dizionariale di una parola (headword)
-- **Forma**: Variante grafica o morfologica attestata nelle fonti
-- **Attestazione**: Occorrenza documentata di un termine in un contesto specifico
+### Termini linguistici
+
+- **Lemma**: Forma normalizzata/dizionariale di una parola (headword), rappresenta il concetto lessicale astratto
+- **Forma**: Variante grafica, fonetica o morfologica attestata nelle fonti storiche
+- **Attestazione**: Occorrenza documentata di un termine in un contesto specifico spazio-temporale
 - **Corpus**: Insieme dei testi analizzati
-- **Frequenza**: Numero di occorrenze nel corpus
-- **Treemap**: Visualizzazione gerarchica con aree proporzionali
-- **Geocoding**: Conversione nome località → coordinate geografiche
-- **Long tail distribution**: Distribuzione con molti valori bassi e pochi molto alti
+- **Frequenza**: Numero di occorrenze di una forma nel corpus
+- **Variazione diatopica**: Variazione linguistica nello spazio geografico (dialettale)
+- **Isoglossa**: Linea geografica che delimita l'estensione di un fenomeno linguistico
+- **Koinè**: Varietà linguistica sovraregionale, forma di compromesso tra dialetti
+- **Scripta**: Tradizione scrittoria locale con convenzioni ortografiche proprie
+
+### Classificazione geografica delle forme
+
+- **Forma locale**: Variante attestata esclusivamente in una o più città specifiche (es. `aggiada` → solo Genova)
+- **Forma regionale**: Variante attestata solo a livello di regione/i (es. `brasole` → Lazio e Toscana)
+- **Forma macro-areale**: Variante attestata in ambiti sub-regionali o sovra-regionali (es. `brasciola` → Italia meridionale intermedia)
+- **Forma trasversale**: Variante attestata a tutti i livelli geografici - città, regioni e macro-aree (es. `agliata`)
+- **Forma marker**: Variante esclusiva di un'area geografica, indicatore di specificità dialettale
+
+### Pattern di diffusione
+
+- **Forma panitaliana**: Forma standardizzata o di grande diffusione attestata in molteplici aree geografiche
+- **Forma di prestigio**: Variante che si diffonde da un centro culturale importante ad aree limitrofe
+- **Variante conservativa**: Forma arcaica mantenuta in area geografica limitata
+- **Espansione geografica**: Processo di diffusione di una forma da un livello locale a uno regionale/macro
+
+### Termini tecnici
+
+- **Treemap**: Visualizzazione gerarchica con aree proporzionali ai valori
+- **Geocoding**: Conversione nome località → coordinate geografiche (latitudine, longitudine)
+- **Long tail distribution**: Distribuzione statistica con molti valori bassi e pochi molto alti
+- **Granularità geografica**: Livello di dettaglio della localizzazione (città < regione < macro-area)
+- **Indice di variabilità**: Metrica che quantifica la diversità delle forme di un lemma su più livelli geografici
 
 ---
 
