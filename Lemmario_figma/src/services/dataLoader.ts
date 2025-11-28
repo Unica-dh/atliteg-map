@@ -17,20 +17,38 @@ export async function loadLemmasCSV(csvPath: string): Promise<Lemma[]> {
         dynamicTyping: true,
         complete: (results) => {
           try {
-            const lemmas = results.data.map((row: any) => ({
-              IdLemma: parseInt(row.IdLemma) || 0,
-              Lemma: row.Lemma || '',
-              Forma: row.Forma || '',
-              CollGeografica: row['Coll.Geografica'] || row.CollGeografica || '',
-              Anno: parseInt(row.Anno) || 0,
-              Periodo: row.Periodo || '',
-              Categoria: row.Categoria || '',
-              Frequenza: parseInt(row.Frequenza) || 0,
-              URL: row.URL || '',
-              IdAmbito: row.IdAmbito || undefined,
-              lat: row.lat ? parseFloat(row.lat) : undefined,
-              lng: row.lng ? parseFloat(row.lng) : undefined,
-            }));
+            const lemmas = results.data.map((row: any) => {
+              // Parsing delle coordinate - gestisce formato italiano con virgola
+              let lat: number | undefined;
+              let lng: number | undefined;
+              
+              if (row.Latitudine && row.Latitudine !== '#N/A') {
+                const latStr = String(row.Latitudine).replace(',', '.');
+                lat = parseFloat(latStr);
+                if (isNaN(lat)) lat = undefined;
+              }
+              
+              if (row.Longitudine && row.Longitudine !== '#N/A') {
+                const lngStr = String(row.Longitudine).replace(',', '.');
+                lng = parseFloat(lngStr);
+                if (isNaN(lng)) lng = undefined;
+              }
+              
+              return {
+                IdLemma: parseInt(row.IdLemma) || 0,
+                Lemma: row.Lemma || '',
+                Forma: row.Forma || '',
+                CollGeografica: row['Coll.Geografica'] || row.CollGeografica || '',
+                Anno: parseInt(row.Anno) || 0,
+                Periodo: row.Periodo || '',
+                Categoria: row.Categoria || '',
+                Frequenza: parseInt(row.Frequenza) || 0,
+                URL: row.URL || '',
+                IdAmbito: row.IdAmbito || undefined,
+                lat,
+                lng,
+              };
+            });
             resolve(lemmas.filter(l => l.IdLemma > 0)); // Filtra righe invalide
           } catch (error) {
             reject(new Error(`Errore nel parsing CSV: ${error}`));

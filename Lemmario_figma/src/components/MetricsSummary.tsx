@@ -8,27 +8,27 @@ interface MetricsSummaryProps {
 
 export function MetricsSummary({ metrics, className = '' }: MetricsSummaryProps) {
   return (
-    <div className={`flex flex-col gap-4 ${className}`}>
+    <div className={`flex flex-wrap gap-3 lg:flex-col ${className}`}>
       <MetricCard
-        icon={<MapPin className="h-5 w-5" />}
+        icon={<MapPin className="h-4 w-4" />}
         label="Località"
         value={metrics.totalLocations}
         color="blue"
       />
       <MetricCard
-        icon={<FileText className="h-5 w-5" />}
+        icon={<FileText className="h-4 w-4" />}
         label="Lemmi"
         value={metrics.totalLemmas}
         color="green"
       />
       <MetricCard
-        icon={<Calendar className="h-5 w-5" />}
+        icon={<Calendar className="h-4 w-4" />}
         label="Anni con attestazioni"
         value={`${metrics.yearsWithData} / ${metrics.totalYears}`}
         color="purple"
       />
       <MetricCard
-        icon={<TrendingUp className="h-5 w-5" />}
+        icon={<TrendingUp className="h-4 w-4" />}
         label="Attestazioni totali"
         value={metrics.totalAttestations}
         color="orange"
@@ -53,17 +53,17 @@ function MetricCard({ icon, label, value, color }: MetricCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-3">
-      <div className="flex items-start gap-3">
-        <div className={`p-2 rounded-lg ${colorClasses[color]} shrink-0`} aria-hidden="true">
-          {icon}
+    <div className="bg-gray-50 rounded-lg border border-gray-200 p-2">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <div className={`p-1.5 rounded-md ${colorClasses[color]} shrink-0`} aria-hidden="true">
+            {icon}
+          </div>
+          <p className="text-xs text-gray-600 truncate">{label}</p>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-gray-600 mb-1">{label}</p>
-          <p className="text-xl font-semibold text-gray-900" aria-label={`${label}: ${value}`}>
-            {value}
-          </p>
-        </div>
+        <p className="text-lg font-semibold text-gray-900 text-center" aria-label={`${label}: ${value}`}>
+          {value}
+        </p>
       </div>
     </div>
   );
