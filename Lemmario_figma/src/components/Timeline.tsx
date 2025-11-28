@@ -168,34 +168,35 @@ export function Timeline({ lemmas, selectedLemma, onLemmaSelect }: TimelineProps
                         )}
                       </Tooltip>
 
-                    {/* Lemmas for this year */}
-                    {hasLemmas && (
-                      <div className="mt-3 space-y-1 w-full">
-                        <div className="text-xs text-gray-500 text-center mb-1">
-                          {yearLemmas.length} lemma{yearLemmas.length > 1 ? 's' : ''}
+                      {/* Lemmas for this year */}
+                      {hasLemmas && (
+                        <div className="mt-3 space-y-1 w-full">
+                          <div className="text-xs text-gray-500 text-center mb-1">
+                            {yearLemmas.length} lemma{yearLemmas.length > 1 ? 's' : ''}
+                          </div>
+                          <div className="space-y-1 max-h-40 overflow-y-auto">
+                            {yearLemmas.map((lemma, index) => (
+                              <button
+                                key={lemma.IdLemma}
+                                onClick={() => onLemmaSelect(lemma)}
+                                className={`w-full text-left px-2 py-1 rounded text-xs transition-colors ${
+                                  selectedLemmaIndex === index
+                                    ? 'bg-blue-600 text-white shadow-md'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                                title={`${lemma.Lemma} - ${lemma.Forma}`}
+                              >
+                                <div className="truncate">{lemma.Lemma}</div>
+                                <div className="truncate text-xs opacity-75">
+                                  {lemma.CollGeografica}
+                                </div>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <div className="space-y-1 max-h-40 overflow-y-auto">
-                          {yearLemmas.map((lemma, index) => (
-                            <button
-                              key={lemma.IdLemma}
-                              onClick={() => onLemmaSelect(lemma)}
-                              className={`w-full text-left px-2 py-1 rounded text-xs transition-colors ${
-                                selectedLemmaIndex === index
-                                  ? 'bg-blue-600 text-white shadow-md'
-                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                              }`}
-                              title={`${lemma.Lemma} - ${lemma.Forma}`}
-                            >
-                              <div className="truncate">{lemma.Lemma}</div>
-                              <div className="truncate text-xs opacity-75">
-                                {lemma.CollGeografica}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
+                  </TooltipProvider>
                 );
               })}
             </div>
