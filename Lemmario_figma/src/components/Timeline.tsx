@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Lemma } from '../data/mockData';
+import type { Lemma } from '../types';
 import { Button } from './ui/button';
+import { useAppContext } from '../context/AppContext';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 interface TimelineProps {
   lemmas: Lemma[];
@@ -12,17 +14,18 @@ interface TimelineProps {
 export function Timeline({ lemmas, selectedLemma, onLemmaSelect }: TimelineProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
   const selectedYearRef = useRef<HTMLDivElement>(null);
+  const { filters, setSelectedYear } = useAppContext();
 
   // Calculate dynamic year range based on lemmas
-  const years = lemmas.map(l => parseInt(l.Anno)).filter(y => !isNaN(y));
-  const START_YEAR = years.length > 0 ? Math.min(...years) : 1470;
-  const END_YEAR = years.length > 0 ? Math.max(...years) : 1865;
+  const years = lemmas.map(l => l.Anno).filter(y => y > 0);
+  const START_YEAR = years.length > 0 ? Math.min(...years) : 1300;
+  const END_YEAR = years.length > 0 ? Math.max(...years) : 1500;
   const TOTAL_YEARS = END_YEAR - START_YEAR + 1;
 
   // Group lemmas by year
   const lemmasByYear = lemmas.reduce((acc, lemma) => {
-    const year = parseInt(lemma.Anno);
-    if (!isNaN(year) && year >= START_YEAR && year <= END_YEAR) {
+    const year = lemma.Anno;
+    if (year > 0 && year >= START_YEAR && year <= END_YEAR) {
       if (!acc[year]) {
         acc[year] = [];
       }
@@ -31,16 +34,17 @@ export function Timeline({ lemmas, selectedLemma, onLemmaSelect }: TimelineProps
     return acc;
   }, {} as Record<number, Lemma[]>);
 
-  // Scroll to selected lemma's year
+  // Scroll to selected lemma's year or selected year
   useEffect(() => {
-    if (selectedLemma && selectedYearRef.current && timelineRef.current) {
+    const targetYear = filters.selectedYear || (selectedLemma ? selectedLemma.Anno : null);
+    if (targetYear && selectedYearRef.current && timelineRef.current) {
       selectedYearRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
         inline: 'center',
       });
     }
-  }, [selectedLemma]);
+  }, [selectedLemma, filters.selectedYear]);
 
   const scrollTimeline = (direction: 'left' | 'right') => {
     if (timelineRef.current) {
@@ -100,40 +104,69 @@ export function Timeline({ lemmas, selectedLemma, onLemmaSelect }: TimelineProps
               {yearsArray.map((year) => {
                 const yearLemmas = lemmasByYear[year] || [];
                 const hasLemmas = yearLemmas.length > 0;
-                const isSelectedYear = selectedLemma && parseInt(selectedLemma.Anno) === year;
+                const isSelectedByYear = filters.selectedYear === year;
+                const isSelectedByLemma = selectedLemma && selectedLemma.Anno === year;
+                const isSelectedYear = isSelectedByYear || isSelectedByLemma;
                 const selectedLemmaIndex = selectedLemma
                   ? yearLemmas.findIndex((l) => l.IdLemma === selectedLemma.IdLemma)
                   : -1;
 
-                return (
-                  <div
-                    key={year}
-                    ref={isSelectedYear ? selectedYearRef : null}
-                    className="flex flex-col items-center"
-                    style={{ width: '60px', flexShrink: 0 }}
-                  >
-                    {/* Year label - show every 10 years or if has lemmas */}
-                    {(year % 10 === 0 || hasLemmas) && (
-                      <div
-                        className={`text-xs mb-2 ${
-                          isSelectedYear ? 'text-blue-600 font-semibold' : 'text-gray-600'
-                        }`}
-                      >
-                        {year}
-                      </div>
-                    )}
+                const handleYearClick = () => {
+                  if (hasLemmas) {
+                    // Toggle year selection
+                    if (filters.selectedYear === year) {
+                      setSelectedYear(null);
+                    } else {
+                      setSelectedYear(year);
+                    }
+                  }
+                };
 
-                    {/* Marker dot */}
+                return (
+                  <TooltipProvider key={year}>
                     <div
-                      className={`w-3 h-3 rounded-full border-2 transition-all ${
-                        isSelectedYear
-                          ? 'bg-blue-600 border-blue-600 scale-150 shadow-lg'
-                          : hasLemmas
-                          ? 'bg-blue-500 border-white cursor-pointer hover:scale-125'
-                          : 'bg-gray-200 border-white'
-                      }`}
-                      style={{ zIndex: isSelectedYear ? 10 : 1 }}
-                    />
+                      ref={isSelectedYear ? selectedYearRef : null}
+                      className="flex flex-col items-center"
+                      style={{ width: '60px', flexShrink: 0 }}
+                    >
+                      {/* Year label - show every 10 years or if has lemmas */}
+                      {(year % 10 === 0 || hasLemmas) && (
+                        <div
+                          className={`text-xs mb-2 ${
+                            isSelectedYear ? 'text-blue-600 font-semibold' : 'text-gray-600'
+                          }`}
+                        >
+                          {year}
+                        </div>
+                      )}
+
+                      {/* Marker dot */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={handleYearClick}
+                            disabled={!hasLemmas}
+                            className={`w-3 h-3 rounded-full border-2 transition-all ${
+                              isSelectedYear
+                                ? 'bg-blue-600 border-blue-600 scale-150 shadow-lg'
+                                : hasLemmas
+                                ? 'bg-blue-500 border-white cursor-pointer hover:scale-125'
+                                : 'bg-gray-200 border-white cursor-not-allowed'
+                            }`}
+                            style={{ zIndex: isSelectedYear ? 10 : 1 }}
+                            aria-label={`Anno ${year}${hasLemmas ? ` - ${yearLemmas.length} attestazioni` : ' - nessuna attestazione'}`}
+                          />
+                        </TooltipTrigger>
+                        {hasLemmas && (
+                          <TooltipContent>
+                            <div className="text-xs">
+                              <div className="font-semibold">Anno {year}</div>
+                              <div>{yearLemmas.length} attestazion{yearLemmas.length > 1 ? 'i' : 'e'}</div>
+                              <div className="text-gray-400 mt-1">Click per filtrare</div>
+                            </div>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
 
                     {/* Lemmas for this year */}
                     {hasLemmas && (
