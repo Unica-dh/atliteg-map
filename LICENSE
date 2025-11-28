@@ -1,0 +1,146 @@
+MIT License
+
+Copyright (c) 2024 AtLiTeG - Atlante del Lessico dell'Italiano Gastronomico
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Dataset License
+
+The AtLiTeG dataset (CSV and GeoJSON files in the `data/` directory) is 
+licensed separately and may have different usage restrictions. Please refer 
+to the dataset documentation for specific licensing terms.
+
+## Third-Party Licenses
+
+This project uses several open-source libraries. Their licenses are listed below:
+
+### Core Dependencies
+
+- **React** (MIT License) - Copyright (c) Meta Platforms, Inc. and affiliates
+- **TypeScript** (Apache License 2.0) - Copyright (c) Microsoft Corporation
+- **Vite** (MIT License) - Copyright (c) 2019-present, Yuxi (Evan) You and Vite contributors
+- **Leaflet** (BSD-2-Clause License) - Copyright (c) 2010-2023, Volodymyr Agafonkin
+- **React Leaflet** (Hippocratic License 2.1) - Copyright (c) Paul Le Cam and contributors
+- **Tailwind CSS** (MIT License) - Copyright (c) Tailwind Labs, Inc.
+- **Radix UI** (MIT License) - Copyright (c) WorkOS
+- **PapaParse** (MIT License) - Copyright (c) 2015 Matthew Holt
+- **Lucide React** (ISC License) - Copyright (c) 2022 Lucide Contributors
+
+### Development Dependencies
+
+- **ESLint** (MIT License) - Copyright (c) OpenJS Foundation and contributors
+- **Prettier** (MIT License) - Copyright (c) James Long and contributors
+- **Vitest** (MIT License) - Copyright (c) 2021-present Anthony Fu and Vitest contributors
+- **Playwright** (Apache License 2.0) - Copyright (c) Microsoft Corporation
+
+### Full Text of Common Licenses
+
+#### MIT License (Full Text)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+#### BSD-2-Clause License (Leaflet)
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#### Apache License 2.0 (TypeScript, Playwright)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+---
+
+## OpenStreetMap Data
+
+Map tiles are provided by OpenStreetMap contributors and licensed under the 
+Open Database License (ODbL). 
+
+**Attribution**: © OpenStreetMap contributors
+
+For more information:
+- OpenStreetMap Copyright: https://www.openstreetmap.org/copyright
+- ODbL License: https://opendatacommons.org/licenses/odbl/
+
+---
+
+## Credits and Attribution
+
+This project was developed as part of the AtLiTeG (Atlante del Lessico 
+dell'Italiano Gastronomico) research initiative.
+
+**Research Team**:
+- Principal Investigator: [Name]
+- Technical Lead: [Name]
+- Data Curator: [Name]
+- Contributors: [Names]
+
+**Acknowledgments**:
+- Dataset provided by AtLiTeG research project
+- Map data © OpenStreetMap contributors
+- UI components from Radix UI and shadcn/ui
+
+---
+
+For questions regarding licensing, please contact: legal@atliteg.example.com
