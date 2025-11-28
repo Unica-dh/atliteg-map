@@ -8,7 +8,7 @@ interface MetricsSummaryProps {
 
 export function MetricsSummary({ metrics, className = '' }: MetricsSummaryProps) {
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 ${className}`}>
+    <div className={`flex flex-col gap-4 ${className}`}>
       <MetricCard
         icon={<MapPin className="h-5 w-5" />}
         label="Località"
@@ -53,14 +53,14 @@ function MetricCard({ icon, label, value, color }: MetricCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-lg ${colorClasses[color]}`} aria-hidden="true">
+    <div className="bg-white rounded-lg border border-gray-200 p-3">
+      <div className="flex items-start gap-3">
+        <div className={`p-2 rounded-lg ${colorClasses[color]} shrink-0`} aria-hidden="true">
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-gray-600 truncate">{label}</p>
-          <p className="text-2xl font-semibold text-gray-900" aria-label={`${label}: ${value}`}>
+          <p className="text-xs text-gray-600 mb-1">{label}</p>
+          <p className="text-xl font-semibold text-gray-900" aria-label={`${label}: ${value}`}>
             {value}
           </p>
         </div>

@@ -49,20 +49,28 @@ function AppContent() {
 
       {/* Main Content */}
       <main className="p-8">
-        {/* Metrics Summary */}
-        <MetricsSummary metrics={metrics} className="mb-6" />
+        {/* Filters and Metrics Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Filters */}
+          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <Filters
+              availableCategories={availableCategories}
+              availablePeriods={availablePeriods}
+              selectedCategories={filters.categorie}
+              selectedPeriods={filters.periodi}
+              onCategoriesChange={setCategorie}
+              onPeriodsChange={setPeriodi}
+              onReset={resetFilters}
+            />
+          </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <Filters
-            availableCategories={availableCategories}
-            availablePeriods={availablePeriods}
-            selectedCategories={filters.categorie}
-            selectedPeriods={filters.periodi}
-            onCategoriesChange={setCategorie}
-            onPeriodsChange={setPeriodi}
-            onReset={resetFilters}
-          />
+          {/* Metrics Summary */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Statistiche</h2>
+            <div className="space-y-4">
+              <MetricsSummary metrics={metrics} />
+            </div>
+          </div>
         </div>
 
         {/* Search Bar */}
