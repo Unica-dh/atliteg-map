@@ -1,66 +1,76 @@
-import { useState } from 'react';
+import { AppProvider, useAppContext } from './context/AppContext';
+import { useDataLoader, useFilteredData, useMetrics } from './hooks';
+import { Header } from './components/Header';
 import { GeographicalMap } from './components/GeographicalMap';
 import { LemmaDetail } from './components/LemmaDetail';
 import { Timeline } from './components/Timeline';
 import { Filters } from './components/Filters';
 import { AlphabeticalIndex } from './components/AlphabeticalIndex';
-import { mockLemmas, Lemma } from './data/mockData';
-import logo from 'figma:asset/91a8d45a51941a567b6deb4b10debbdad2d45792.png';
+import { MetricsSummary } from './components/MetricsSummary';
+import { SearchBar } from './components/SearchBar';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import { EmptyState } from './components/EmptyState';
+import { extractUniqueCategories, extractUniquePeriods } from './services/dataLoader';
 
-export default function App() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLemma, setSelectedLemma] = useState<Lemma | null>(null);
-  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+function AppContent() {
+  const { lemmas, isLoading, error } = useDataLoader();
+  const { filters, setCategorie, setPeriodi, setSelectedLemma, resetFilters } = useAppContext();
+  
+  const filteredLemmas = useFilteredData(lemmas, filters);
+  const metrics = useMetrics(filteredLemmas);
 
-  const filteredLemmas = mockLemmas.filter(lemma => {
-    const matchesCategory = !selectedCategory || lemma.Categoria === selectedCategory;
-    const matchesTimePeriod = !selectedTimePeriod || lemma.Periodo === selectedTimePeriod;
-    const matchesSearch = !searchQuery || 
-      lemma.Lemma.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lemma.Forma.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLetter = !selectedLetter || lemma.Lemma.charAt(0).toUpperCase() === selectedLetter;
-    
-    return matchesCategory && matchesTimePeriod && matchesSearch && matchesLetter;
-  });
+  const availableCategories = extractUniqueCategories(lemmas);
+  const availablePeriods = extractUniquePeriods(lemmas);
 
-  const handleResetFilters = () => {
-    setSelectedCategory(null);
-    setSelectedTimePeriod(null);
-    setSearchQuery('');
-    setSelectedLetter(null);
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner message="Caricamento dati del lemmario..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <EmptyState 
+          icon="alert"
+          title="Errore nel caricamento"
+          message={error}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex items-start gap-6">
-          <img src={logo} alt="AtLiTeG Logo" className="w-24 h-24 flex-shrink-0" />
-          <div className="flex flex-col gap-2">
-            <h1 className="text-gray-900 text-2xl">
-              Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità
-            </h1>
-            <p className="text-gray-600 text-sm">
-              PRIN 2017XRCZTM - PI professoressa Giovanna Frosini, Università per Stranieri di Siena. Elaborato sui dati estrapolati dal "Vocabolario storico della lingua italiana della gastronomia (VoSLIG)", in collaborazione con il Labgeo "Giuseppe Caraci", Università Roma Tre.
-            </p>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="p-8">
+        {/* Metrics Summary */}
+        <MetricsSummary metrics={metrics} className="mb-6" />
+
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <Filters
-            selectedCategory={selectedCategory}
-            selectedTimePeriod={selectedTimePeriod}
-            onCategoryChange={setSelectedCategory}
-            onTimePeriodChange={setSelectedTimePeriod}
-            onReset={handleResetFilters}
+            availableCategories={availableCategories}
+            availablePeriods={availablePeriods}
+            selectedCategories={filters.categorie}
+            selectedPeriods={filters.periodi}
+            onCategoriesChange={setCategorie}
+            onPeriodsChange={setPeriodi}
+            onReset={resetFilters}
           />
         </div>
+
+        {/* Search Bar */}
+        <SearchBar 
+          lemmas={lemmas}
+          onSelect={setSelectedLemma}
+          className="mb-6"
+        />
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -68,17 +78,17 @@ export default function App() {
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <GeographicalMap
               lemmas={filteredLemmas}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              onLocationSelect={setSelectedCategory}
+              searchQuery={filters.searchQuery}
+              onSearchChange={() => {}}
+              onLocationSelect={() => {}}
               onLemmaSelect={setSelectedLemma}
-              selectedLemma={selectedLemma}
+              selectedLemma={filters.selectedLemma}
             />
           </div>
 
           {/* Lemma Details */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <LemmaDetail lemma={selectedLemma} allLemmas={mockLemmas} />
+            <LemmaDetail lemma={filters.selectedLemma} allLemmas={filteredLemmas} />
           </div>
         </div>
 
@@ -86,7 +96,7 @@ export default function App() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <Timeline 
             lemmas={filteredLemmas} 
-            selectedLemma={selectedLemma}
+            selectedLemma={filters.selectedLemma}
             onLemmaSelect={setSelectedLemma}
           />
         </div>
@@ -94,12 +104,20 @@ export default function App() {
         {/* Alphabetical Index */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <AlphabeticalIndex 
-            lemmas={mockLemmas}
+            lemmas={filteredLemmas}
             onLemmaSelect={setSelectedLemma}
-            onLetterChange={setSelectedLetter}
+            onLetterChange={() => {}}
           />
         </div>
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
   );
 }

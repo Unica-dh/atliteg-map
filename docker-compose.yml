@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  lemmario-dashboard:
+    build:
+      context: ./Lemmario_figma
+      dockerfile: Dockerfile
+    container_name: atliteg-lemmario-dashboard
+    ports:
+      - "9000:9000"
+    volumes:
+      # Mount data directory per aggiornamenti senza rebuild
+      - ./data:/usr/share/nginx/html/data:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - atliteg-network
+
+networks:
+  atliteg-network:
+    driver: bridge
