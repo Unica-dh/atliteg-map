@@ -49,11 +49,11 @@ function AppContent() {
 
       {/* Main Content */}
       <main className="p-8">
-        {/* Filters and Metrics Row - Single line layout */}
+        {/* Filters and Metrics Row - ALWAYS HORIZONTAL */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            {/* Filters */}
-            <div className="flex-1">
+          <div className="flex flex-row items-center gap-8">
+            {/* Filters - left side */}
+            <div className="flex-shrink-0">
               <Filters
                 availableCategories={availableCategories}
                 availablePeriods={availablePeriods}
@@ -65,8 +65,11 @@ function AppContent() {
               />
             </div>
 
-            {/* Metrics Summary */}
-            <div className="lg:border-l lg:border-gray-200 lg:pl-6">
+            {/* Divider */}
+            <div className="h-16 w-px bg-gray-200"></div>
+
+            {/* Statistics - right side */}
+            <div className="flex-1">
               <h2 className="text-sm font-semibold text-gray-700 mb-3">Statistiche</h2>
               <MetricsSummary metrics={metrics} />
             </div>

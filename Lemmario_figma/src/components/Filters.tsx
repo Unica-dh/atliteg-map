@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Tag, Calendar, RotateCcw, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -28,6 +29,8 @@ export function Filters({
   onPeriodsChange,
   onReset,
 }: FiltersProps) {
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [periodOpen, setPeriodOpen] = useState(false);
   const handleCategoryToggle = (category: string) => {
     if (selectedCategories.includes(category)) {
       onCategoriesChange(selectedCategories.filter(c => c !== category));
@@ -51,7 +54,7 @@ export function Filters({
       <div className="flex items-center gap-4 flex-wrap">
         {/* Category Filter */}
         <div className="flex items-center gap-2">
-          <Popover>
+          <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
             <PopoverTrigger asChild>
               <Button 
                 variant="outline" 
@@ -102,7 +105,7 @@ export function Filters({
 
         {/* Time Period Filter */}
         <div className="flex items-center gap-2">
-          <Popover>
+          <Popover open={periodOpen} onOpenChange={setPeriodOpen}>
             <PopoverTrigger asChild>
               <Button 
                 variant="outline" 
