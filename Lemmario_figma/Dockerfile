@@ -24,10 +24,7 @@ FROM nginx:alpine
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copia build artifacts da stage precedente
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copia dati CSV/GeoJSON
-COPY --from=builder /app/public/data /usr/share/nginx/html/data
+COPY --from=builder /app/build /usr/share/nginx/html
 
 # Esponi porta 9000
 EXPOSE 9000
