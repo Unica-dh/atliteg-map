@@ -118,3 +118,4 @@ src/
 Vedi la [Documentazione di Vite](https://vite.dev/config/) per la configurazione avanzata.
 
 Per personalizzare Tailwind CSS, modifica il file `tailwind.config.js`.
+
