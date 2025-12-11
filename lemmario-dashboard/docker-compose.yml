@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  lemmario-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atliteg-lemmario-dashboard
+    ports:
+      - "9000:9000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "description=AtLiTeG Lemmario Interactive Dashboard"
+      - "version=1.0.0"
