@@ -3,7 +3,7 @@ version: '3.8'
 services:
   lemmario-dashboard:
     build:
-      context: ./Lemmario_figma
+      context: ./lemmario-dashboard
       dockerfile: Dockerfile
     container_name: atliteg-lemmario-dashboard
     ports:
