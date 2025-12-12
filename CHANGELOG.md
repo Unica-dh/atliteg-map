@@ -8,14 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **GitHub Actions CI/CD**: Workflow automatico per deploy in produzione (`deploy-production.yml`)
-  - Trigger automatico su push/merge al branch `master`
-  - Esecuzione remota via SSH di: git pull, docker build, container restart
+- **GitHub Actions CI/CD con Self-Hosted Runner**: Sistema di deploy automatico ottimizzato per server protetti da VPN
+  - Self-hosted runner installato direttamente sul server (niente problemi SSH/firewall/VPN)
+  - Workflow automatico per deploy in produzione (`deploy-production.yml`)
+  - Trigger automatico su push/merge al branch `master` + esecuzione manuale
+  - Esegue: git pull, docker build, container restart, cleanup, verifica
   - Log dettagliati con emoji per facile identificazione degli step
-  - Gestione secrets tramite GitHub Environments
-  - Cleanup automatico delle risorse Docker
-- **Documentazione deploy**: Guida completa in `docs/GITHUB_ACTIONS_SETUP.md`
-- **Script di test SSH**: Template per testare la connessione SSH prima della configurazione GitHub Actions
+  - Configurazione semplificata: 1 solo secret necessario (DEPLOY_PATH) invece di 4
+  - Gestione environment GitHub per protezione production
+- **Script installazione runner**: `install-github-runner.sh` per setup automatico del self-hosted runner
+- **Documentazione completa deploy**:
+  - `docs/DEPLOY_QUICKSTART.md` - Guida rapida per iniziare
+  - `docs/GITHUB_ACTIONS_SETUP.md` - Setup completo e troubleshooting
+  - `test-ssh-connection.example.sh` - Script di test connessione (deprecato con self-hosted)
 
 ### Planned
 
