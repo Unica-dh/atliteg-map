@@ -71,6 +71,23 @@ docker-compose up -d
 # App su http://localhost:9000
 ```
 
+### 🚀 Deploy Automatico (CI/CD)
+
+Il progetto include un workflow GitHub Actions per il deploy automatico sul server di produzione.
+
+**Trigger automatici:**
+- Push o merge su branch `master`
+- Esecuzione manuale tramite GitHub Actions
+
+**Cosa fa il workflow:**
+1. 📥 Git pull del codice aggiornato sul server remoto
+2. 🏗️ Build delle immagini Docker
+3. 🔄 Restart dei container con la nuova versione
+4. 🧹 Pulizia risorse Docker non utilizzate
+
+**Configurazione:**
+- Vedi [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) per istruzioni dettagliate sulla configurazione
+- Il workflow è già configurato in [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml)
 
 ### Aggiornamento dati
 

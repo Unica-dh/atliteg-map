@@ -1,0 +1,185 @@
+name: Deploy to Production
+
+# Trigger automatico su push/merge al ramo master
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: # Permette esecuzione manuale dal tab Actions
+
+# Permessi necessari per il workflow
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy AtLiTeG Map Application
+    runs-on: ubuntu-latest
+    
+    # Environment per gestire secrets e protezioni
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    
+    steps:
+      # Step 1: Checkout del codice (opzionale, per validazione)
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # Step 2: Setup SSH
+      - name: 🔐 Configure SSH Connection
+        run: |
+          echo "🔑 Configurazione chiave SSH per connessione al server remoto..."
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Aggiungi l'host ai known_hosts per evitare prompt
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          
+          echo "✅ Chiave SSH configurata con successo"
+      
+      # Step 3: Verifica connessione SSH
+      - name: 🔍 Test SSH Connection
+        run: |
+          echo "🧪 Test della connessione SSH al server remoto..."
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "echo '✅ Connessione SSH stabilita con successo' && whoami && pwd"
+      
+      # Step 4: Deploy applicazione sul server remoto
+      - name: 🚀 Deploy Application on Remote Server
+        run: |
+          echo "🚀 Inizio processo di deploy sul server remoto..."
+          
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
+          
+          set -e  # Exit immediatamente in caso di errore
+          
+          echo "📂 Navigazione alla directory del progetto..."
+          cd ${{ secrets.DEPLOY_PATH }}
+          
+          echo "📍 Directory corrente: $(pwd)"
+          echo "🌿 Branch corrente: $(git branch --show-current)"
+          
+          # STEP 1: Git Pull
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📥 STEP 1: Pulling latest code from repository"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Salva modifiche locali se esistono
+          if [[ -n $(git status -s) ]]; then
+            echo "⚠️  Modifiche locali rilevate, eseguo stash..."
+            git stash
+          fi
+          
+          # Pull del codice
+          git fetch origin master
+          git checkout master
+          git pull origin master
+          
+          echo "✅ Git pull completato con successo"
+          echo "📊 Ultimo commit: $(git log -1 --pretty=format:'%h - %s (%an, %ar)')"
+          
+          # STEP 2: Build dell'applicazione
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🏗️  STEP 2: Building application containers"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Build con docker compose
+          echo "🔨 Esecuzione docker compose build..."
+          docker compose build --no-cache
+          
+          echo "✅ Build completato con successo"
+          
+          # STEP 3: Restart dei container
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔄 STEP 3: Restarting application containers"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          # Stop containers esistenti
+          echo "🛑 Stopping running containers..."
+          docker compose down
+          
+          # Start nuovi containers
+          echo "▶️  Starting new containers..."
+          docker compose up -d
+          
+          # Attendi che i container siano healthy
+          echo "⏳ Waiting for containers to be healthy..."
+          sleep 10
+          
+          # Verifica stato containers
+          echo "🔍 Checking container status..."
+          docker compose ps
+          
+          # Verifica health check
+          CONTAINER_NAME="atliteg-lemmario-dashboard"
+          if docker inspect --format='{{.State.Health.Status}}' $CONTAINER_NAME 2>/dev/null | grep -q "healthy\|starting"; then
+            echo "✅ Container $CONTAINER_NAME is running and healthy"
+          elif docker inspect --format='{{.State.Status}}' $CONTAINER_NAME 2>/dev/null | grep -q "running"; then
+            echo "✅ Container $CONTAINER_NAME is running"
+          else
+            echo "⚠️  Warning: Could not verify container health status"
+          fi
+          
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎉 DEPLOY COMPLETATO CON SUCCESSO!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📅 Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "🔖 Version: $(git describe --tags --always)"
+          
+          ENDSSH
+          
+          echo ""
+          echo "✨ Deploy completato sul server remoto!"
+      
+      # Step 5: Cleanup
+      - name: 🧹 Cleanup SSH Keys
+        if: always()
+        run: |
+          echo "🧹 Rimozione chiavi SSH temporanee..."
+          rm -rf ~/.ssh/deploy_key
+          echo "✅ Cleanup completato"
+      
+      # Step 6: Notifica risultato
+      - name: 📢 Deployment Summary
+        if: success()
+        run: |
+          echo ""
+          echo "╔════════════════════════════════════════════════════════╗"
+          echo "║                                                        ║"
+          echo "║        ✅ DEPLOY PRODUCTION SUCCESSFUL ✅              ║"
+          echo "║                                                        ║"
+          echo "╚════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "📦 Repository: ${{ github.repository }}"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo "👤 Author: ${{ github.actor }}"
+          echo "💬 Message: ${{ github.event.head_commit.message }}"
+          echo "🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+      
+      - name: ❌ Deployment Failed
+        if: failure()
+        run: |
+          echo ""
+          echo "╔════════════════════════════════════════════════════════╗"
+          echo "║                                                        ║"
+          echo "║          ❌ DEPLOY PRODUCTION FAILED ❌                ║"
+          echo "║                                                        ║"
+          echo "╚════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "⚠️  Si è verificato un errore durante il deploy"
+          echo "🔍 Controlla i log sopra per maggiori dettagli"
+          echo "🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          exit 1
