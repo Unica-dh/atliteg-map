@@ -79,7 +79,7 @@ export function GeographicalMap() {
   return (
     <div className="relative h-[600px] w-full">
       {/* Contatore in alto a destra */}
-      <div className="absolute top-4 right-4 z-[1000] bg-white px-4 py-2 rounded-md shadow-lg">
+      <div className="absolute top-4 right-4 z-[800] bg-white px-4 py-2 rounded-md shadow-lg">
         <p className="text-sm font-medium text-gray-700">
           {totalLocations} locations • {totalLemmas} lemmas
         </p>
