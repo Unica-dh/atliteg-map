@@ -1,121 +1,114 @@
+
 # Dashboard Linguistico ATLITEG
 
-**Atliteg** (acronimo di **Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità**) è un applicativo web e progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana, dall'età medievale fino all'Unità d'Italia (1861).
+**Atliteg** (Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità) è un progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana (dal Medioevo all'Unità d'Italia).
 
-## 🏛️ Fondamenti Scientifici
+## 📚 Scopo e Funzionalità
 
-L'applicativo si basa sul **"Vocabolario storico della lingua italiana della gastronomia (VoSLIG)"**, offrendo un'interfaccia visuale e interattiva per esplorare i dati lessicografici raccolti in questo vocabolario specialistico.
+- **Esplorazione lessicografica**: Interfaccia visuale e interattiva per esplorare i dati del "Vocabolario storico della lingua italiana della gastronomia (VoSLIG)".
+- **Mappe interattive**: Visualizzazione della diffusione geografica di termini gastronomici (piatti, ingredienti, tecniche di cottura) in diverse epoche.
+- **Timeline e cronologia**: Tracciamento della comparsa e dell'evoluzione di parole e concetti nel tempo.
+- **Analisi testuale**: Esplorazione di testi storici (ricettari, trattati di cucina) che costituiscono le fonti della cultura gastronomica italiana.
+- **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche.
+- **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati.
 
-## 🤝 Collaborazioni
+## 👥 Destinatari e Collaborazioni
 
-Il progetto è realizzato in collaborazione con il **Labgeo "Giuseppe Caraci"** dell'**Università Roma Tre**, laboratorio specializzato in geografia e cartografia.
+- Progetto sviluppato in collaborazione con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre), laboratorio specializzato in geografia e cartografia.
+- Finanziato dal **PRIN 2017** (Progetti di Ricerca di Interesse Nazionale), responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
 
-## 🎓 Finanziamento
+## 📂 Dati e Fonti
 
-Atliteg è finanziato nell'ambito del **PRIN (Progetti di Ricerca di Interesse Nazionale) 2017**, sotto la responsabilità scientifica della professoressa **Giovanna Frosini** dell'**Università per Stranieri di Siena**.
+- **CSV**: Lemmi, forme, coordinate e metadati (es. `Lemmi_forme_atliteg_updated.csv`)
+- **GeoJSON**: Aree geografiche poligonali (es. `Ambiti geolinguistici newline.json`)
 
-## ✨ Funzionalità Principali
+## 🗺️ Principali funzionalità utente
 
-- **Mappe interattive geografiche**: Visualizzazione della diffusione geografica di termini gastronomici (piatti, ingredienti, tecniche di cottura) in diverse epoche
-- **Visualizzazioni cronologiche**: Tracciamento della comparsa e dell'evoluzione di parole e concetti nel tempo
-- **Analisi testuale**: Esplorazione di testi storici (ricettari, trattati di cucina) che costituiscono le fonti della cultura gastronomica italiana
-- **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche
-- **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati
+- Filtri globali per categoria e periodo, con badge visivi e reset rapido
+- Mappa geografica con marker e poligoni, popup dettagliati, auto-zoom e contatori
+- Indice alfabetico interattivo e ordinamento automatico
+- Metriche dashboard: località, lemmi, anni, attestazioni
 
-## Tecnologie Utilizzate
+---
 
-- **Vue 3** - Framework JavaScript progressivo
-- **Vite** - Build tool e dev server veloce
-- **Tailwind CSS v4** - Framework CSS utility-first
-- **Vue DevTools** - Strumenti di debug per Vue
+## ⚙️ Stack Tecnico e Setup
 
-## Requisiti di Sistema
+- **Frontend**: Next.js 16 (App Router), React 18.3, TypeScript, Tailwind CSS, React-Leaflet, PapaParse
+- **Deployment**: Docker, Docker Compose, Nginx
+- **Dati**: Tutti i dati sono statici e accessibili via `public/data/` (no backend API)
 
-- **Node.js**: versione `^20.19.0` oppure `>=22.12.0`
-- **npm**: versione 8 o superiore (incluso con Node.js)
 
-## Configurazione IDE Consigliata
+### Requisiti
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disabilitare Vetur se installato).
+- Node.js 20+ (per sviluppo)
+- Docker & Docker Compose (per deployment)
 
-## Configurazione Browser Consigliata
 
-- Browser basati su Chromium (Chrome, Edge, Brave, ecc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Attiva Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Attiva Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Installazione e Avvio in Locale
-
-### 1. Verifica versione Node.js
+### Sviluppo locale
 
 ```sh
-node --version
-```
-
-Se necessario, installa la versione corretta di Node.js da [nodejs.org](https://nodejs.org/) o usa un version manager come [nvm](https://github.com/nvm-sh/nvm).
-
-### 2. Clona il repository
-
-```sh
-git clone <url-repository>
-cd atliteg-map
-```
-
-### 3. Installa le dipendenze
-
-```sh
+cd lemmario-dashboard
 npm install
-```
-
-### 4. Avvia il server di sviluppo
-
-```sh
 npm run dev
+# App su http://localhost:3000
 ```
 
-Il server sarà disponibile all'indirizzo `http://localhost:5173/` (la porta potrebbe variare se la 5173 è già in uso).
 
-### 5. Build per produzione
-
-Per creare una build ottimizzata per la produzione:
+### Build produzione
 
 ```sh
 npm run build
+npm run start
+# App su http://localhost:3000
 ```
 
-I file compilati saranno generati nella cartella `dist/`.
 
-### 6. Anteprima della build di produzione
-
-Per testare la build di produzione in locale:
+### Deployment Docker (consigliato)
 
 ```sh
-npm run preview
+docker-compose build
+docker-compose up -d
+# App su http://localhost:9000
 ```
 
-## Struttura del Progetto
 
+### Aggiornamento dati
+
+1. Aggiungi/aggiorna file in `data/`
+2. Copia in `lemmario-dashboard/public/data/`
+
+---
+
+## 📁 Struttura del Progetto
+
+
+```text
+atliteg-map/
+├── data/                # Dati sorgente (CSV, JSON)
+├── docs/                # Documentazione tecnica e scientifica
+├── lemmario-dashboard/  # Web app Next.js/React
+│   ├── app/             # Pagine/layout Next.js
+│   ├── components/      # Componenti React UI
+│   ├── services/        # Data loader/parsing
+│   ├── types/           # Tipi TypeScript
+│   ├── public/data/     # Dati statici per frontend
+│   └── ...
+├── process_data.py      # Script Python per preprocessing dati
+└── ...
 ```
-src/
-├── App.vue                           # Componente root
-├── main.js                           # Entry point dell'applicazione
-├── index.css                         # Stili globali
-├── components/
-│   ├── Dashboard.vue                 # Layout principale del dashboard
-│   ├── TopNavBar.vue                 # Barra di navigazione superiore
-│   ├── GlobalFilterBar.vue           # Barra dei filtri globali
-│   ├── GeographicalDistributionMap.vue  # Mappa geografica interattiva
-│   ├── LemmaCategoriesTreemap.vue    # Treemap delle categorie
-│   └── LemmaDetailsTable.vue         # Tabella dettagli lemmi
-└── assets/                           # Assets statici e CSS
-```
 
-## Personalizzazione
+Per dettagli su architettura e dataset, vedi `docs/ARCHITECTURE.md` e `docs/DATASET_SPECIFICATION.md`.
 
-Vedi la [Documentazione di Vite](https://vite.dev/config/) per la configurazione avanzata.
+---
 
-Per personalizzare Tailwind CSS, modifica il file `tailwind.config.js`.
+## 🔧 Personalizzazione
+
+- Configurazione avanzata: vedi [Vite](https://vite.dev/config/) e `tailwind.config.js`.
+- Per modifiche dati, aggiorna i file in `data/` e `public/data/`.
+
+---
+
+## 📝 Licenza
+
+Vedi il file LICENSE nella root del progetto.
 
