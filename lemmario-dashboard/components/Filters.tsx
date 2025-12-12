@@ -17,12 +17,40 @@ interface MultiSelectProps {
 function MultiSelect({ label, options, selectedValues, onChange, placeholder, color = 'blue' }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Update dropdown position when opened or on scroll/resize
+  useEffect(() => {
+    const updatePosition = () => {
+      if (isOpen && buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY + 8,
+          left: rect.left + window.scrollX,
+          width: rect.width
+        });
+      }
+    };
+
+    updatePosition();
+
+    if (isOpen) {
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+      return () => {
+        window.removeEventListener('scroll', updatePosition, true);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [isOpen]);
 
   // Chiudi dropdown quando si clicca fuori
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
@@ -72,14 +100,16 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
 
   const colors = colorClasses[color];
 
+
   return (
-    <div className="flex-1 min-w-[280px]" ref={dropdownRef}>
+    <div className="flex-1 min-w-[280px] relative">
       <label className="block text-sm font-semibold text-gray-700 mb-3">
         {label}
       </label>
       
       <div className="relative">
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={`w-full card px-4 py-3 flex items-center justify-between gap-2 border-2 ${colors.button} transition-all focus:outline-none focus:ring-2`}
@@ -104,7 +134,17 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
         </button>
 
         {isOpen && (
-          <div className="absolute z-[1000] w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+          <div 
+            ref={dropdownRef}
+            style={{
+              position: 'fixed',
+              top: `${dropdownPosition.top}px`,
+              left: `${dropdownPosition.left}px`,
+              width: `${dropdownPosition.width}px`,
+              zIndex: 10000
+            }}
+            className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+          >
             {/* Barra di ricerca */}
             <div className="p-3 border-b border-gray-200 bg-gray-50">
               <div className="relative">
@@ -140,7 +180,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
             </div>
 
             {/* Lista opzioni */}
-            <div className="max-h-64 overflow-y-auto">
+            <div className="max-h-[32rem] overflow-y-auto">
               {filteredOptions.length === 0 ? (
                 <div className="px-4 py-8 text-center text-sm text-gray-500">
                   Nessun risultato trovato
