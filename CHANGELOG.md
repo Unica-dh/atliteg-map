@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **GitHub Actions CI/CD**: Workflow automatico per deploy in produzione (`deploy-production.yml`)
+  - Trigger automatico su push/merge al branch `master`
+  - Esecuzione remota via SSH di: git pull, docker build, container restart
+  - Log dettagliati con emoji per facile identificazione degli step
+  - Gestione secrets tramite GitHub Environments
+  - Cleanup automatico delle risorse Docker
+- **Documentazione deploy**: Guida completa in `docs/GITHUB_ACTIONS_SETUP.md`
+- **Script di test SSH**: Template per testare la connessione SSH prima della configurazione GitHub Actions
+
 ### Planned
 
 - Export dati filtrati (CSV/JSON)
