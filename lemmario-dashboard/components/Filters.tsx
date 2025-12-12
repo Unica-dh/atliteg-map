@@ -104,7 +104,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
         </button>
 
         {isOpen && (
-          <div className="absolute z-[1000] w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+          <div className="absolute z-[9999] w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
             {/* Barra di ricerca */}
             <div className="p-3 border-b border-gray-200 bg-gray-50">
               <div className="relative">
