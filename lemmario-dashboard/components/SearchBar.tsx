@@ -137,7 +137,7 @@ export const SearchBar: React.FC = () => {
         <div
           ref={suggestionsRef}
           id="search-suggestions"
-          className="absolute z-50 w-full mt-3 card shadow-xl max-h-[500px] overflow-y-auto"
+          className="absolute z-[1000] w-full mt-3 card shadow-xl max-h-[500px] overflow-y-auto"
           role="listbox"
         >
           {suggestions.map((lemma, index) => (
@@ -176,7 +176,7 @@ export const SearchBar: React.FC = () => {
       )}
 
       {query.length > 0 && suggestions.length === 0 && !isOpen && (
-        <div className="absolute z-50 w-full mt-3 card shadow-xl p-6 text-center text-gray-500">
+        <div className="absolute z-[1000] w-full mt-3 card shadow-xl p-6 text-center text-gray-500">
           <Search className="w-12 h-12 mx-auto mb-3 text-gray-300" />
           <p className="font-medium">Nessun risultato trovato</p>
           <p className="text-sm mt-1">Prova con un termine diverso</p>
