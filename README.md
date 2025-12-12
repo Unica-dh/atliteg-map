@@ -1,5 +1,17 @@
 
+
+<p align="center">
+	<img src="docs/logo-atliteg.png" alt="ATLITEG Dashboard Banner" width="20%"/>
+</p>
+
 # Dashboard Linguistico ATLITEG
+
+
+<p align="center">
+	<img src="docs/screenshot-dashboard.jpg" alt="Screenshot della dashboard ATLITEG" width="80%"/>
+	<br/>
+	<em>Screenshot della dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
+</p>
 
 **Atliteg** (Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità) è un progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana (dal Medioevo all'Unità d'Italia).
 
@@ -22,6 +34,25 @@
 - **CSV**: Lemmi, forme, coordinate e metadati (es. `Lemmi_forme_atliteg_updated.csv`)
 - **GeoJSON**: Aree geografiche poligonali (es. `Ambiti geolinguistici newline.json`)
 
+
+## ✨ Anteprima Visiva
+
+<p align="center">
+	<img src="docs/screenshot-mappa.jpg" alt="Mappa interattiva ATLITEG" width="48%"/>
+	<img src="docs/screenshot-timeline.jpg" alt="Timeline e cronologia ATLITEG" width="48%"/>
+	<br/>
+	<em>A sinistra: mappa interattiva con poligoni e marker. A destra: timeline per l'evoluzione dei termini nel tempo.</em>
+</p>
+
+<p align="center">
+	<img src="docs/screenshot-filtri.jpg" alt="Filtri avanzati ATLITEG" width="48%"/>
+	<img src="docs/screenshot-treemap.jpg" alt="Treemap categorie ATLITEG" width="48%"/>
+	<br/>
+	<em>A sinistra: filtri globali per categoria e periodo. A destra: treemap delle categorie linguistiche.</em>
+</p>
+
+---
+
 ## 🗺️ Principali funzionalità utente
 
 - Filtri globali per categoria e periodo, con badge visivi e reset rapido
@@ -31,7 +62,8 @@
 
 ---
 
-## ⚙️ Stack Tecnico e Setup
+
+---
 
 - **Frontend**: Next.js 16 (App Router), React 18.3, TypeScript, Tailwind CSS, React-Leaflet, PapaParse
 - **Deployment**: Docker, Docker Compose, Nginx
@@ -44,7 +76,8 @@
 - Docker & Docker Compose (per deployment)
 
 
-### Sviluppo locale
+
+---
 
 ```sh
 cd lemmario-dashboard
@@ -54,7 +87,8 @@ npm run dev
 ```
 
 
-### Build produzione
+
+---
 
 ```sh
 npm run build
@@ -63,7 +97,8 @@ npm run start
 ```
 
 
-### Deployment Docker (consigliato)
+
+---
 
 ```sh
 docker-compose build
@@ -71,7 +106,8 @@ docker-compose up -d
 # App su http://localhost:9000
 ```
 
-### 🚀 Deploy Automatico (CI/CD) con Self-Hosted Runner
+
+---
 
 Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy automatico sul server di produzione (protetto da VPN).
 
@@ -98,14 +134,25 @@ Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy auto
 - ⚙️ [install-github-runner.sh](install-github-runner.sh) - Script installazione runner
 - 📄 [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml) - Workflow
 
-### Aggiornamento dati
+
+---
 
 1. Aggiungi/aggiorna file in `data/`
 2. Copia in `lemmario-dashboard/public/data/`
 
 ---
 
-## 📁 Struttura del Progetto
+
+## 📸 Aggiornamento e gestione immagini
+
+- Le immagini e gli screenshot vanno posizionati nella cartella `docs/` (es. `docs/screenshot-dashboard.png`).
+- Per aggiornare le immagini, sostituisci i file nella cartella `docs/` mantenendo lo stesso nome, oppure aggiorna i riferimenti nel README.
+- Per generare nuovi screenshot:
+	1. Avvia l'app localmente (`npm run dev`)
+	2. Cattura le schermate delle funzionalità principali
+	3. Salva le immagini in `docs/` e aggiorna i riferimenti se necessario
+
+---
 
 
 ```text
@@ -123,7 +170,10 @@ atliteg-map/
 └── ...
 ```
 
+
 Per dettagli su architettura e dataset, vedi `docs/ARCHITECTURE.md` e `docs/DATASET_SPECIFICATION.md`.
+
+---
 
 ---
 
