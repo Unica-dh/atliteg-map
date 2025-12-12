@@ -12,7 +12,7 @@
 - **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche.
 - **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati.
 
-## 👥 Destinatari e Collaborazioni
+## 👥 Destinatari e Collaborazioni 
 
 - Progetto sviluppato in collaborazione con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre), laboratorio specializzato in geografia e cartografia.
 - Finanziato dal **PRIN 2017** (Progetti di Ricerca di Interesse Nazionale), responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
