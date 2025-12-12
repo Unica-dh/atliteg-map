@@ -71,23 +71,32 @@ docker-compose up -d
 # App su http://localhost:9000
 ```
 
-### 🚀 Deploy Automatico (CI/CD)
+### 🚀 Deploy Automatico (CI/CD) con Self-Hosted Runner
 
-Il progetto include un workflow GitHub Actions per il deploy automatico sul server di produzione.
+Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy automatico sul server di produzione (protetto da VPN).
+
+**Vantaggi del self-hosted runner:**
+- ✅ Funziona dietro VPN/firewall (niente problemi di connettività)
+- ✅ Deploy più veloce (esecuzione locale)
+- ✅ Configurazione semplificata (1 solo secret necessario!)
+- ✅ Più sicuro (nessuna esposizione porte SSH)
 
 **Trigger automatici:**
 - Push o merge su branch `master`
 - Esecuzione manuale tramite GitHub Actions
 
 **Cosa fa il workflow:**
-1. 📥 Git pull del codice aggiornato sul server remoto
+1. 📥 Git pull del codice aggiornato
 2. 🏗️ Build delle immagini Docker
-3. 🔄 Restart dei container con la nuova versione
+3. 🔄 Restart dei container
 4. 🧹 Pulizia risorse Docker non utilizzate
+5. 🔍 Verifica deployment
 
-**Configurazione:**
-- Vedi [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) per istruzioni dettagliate sulla configurazione
-- Il workflow è già configurato in [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml)
+**Setup:**
+- 🚀 [docs/DEPLOY_QUICKSTART.md](docs/DEPLOY_QUICKSTART.md) - Guida rapida
+- 📖 [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) - Setup completo
+- ⚙️ [install-github-runner.sh](install-github-runner.sh) - Script installazione runner
+- 📄 [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml) - Workflow
 
 ### Aggiornamento dati
 

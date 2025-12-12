@@ -14,7 +14,8 @@ permissions:
 jobs:
   deploy:
     name: Deploy AtLiTeG Map Application
-    runs-on: ubuntu-latest
+    # Usa il self-hosted runner installato sul server
+    runs-on: self-hosted
     
     # Environment per gestire secrets e protezioni
     environment:
@@ -22,54 +23,32 @@ jobs:
       url: ${{ vars.PRODUCTION_URL }}
     
     steps:
-      # Step 1: Checkout del codice (opzionale, per validazione)
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      # Step 2: Setup SSH
-      - name: 🔐 Configure SSH Connection
+      # Step 1: Informazioni di avvio
+      - name: 🚀 Inizio Deploy
         run: |
-          echo "🔑 Configurazione chiave SSH per connessione al server remoto..."
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          
-          # Aggiungi l'host ai known_hosts per evitare prompt
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
-          
-          echo "✅ Chiave SSH configurata con successo"
+          echo "================================================"
+          echo "🚀 Avvio procedura di deploy automatico"
+          echo "================================================"
+          echo "📦 Repository: ${{ github.repository }}"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "👤 Autore commit: ${{ github.actor }}"
+          echo "💬 Messaggio commit: ${{ github.event.head_commit.message }}"
+          echo "🖥️  Server: $(hostname)"
+          echo "👤 User: $(whoami)"
+          echo "📂 Working directory: $(pwd)"
+          echo "================================================"
       
-      # Step 3: Verifica connessione SSH
-      - name: 🔍 Test SSH Connection
+      # Step 2: Git Pull
+      - name: 📥 Git Pull del codice aggiornato
         run: |
-          echo "🧪 Test della connessione SSH al server remoto..."
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "echo '✅ Connessione SSH stabilita con successo' && whoami && pwd"
-      
-      # Step 4: Deploy applicazione sul server remoto
-      - name: 🚀 Deploy Application on Remote Server
-        run: |
-          echo "🚀 Inizio processo di deploy sul server remoto..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📥 STEP 1: Pulling latest code from repository"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
-          
-          set -e  # Exit immediatamente in caso di errore
-          
-          echo "📂 Navigazione alla directory del progetto..."
           cd ${{ secrets.DEPLOY_PATH }}
           
           echo "📍 Directory corrente: $(pwd)"
           echo "🌿 Branch corrente: $(git branch --show-current)"
-          
-          # STEP 1: Git Pull
-          echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📥 STEP 1: Pulling latest code from repository"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           # Salva modifiche locali se esistono
           if [[ -n $(git status -s) ]]; then
@@ -78,30 +57,38 @@ jobs:
           fi
           
           # Pull del codice
+          echo "📥 Download ultimi aggiornamenti..."
           git fetch origin master
           git checkout master
           git pull origin master
           
           echo "✅ Git pull completato con successo"
           echo "📊 Ultimo commit: $(git log -1 --pretty=format:'%h - %s (%an, %ar)')"
-          
-          # STEP 2: Build dell'applicazione
-          echo ""
+      
+      # Step 3: Build dell'applicazione
+      - name: 🏗️ Build dell'applicazione
+        run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🏗️  STEP 2: Building application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
-          # Build con docker compose
+          cd ${{ secrets.DEPLOY_PATH }}
+          
           echo "🔨 Esecuzione docker compose build..."
           docker compose build --no-cache
           
           echo "✅ Build completato con successo"
-          
-          # STEP 3: Restart dei container
-          echo ""
+          echo "📋 Immagini Docker disponibili:"
+          docker images | grep atliteg || echo "Nessuna immagine atliteg trovata"
+      
+      # Step 4: Restart dei container
+      - name: 🔄 Restart dei container
+        run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🔄 STEP 3: Restarting application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          cd ${{ secrets.DEPLOY_PATH }}
           
           # Stop containers esistenti
           echo "🛑 Stopping running containers..."
@@ -112,11 +99,38 @@ jobs:
           docker compose up -d
           
           # Attendi che i container siano healthy
-          echo "⏳ Waiting for containers to be healthy..."
+          echo "⏳ Waiting for containers to be healthy (10 secondi)..."
           sleep 10
           
-          # Verifica stato containers
-          echo "🔍 Checking container status..."
+          echo "✅ Container riavviati con successo"
+      
+      # Step 5: Pulizia risorse Docker
+      - name: 🧹 Pulizia risorse Docker
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🧹 Pulizia risorse Docker inutilizzate"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          cd ${{ secrets.DEPLOY_PATH }}
+          
+          echo "🗑️  Rimozione immagini dangling..."
+          docker image prune -f
+          
+          echo "🗑️  Rimozione volumi non utilizzati..."
+          docker volume prune -f
+          
+          echo "✅ Pulizia completata"
+      
+      # Step 6: Verifica deployment
+      - name: 🔍 Verifica deployment
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔍 Verifica finale del deployment"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          cd ${{ secrets.DEPLOY_PATH }}
+          
+          echo "📊 Container in esecuzione:"
           docker compose ps
           
           # Verifica health check
@@ -130,34 +144,37 @@ jobs:
           fi
           
           echo ""
+          echo "📝 Log recenti (ultime 20 righe):"
+          docker compose logs --tail=20
+          
+          echo ""
+          echo "💾 Utilizzo disco:"
+          df -h | grep -E '(Filesystem|/$)'
+          
+          echo "✅ Verifica completata"
+      
+      # Step 7: Notifica risultato
+      - name: 🎉 Deploy completato
+        run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🎉 DEPLOY COMPLETATO CON SUCCESSO!"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Codice aggiornato"
+          echo "✅ Applicazione ribuildata"
+          echo "✅ Container riavviati"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "📅 Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
-          echo "🔖 Version: $(git describe --tags --always)"
-          
-          ENDSSH
-          
-          echo ""
-          echo "✨ Deploy completato sul server remoto!"
+          echo "🔖 Version: $(cd ${{ secrets.DEPLOY_PATH }} && git describe --tags --always)"
+          echo "🌐 L'applicazione è ora accessibile"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
       
-      # Step 5: Cleanup
-      - name: 🧹 Cleanup SSH Keys
-        if: always()
-        run: |
-          echo "🧹 Rimozione chiavi SSH temporanee..."
-          rm -rf ~/.ssh/deploy_key
-          echo "✅ Cleanup completato"
-      
-      # Step 6: Notifica risultato
+      # Step 8: Deployment Summary (per GitHub)
       - name: 📢 Deployment Summary
         if: success()
         run: |
           echo ""
           echo "╔════════════════════════════════════════════════════════╗"
-          echo "║                                                        ║"
           echo "║        ✅ DEPLOY PRODUCTION SUCCESSFUL ✅              ║"
-          echo "║                                                        ║"
           echo "╚════════════════════════════════════════════════════════╝"
           echo ""
           echo "📦 Repository: ${{ github.repository }}"
@@ -168,18 +185,16 @@ jobs:
           echo "🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           echo ""
       
-      - name: ❌ Deployment Failed
+      # Step 9: Gestione errori
+      - name: 🚨 Notifica errore
         if: failure()
         run: |
           echo ""
           echo "╔════════════════════════════════════════════════════════╗"
-          echo "║                                                        ║"
           echo "║          ❌ DEPLOY PRODUCTION FAILED ❌                ║"
-          echo "║                                                        ║"
           echo "╚════════════════════════════════════════════════════════╝"
           echo ""
           echo "⚠️  Si è verificato un errore durante il deploy"
           echo "🔍 Controlla i log sopra per maggiori dettagli"
           echo "🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           echo ""
-          exit 1

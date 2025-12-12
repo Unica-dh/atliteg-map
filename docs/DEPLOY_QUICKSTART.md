@@ -1,8 +1,15 @@
-# 🚀 Quick Start: Configurazione Deploy Automatico
+# 🚀 Quick Start: Deploy Automatico con Self-Hosted Runner
 
 ## ✅ Cosa è stato implementato
 
-È stato configurato un sistema di **deploy automatico** che si attiva ogni volta che fai un merge o un commit sul branch `master`.
+È stato configurato un sistema di **deploy automatico** con **self-hosted runner** che si attiva ogni volta che fai un merge o un commit sul branch `master`.
+
+### Perché Self-Hosted Runner?
+Il server è protetto da VPN. Un runner installato sul server:
+- ✅ Non richiede SSH dall'esterno (niente problemi firewall/VPN)
+- ✅ Deploy più veloce (esecuzione locale)
+- ✅ Più sicuro (nessuna esposizione porte)
+- ✅ Configurazione semplificata (1 solo secret invece di 4!)
 
 ### Il workflow esegue automaticamente:
 1. 📥 **Git pull** del codice aggiornato sul server remoto
@@ -23,98 +30,74 @@
 
 ## 🔧 Cosa devi fare tu (Configurazione manuale richiesta)
 
-### Passo 1: Prepara la chiave SSH
+### Passo 1: Installa il Self-Hosted Runner sul server
 
-Sul tuo computer locale:
-
-```bash
-# Genera una nuova chiave SSH dedicata al deploy
-ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/github_deploy_key
-
-# Copia la chiave PUBBLICA e aggiungila al server remoto
-cat ~/.ssh/github_deploy_key.pub
-# Copiala negli appunti
-```
-
-Sul server remoto:
+**Opzione A - Installazione Automatica (Raccomandata):**
 
 ```bash
-# Connettiti al server
-ssh user@your-server.com
+# 1. Copia lo script sul server
+scp install-github-runner.sh dhruby@90.147.144.147:~/
 
-# Aggiungi la chiave pubblica
-echo "INCOLLA_QUI_LA_CHIAVE_PUBBLICA" >> ~/.ssh/authorized_keys
+# 2. Connettiti al server
+ssh dhruby@90.147.144.147
 
-# Verifica i permessi
-chmod 700 ~/.ssh
-chmod 600 ~/.ssh/authorized_keys
+# 3. Rendi eseguibile e lancia lo script
+chmod +x install-github-runner.sh
+./install-github-runner.sh
+
+# 4. Segui le istruzioni interattive:
+#    - Owner: Unica-dh
+#    - Repository: atliteg-map
+#    - TOKEN: ottienilo da https://github.com/Unica-dh/atliteg-map/settings/actions/runners/new
 ```
 
-### Passo 2: Testa la connessione SSH (IMPORTANTE!)
+Lo script installerà automaticamente il runner come servizio systemd.
 
-Prima di configurare GitHub, verifica che tutto funzioni:
+**Opzione B - Installazione Manuale:**
 
+Consulta la sezione "Opzione 2: Installazione Manuale" in `docs/GITHUB_ACTIONS_SETUP.md`
+
+### Passo 2: Verifica che il runner sia online
+
+1. **Vai su:** https://github.com/Unica-dh/atliteg-map/settings/actions/runners
+2. **Dovresti vedere il runner con:**
+   - ✅ Status: **Idle** (verde = pronto per lavorare)
+   - 🏷️ Labels: **self-hosted, Linux, X64**
+   - 💻 Nome: simile a **hostname-runner**
+
+**Se il runner è Offline:**
 ```bash
-# Crea una copia locale dello script di test
-cp test-ssh-connection.example.sh test-ssh-connection.local.sh
+# Sul server, controlla i log
+sudo journalctl -u actions.runner.Unica-dh-atliteg-map.*.service -f
 
-# Modifica con i tuoi valori reali
-nano test-ssh-connection.local.sh
-# Sostituisci:
-# - SSH_HOST con l'IP o hostname del server
-# - SSH_USER con il tuo username
-# - DEPLOY_PATH con il percorso del progetto sul server
-# - SSH_KEY_PATH se diverso da ~/.ssh/github_deploy_key
-
-# Rendi eseguibile lo script
-chmod +x test-ssh-connection.local.sh
-
-# Esegui il test
-./test-ssh-connection.local.sh
+# Oppure riavvia il servizio
+sudo ~/actions-runner/svc.sh restart
 ```
 
-Se tutti i test passano ✅, puoi procedere al passo successivo!
+### Passo 3: Configura il Secret DEPLOY_PATH (UNICO SECRET!)
 
-### Passo 3: Configura GitHub Secrets
+Con il self-hosted runner serve solo **1 secret** invece di 4! 🎉
 
 1. **Vai su GitHub:**
-   - Repository: `https://github.com/Unica-dh/atliteg-map`
-   - Clicca su **Settings**
+   - https://github.com/Unica-dh/atliteg-map
+   - Clicca su **Settings** → **Environments**
 
-2. **Crea l'Environment (Raccomandato):**
-   - Menu laterale → **Environments**
-   - Clicca **New environment**
+2. **Crea/Seleziona l'Environment:**
+   - Clicca **New environment** (se non esiste)
    - Nome: `production`
-   - (Opzionale) Configura protezioni come "Required reviewers"
+   - Clicca **Configure environment**
 
-3. **Aggiungi i Secrets:**
-   - Vai in **Environments** → **production**
-   - Per ogni secret, clicca **Add secret**:
+3. **Aggiungi il Secret:**
+   - Nella sezione **Environment secrets**, clicca **Add secret**
+   - **Name:** `DEPLOY_PATH`
+   - **Value:** `/home/dhruby/atliteg-map`
+   - Clicca **Add secret**
 
-   **Secret 1: SSH_PRIVATE_KEY**
-   ```bash
-   # Copia il contenuto della chiave PRIVATA
-   cat ~/.ssh/github_deploy_key
-   ```
-   - Name: `SSH_PRIVATE_KEY`
-   - Value: [Incolla TUTTO il contenuto, inclusi `-----BEGIN` e `-----END`]
-
-   **Secret 2: SSH_HOST**
-   - Name: `SSH_HOST`
-   - Value: `192.168.1.100` (o il tuo IP/hostname)
-
-   **Secret 3: SSH_USER**
-   - Name: `SSH_USER`
-   - Value: `ubuntu` (o il tuo username)
-
-   **Secret 4: DEPLOY_PATH**
-   - Name: `DEPLOY_PATH`
-   - Value: `/home/ubuntu/atliteg-map` (o il tuo path completo)
-
-4. **Aggiungi Variabile (Opzionale):**
-   - Nella sezione **Environment variables**
-   - Name: `PRODUCTION_URL`
-   - Value: `https://atliteg.unica.it` (o il tuo URL pubblico)
+4. **(Opzionale) Aggiungi la Variabile PRODUCTION_URL:**
+   - Nella sezione **Environment variables**, clicca **Add variable**
+   - **Name:** `PRODUCTION_URL`
+   - **Value:** `http://90.147.144.147:9000`
+   - Clicca **Add variable**
 
 ---
 
