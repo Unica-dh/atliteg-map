@@ -144,7 +144,7 @@ Prima di configurare GitHub Actions, verifica che la connessione SSH funzioni:
 
 ```bash
 # Dal tuo computer locale
-ssh -i ~/.ssh/github_deploy_key user@your-server.com "echo 'Connessione riuscita!'"
+ssh -i ~/.ssh/github_deploy_key user@your-server.com "echo 'Connessione riuscita!'" 
 ```
 
 ### Test 2: Trigger Manuale del Workflow
