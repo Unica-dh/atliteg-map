@@ -53,21 +53,21 @@ export default function Home() {
       <Header />
       <Filters />
       <MetricsSummary />
-      
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+      <main className="max-w-container mx-auto px-lg py-3xl space-y-3xl">
         {/* Barra di ricerca */}
         <div className="flex justify-center">
           <SearchBar />
         </div>
 
         {/* Layout principale: Mappa + Dettaglio Lemma */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-2xl">
           {/* Mappa - 2 colonne */}
-          <div className="xl:col-span-2 space-y-6 lg:space-y-8">
+          <div className="xl:col-span-2 space-y-2xl">
             <div className="card p-0 overflow-hidden">
               <GeographicalMap />
             </div>
-            
+
             {/* Timeline */}
             <Timeline />
           </div>
@@ -84,8 +84,8 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-8 px-6 py-4">
-        <div className="max-w-7xl mx-auto text-center text-sm text-gray-600">
+      <footer className="bg-white border-t border-border mt-3xl px-lg py-2xl">
+        <div className="max-w-container mx-auto text-center text-sm text-text-secondary">
           <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
         </div>
       </footer>

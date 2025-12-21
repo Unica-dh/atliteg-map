@@ -108,7 +108,7 @@ export const SearchBar: React.FC = () => {
   return (
     <div className="relative w-full max-w-3xl">
       <div className="relative card overflow-hidden">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-muted w-5 h-5" />
         <input
           ref={inputRef}
           type="text"
@@ -116,7 +116,10 @@ export const SearchBar: React.FC = () => {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Cerca per lemma o forma..."
-          className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-xl"
+          className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-0 focus:outline-none focus:border-accent text-text-primary"
+          style={{
+            boxShadow: 'none'
+          }}
           aria-label="Cerca lemmi o forme"
           aria-autocomplete="list"
           aria-controls="search-suggestions"
@@ -125,7 +128,7 @@ export const SearchBar: React.FC = () => {
         {query && (
           <button
             onClick={handleClear}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors p-1 hover:bg-gray-100 rounded-full"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-accent transition-fast p-1 hover:bg-background-muted rounded-md"
             aria-label="Cancella ricerca"
           >
             <X className="w-5 h-5" />
@@ -137,7 +140,7 @@ export const SearchBar: React.FC = () => {
         <div
           ref={suggestionsRef}
           id="search-suggestions"
-          className="absolute z-[1000] w-full mt-3 card shadow-xl max-h-[500px] overflow-y-auto"
+          className="absolute z-[1000] w-full mt-3 card shadow-card-hover max-h-[500px] overflow-y-auto"
           role="listbox"
         >
           {suggestions.map((lemma, index) => (
@@ -145,21 +148,21 @@ export const SearchBar: React.FC = () => {
               key={`${lemma.IdLemma}-${index}`}
               onClick={() => handleSelect(lemma)}
               onMouseEnter={() => setHighlightedIndex(index)}
-              className={`px-5 py-4 cursor-pointer border-b border-gray-100 last:border-b-0 transition-all ${
+              className={`px-5 py-4 cursor-pointer border-b border-border last:border-b-0 transition-normal ${
                 highlightedIndex === index
-                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-l-blue-500'
-                  : 'hover:bg-gray-50'
+                  ? 'bg-primary-light border-l-4 border-l-primary'
+                  : 'hover:bg-background-muted'
               }`}
               role="option"
               aria-selected={highlightedIndex === index}
             >
-              <div className="font-semibold text-gray-900 text-lg mb-1">
+              <div className="font-semibold text-text-primary text-lg mb-1">
                 {highlightText(lemma.Lemma, query)}
               </div>
-              <div className="text-sm text-gray-600 mb-2">
+              <div className="text-sm text-text-secondary mb-2">
                 Forma: {highlightText(lemma.Forma, query)}
               </div>
-              <div className="flex items-center gap-3 text-xs text-gray-500">
+              <div className="flex items-center gap-3 text-xs text-text-muted">
                 <span className="inline-flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
                   {lemma.CollGeografica}
@@ -176,8 +179,8 @@ export const SearchBar: React.FC = () => {
       )}
 
       {query.length > 0 && suggestions.length === 0 && !isOpen && (
-        <div className="absolute z-[1000] w-full mt-3 card shadow-xl p-6 text-center text-gray-500">
-          <Search className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+        <div className="absolute z-[1000] w-full mt-3 card shadow-card-hover p-6 text-center text-text-muted">
+          <Search className="w-12 h-12 mx-auto mb-3 text-border-divider" />
           <p className="font-medium">Nessun risultato trovato</p>
           <p className="text-sm mt-1">Prova con un termine diverso</p>
         </div>
