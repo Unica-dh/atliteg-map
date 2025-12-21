@@ -55,9 +55,9 @@ export default function Home() {
       <MetricsSummary />
       <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
 
-      <main className="max-w-container mx-auto px-lg py-3 flex-1">
+      <main className="w-full px-lg py-3 flex-1">
         {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-3 w-full">
           {/* Mappa con mini-timeline - 4 colonne (80%) */}
           <div className="xl:col-span-4">
             <div className="card p-0 overflow-hidden">
