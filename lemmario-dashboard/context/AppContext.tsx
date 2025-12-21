@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { Lemma, GeoArea, FilterState, AppState, Metrics } from '@/types/lemma';
 import { loadCSVData, loadGeoJSON, parseCategorie } from '@/services/dataLoader';
+import { SearchIndex } from '@/utils/searchIndex';
 
 interface AppContextValue extends AppState {
   setFilters: (filters: Partial<FilterState>) => void;
@@ -27,6 +28,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [filters, setFiltersState] = useState<FilterState>(initialFilterState);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchIndex, setSearchIndex] = useState<SearchIndex | null>(null);
 
   // Caricamento dati iniziale
   useEffect(() => {
@@ -39,6 +41,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ]);
         setLemmi(csvData);
         setGeoAreas(geoData);
+
+        // Crea indice di ricerca ottimizzato
+        console.time('🔍 Building search index');
+        const index = new SearchIndex(csvData);
+        setSearchIndex(index);
+        console.timeEnd('🔍 Building search index');
+
         setError(null);
       } catch (err) {
         setError('Errore nel caricamento dei dati');
@@ -50,9 +59,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  // Calcolo lemmi filtrati
+  // Calcolo lemmi filtrati (OTTIMIZZATO)
   const filteredLemmi = useMemo(() => {
     let result = lemmi;
+
+    // OTTIMIZZAZIONE: Se c'è una ricerca, usa l'indice ottimizzato
+    if (filters.searchQuery && searchIndex) {
+      // Ricerca veloce O(k) invece di O(n)
+      result = searchIndex.search(filters.searchQuery, 10000); // Limite alto per non perdere risultati
+    }
 
     // Filtro per categorie
     if (filters.categorie.length > 0) {
@@ -67,18 +82,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       result = result.filter(lemma => filters.periodi.includes(lemma.Periodo));
     }
 
-    // Filtro per ricerca
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase();
-      result = result.filter(lemma => 
-        lemma.Lemma.toLowerCase().includes(query) ||
-        lemma.Forma.toLowerCase().includes(query)
-      );
-    }
-
     // Filtro per lettera selezionata
     if (filters.selectedLetter) {
-      result = result.filter(lemma => 
+      result = result.filter(lemma =>
         lemma.Lemma.toLowerCase().startsWith(filters.selectedLetter!.toLowerCase())
       );
     }
@@ -94,7 +100,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     return result;
-  }, [lemmi, filters]);
+  }, [lemmi, filters, searchIndex]);
 
   // Calcolo metriche
   const metrics = useMemo((): Metrics => {

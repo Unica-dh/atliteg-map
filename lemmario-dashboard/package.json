@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/preprocess-data.js",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "preprocess": "node scripts/preprocess-data.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
