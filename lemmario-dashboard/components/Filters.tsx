@@ -3,6 +3,7 @@
 import { useApp } from '@/context/AppContext';
 import { getUniqueCategorie, getUniquePeriodi } from '@/services/dataLoader';
 import { useMemo, useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ChevronDown, Search, Check } from 'lucide-react';
 
 interface MultiSelectProps {
@@ -18,8 +19,15 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Ensure component is mounted before using Portal
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   // Update dropdown position when opened or on scroll/resize
   useEffect(() => {
@@ -133,15 +141,15 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
           <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        {isOpen && (
-          <div 
+        {isOpen && mounted && createPortal(
+          <div
             ref={dropdownRef}
             style={{
               position: 'fixed',
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
               width: `${dropdownPosition.width}px`,
-              zIndex: 10000
+              zIndex: 9999
             }}
             className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
           >
@@ -210,7 +218,8 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
                 })
               )}
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </div>
