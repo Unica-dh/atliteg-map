@@ -10,63 +10,98 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
+        // AtLiTeG Design System Colors
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#0B5FA5",
+          hover: "#094E88",
+          light: "#E6F0FA",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#3B82F6",
+          hover: "#2563EB",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+        background: {
+          DEFAULT: "#FFFFFF",
+          muted: "#F6F8FB",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+        text: {
+          primary: "#1F2937",
+          secondary: "#4B5563",
+          muted: "#6B7280",
+          inverse: "#FFFFFF",
+        },
+        border: {
+          DEFAULT: "#E5E7EB",
+          divider: "#D1D5DB",
+        },
+        link: {
+          DEFAULT: "#0B5FA5",
+          hover: "#094E88",
+        },
+        // Navigation colors
+        nav: {
+          bg: "#0B5FA5",
+          text: "#FFFFFF",
+          hover: "#E6F0FA",
+        },
+        // Timeline colors
+        timeline: {
+          dot: "#3B82F6",
+          line: "#D1D5DB",
         },
       },
+      spacing: {
+        'xs': '4px',
+        'sm': '8px',
+        'md': '16px',
+        'lg': '24px',
+        'xl': '32px',
+        '2xl': '48px',
+        '3xl': '64px',
+      },
+      fontSize: {
+        'xs': '12px',
+        'sm': '14px',
+        'base': '16px',
+        'lg': '18px',
+        'xl': '22px',
+        '2xl': '28px',
+        '3xl': '36px',
+      },
+      lineHeight: {
+        'tight': '1.2',
+        'normal': '1.5',
+        'relaxed': '1.7',
+      },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        'sm': '6px',
+        'md': '8px',
+        'lg': '8px',
+      },
+      maxWidth: {
+        'container': '1200px',
+        'content': '1040px',
       },
       fontFamily: {
         sans: [
           "Inter",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
           "Helvetica Neue",
+          "Helvetica",
           "Arial",
           "sans-serif",
         ],
+      },
+      boxShadow: {
+        'card': '0 2px 6px rgba(0,0,0,0.05)',
+        'card-hover': '0 4px 12px rgba(0,0,0,0.08)',
+      },
+      transitionDuration: {
+        'fast': '150ms',
+        'normal': '250ms',
+      },
+      transitionTimingFunction: {
+        'fast': 'ease-out',
+        'normal': 'ease',
       },
     },
   },

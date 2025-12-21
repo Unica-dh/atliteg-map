@@ -83,12 +83,12 @@ export const Timeline: React.FC = () => {
   }
 
   return (
-    <div className="card p-6">
+    <div className="card">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">Timeline Storica</h2>
-        <div className="text-sm text-gray-600 bg-purple-50 px-3 py-1.5 rounded-full">
-          <span className="font-semibold text-purple-700">{yearsWithData}</span> anni con lemmi •{' '}
-          <span className="font-semibold text-purple-700">{years.length}</span> totali
+        <h2 className="text-xl font-semibold text-text-primary">Timeline Storica</h2>
+        <div className="text-sm text-text-secondary bg-background-muted px-3 py-1.5 rounded-md">
+          <span className="font-semibold text-primary">{yearsWithData}</span> anni con lemmi •{' '}
+          <span className="font-semibold text-primary">{years.length}</span> totali
         </div>
       </div>
 
@@ -96,10 +96,10 @@ export const Timeline: React.FC = () => {
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 0}
-          className="p-2.5 rounded-full bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 transition-all hover:shadow-md disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none"
+          className="p-2.5 rounded-md bg-background-muted hover:bg-primary-light transition-normal disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Anni precedenti"
         >
-          <ChevronLeft className="w-5 h-5 text-purple-700" />
+          <ChevronLeft className="w-5 h-5 text-primary" />
         </button>
 
         <div className="flex-1 overflow-x-auto">
@@ -111,13 +111,17 @@ export const Timeline: React.FC = () => {
               >
                 <button
                   onClick={() => handleYearClick(yearItem.year)}
-                  className={`w-5 h-5 rounded-full transition-all shadow-sm ${
+                  className={`rounded-full transition-normal shadow-sm ${
                     filters.selectedYear === yearItem.year.toString()
-                      ? 'bg-gradient-to-br from-purple-600 to-purple-700 border-2 border-purple-800 scale-125 shadow-lg shadow-purple-300'
+                      ? 'bg-primary w-6 h-6 border-2 border-primary-hover scale-110'
                       : yearItem.hasData
-                      ? 'bg-gradient-to-br from-purple-400 to-purple-500 border-2 border-purple-600 hover:scale-110 hover:shadow-md hover:shadow-purple-200'
-                      : 'bg-white border-2 border-gray-300 hover:border-gray-400'
+                      ? 'bg-timeline-dot w-5 h-5 border-2 border-accent-hover hover:scale-110'
+                      : 'bg-white w-5 h-5 border-2 border-border hover:border-border-divider'
                   }`}
+                  style={{
+                    width: filters.selectedYear === yearItem.year.toString() ? '10px' : undefined,
+                    height: filters.selectedYear === yearItem.year.toString() ? '10px' : undefined,
+                  }}
                   aria-label={`Anno ${yearItem.year}${
                     yearItem.hasData ? ' con attestazioni' : ' senza attestazioni'
                   }`}
@@ -127,16 +131,16 @@ export const Timeline: React.FC = () => {
                       : ' - nessuna attestazione'
                   }`}
                 />
-                <div className="text-xs text-gray-700 mt-2 font-semibold">
+                <div className="text-xs text-text-primary mt-2 font-medium">
                   {yearItem.year}
                 </div>
                 {yearItem.hasData && (
-                  <div className="text-[10px] text-gray-500 mt-1 text-center max-w-[100px]">
-                    <div className="truncate font-medium text-purple-700" title={yearItem.lemmas.join(', ')}>
+                  <div className="text-[10px] text-text-muted mt-1 text-center max-w-[100px]">
+                    <div className="truncate font-medium text-primary" title={yearItem.lemmas.join(', ')}>
                       {yearItem.lemmas.slice(0, 2).join(', ')}
                       {yearItem.lemmas.length > 2 && '...'}
                     </div>
-                    <div className="text-gray-500 font-medium">
+                    <div className="text-text-muted font-medium">
                       {yearItem.locations.length} loc.
                     </div>
                   </div>
@@ -149,10 +153,10 @@ export const Timeline: React.FC = () => {
         <button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages - 1}
-          className="p-2.5 rounded-full bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 transition-all hover:shadow-md disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none"
+          className="p-2.5 rounded-md bg-background-muted hover:bg-primary-light transition-normal disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Anni successivi"
         >
-          <ChevronRight className="w-5 h-5 text-purple-700" />
+          <ChevronRight className="w-5 h-5 text-primary" />
         </button>
       </div>
 
@@ -161,8 +165,8 @@ export const Timeline: React.FC = () => {
           <button
             key={i}
             onClick={() => setCurrentPage(i)}
-            className={`h-2 rounded-full transition-all ${
-              currentPage === i ? 'bg-gradient-to-r from-purple-500 to-purple-600 w-6 shadow-md' : 'bg-gray-300 w-2 hover:bg-gray-400'
+            className={`h-2 rounded-full transition-normal ${
+              currentPage === i ? 'bg-primary w-6' : 'bg-border-divider w-2 hover:bg-border'
             }`}
             aria-label={`Pagina ${i + 1}`}
           />

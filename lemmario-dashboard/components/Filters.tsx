@@ -91,18 +91,18 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
 
   const colorClasses = {
     blue: {
-      button: 'border-blue-200 hover:border-blue-300 focus:ring-blue-500',
-      badge: 'bg-blue-500 text-white',
-      checkbox: 'text-blue-600 focus:ring-blue-500',
-      hover: 'hover:bg-blue-50',
-      selectBtn: 'text-blue-600 hover:text-blue-700'
+      button: 'border-primary hover:border-primary-hover focus:ring-accent',
+      badge: 'bg-primary text-white',
+      checkbox: 'text-primary focus:ring-accent',
+      hover: 'hover:bg-primary-light',
+      selectBtn: 'text-primary hover:text-primary-hover'
     },
     purple: {
-      button: 'border-purple-200 hover:border-purple-300 focus:ring-purple-500',
-      badge: 'bg-purple-500 text-white',
-      checkbox: 'text-purple-600 focus:ring-purple-500',
-      hover: 'hover:bg-purple-50',
-      selectBtn: 'text-purple-600 hover:text-purple-700'
+      button: 'border-accent hover:border-accent-hover focus:ring-accent',
+      badge: 'bg-accent text-white',
+      checkbox: 'text-accent focus:ring-accent',
+      hover: 'hover:bg-primary-light',
+      selectBtn: 'text-accent hover:text-accent-hover'
     }
   };
 
@@ -249,8 +249,8 @@ export function Filters() {
   const hasActiveFilters = filters.categorie.length > 0 || filters.periodi.length > 0;
 
   return (
-    <div className="bg-white/70 backdrop-blur-md border-b border-gray-200/50">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="bg-white/70 backdrop-blur-md border-b border-border">
+      <div className="max-w-container mx-auto px-lg py-6">
         <div className="flex items-start gap-6 flex-wrap">
           <MultiSelect
             label="Filtra per Categoria"
@@ -273,7 +273,7 @@ export function Filters() {
           {hasActiveFilters && (
             <button
               onClick={resetFilters}
-              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all shadow-md hover:shadow-lg text-sm font-semibold self-end"
+              className="flex items-center gap-2 px-5 py-3 bg-accent text-white rounded-md hover:bg-accent-hover transition-normal shadow-card hover:shadow-card-hover text-sm font-medium self-end"
               aria-label="Reset filtri"
             >
               <X className="w-4 h-4" />
@@ -287,12 +287,12 @@ export function Filters() {
             {filters.categorie.map(cat => (
               <span
                 key={cat}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 rounded-full text-sm font-medium shadow-sm hover:shadow transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-light text-primary rounded-md text-sm font-medium border border-primary/20 hover:border-primary/40 transition-normal"
               >
                 {cat}
                 <button
                   onClick={() => toggleCategoria(cat)}
-                  className="hover:bg-blue-200 rounded-full p-1 transition-colors"
+                  className="hover:bg-primary/10 rounded-sm p-1 transition-fast"
                   aria-label={`Rimuovi ${cat}`}
                 >
                   <X className="w-3.5 h-3.5" />
@@ -302,12 +302,12 @@ export function Filters() {
             {filters.periodi.map(per => (
               <span
                 key={per}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-purple-50 text-purple-800 rounded-full text-sm font-medium shadow-sm hover:shadow transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-light text-accent rounded-md text-sm font-medium border border-accent/20 hover:border-accent/40 transition-normal"
               >
                 {per}
                 <button
                   onClick={() => togglePeriodo(per)}
-                  className="hover:bg-purple-200 rounded-full p-1 transition-colors"
+                  className="hover:bg-accent/10 rounded-sm p-1 transition-fast"
                   aria-label={`Rimuovi ${per}`}
                 >
                   <X className="w-3.5 h-3.5" />
