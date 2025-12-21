@@ -2,8 +2,13 @@
 
 import { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
+import { X } from 'lucide-react';
 
-export function AlphabeticalIndex() {
+interface AlphabeticalIndexProps {
+  onClose?: () => void;
+}
+
+export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
   const { lemmi, filteredLemmi, filters, setFilters } = useApp();
 
   // Genera alfabeto completo
@@ -51,11 +56,22 @@ export function AlphabeticalIndex() {
   return (
     <div className="card p-md">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-text-primary">Indice Alfabetico</h2>
-        {filters.selectedLetter && (
-          <span className="text-xs text-text-muted">
-            {displayedLemmi.length} lemmi con "{filters.selectedLetter}"
-          </span>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-text-primary">Indice Alfabetico</h2>
+          {filters.selectedLetter && (
+            <span className="text-xs text-text-muted">
+              {displayedLemmi.length} lemmi con "{filters.selectedLetter}"
+            </span>
+          )}
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-background-muted rounded transition-fast text-text-muted hover:text-text-primary"
+            aria-label="Chiudi indice"
+          >
+            <X className="w-5 h-5" />
+          </button>
         )}
       </div>
 
