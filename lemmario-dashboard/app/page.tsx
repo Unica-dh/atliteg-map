@@ -2,22 +2,21 @@
 
 import { useApp } from '@/context/AppContext';
 import { Header } from '@/components/Header';
-import { Filters } from '@/components/Filters';
 import { MetricsSummary } from '@/components/MetricsSummary';
+import { CompactToolbar } from '@/components/CompactToolbar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AlphabeticalIndex } from '@/components/AlphabeticalIndex';
-import { SearchBar } from '@/components/SearchBar';
-import { Timeline } from '@/components/Timeline';
+import { MiniTimeline } from '@/components/MiniTimeline';
 import { LemmaDetail } from '@/components/LemmaDetail';
 import dynamic from 'next/dynamic';
 
 // Importa la mappa dinamicamente per evitare problemi SSR
 const GeographicalMap = dynamic(
   () => import('@/components/GeographicalMap').then(mod => ({ default: mod.GeographicalMap })),
-  { 
+  {
     ssr: false,
     loading: () => (
-      <div className="h-[600px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="h-[500px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
         <p className="text-gray-600">Caricamento mappa...</p>
       </div>
     )
@@ -51,25 +50,18 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Header />
-      <Filters />
       <MetricsSummary />
+      <CompactToolbar />
 
-      <main className="max-w-container mx-auto px-lg py-3xl space-y-3xl">
-        {/* Barra di ricerca */}
-        <div className="flex justify-center">
-          <SearchBar />
-        </div>
-
+      <main className="max-w-container mx-auto px-lg py-lg space-y-lg">
         {/* Layout principale: Mappa + Dettaglio Lemma */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-2xl">
-          {/* Mappa - 2 colonne */}
-          <div className="xl:col-span-2 space-y-2xl">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+          {/* Mappa con mini-timeline - 2 colonne */}
+          <div className="xl:col-span-2">
             <div className="card p-0 overflow-hidden">
               <GeographicalMap />
             </div>
-
-            {/* Timeline */}
-            <Timeline />
+            <MiniTimeline />
           </div>
 
           {/* Dettaglio Lemma - 1 colonna */}
@@ -78,14 +70,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Indice alfabetico - full width */}
-        <div className="w-full">
-          <AlphabeticalIndex />
-        </div>
+        {/* Indice alfabetico compatto - full width */}
+        <AlphabeticalIndex />
       </main>
 
-      <footer className="bg-white border-t border-border mt-3xl px-lg py-2xl">
-        <div className="max-w-container mx-auto text-center text-sm text-text-secondary">
+      <footer className="bg-white border-t border-border mt-lg px-lg py-lg">
+        <div className="max-w-container mx-auto text-center text-xs text-text-secondary">
           <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
         </div>
       </footer>
