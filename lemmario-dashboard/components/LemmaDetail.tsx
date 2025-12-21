@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
-import { FileText, MapPin, Calendar, Tag, Hash, ExternalLink } from 'lucide-react';
+import { FileText, MapPin, Calendar, Hash } from 'lucide-react';
 
 export const LemmaDetail: React.FC = () => {
   const { filteredLemmi, filters } = useApp();
@@ -54,14 +54,16 @@ export const LemmaDetail: React.FC = () => {
   }
 
   return (
-    <div className="card h-full flex flex-col overflow-hidden p-md">
-      <div className="pb-3 border-b border-border mb-3">
-        <h2 className="text-lg font-semibold text-text-primary">Dettaglio Lemmi</h2>
+    <div className="card h-[560px] flex flex-col overflow-hidden p-md">
+      {/* Header Sticky */}
+      <div className="pb-3 border-b border-border mb-3 sticky top-0 bg-white z-10">
+        <h2 className="text-lg font-semibold text-text-primary">Dettaglio Forme</h2>
         <p className="text-xs text-text-secondary">
-          {displayedLemmas.length} occorrenze • {groupedByLemma.length} lemmi
+          {groupedByLemma.length} forme • {displayedLemmas.length} occorrenze
         </p>
       </div>
 
+      {/* Content con scroll interno */}
       <div className="flex-1 overflow-y-auto space-y-3">
         {groupedByLemma.map(([lemmaText, occurrences]) => (
           <div key={lemmaText} className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast">
@@ -102,34 +104,10 @@ export const LemmaDetail: React.FC = () => {
                       </div>
                     )}
 
-                    {lemma.Categoria && (
-                      <div className="col-span-2 flex items-start gap-1">
-                        <Tag className="w-3 h-3 text-text-muted flex-shrink-0 mt-0.5" />
-                        <div className="flex flex-wrap gap-1">
-                          {lemma.Categoria.split(',').map((cat, i) => (
-                            <span
-                              key={i}
-                              className="inline-block px-1.5 py-0.5 bg-primary-light text-primary text-[10px] rounded"
-                            >
-                              {cat.trim()}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {lemma.URL && (
-                      <div className="col-span-2 flex items-center gap-1">
-                        <ExternalLink className="w-3 h-3 text-text-muted flex-shrink-0" />
-                        <a
-                          href={lemma.URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-link hover:text-link-hover truncate"
-                          aria-label={`Apri risorsa esterna per ${lemma.Lemma}`}
-                        >
-                          Link
-                        </a>
+                    {lemma.IdAmbito && (
+                      <div className="flex items-center gap-1 col-span-2">
+                        <span className="text-text-muted">ID Ambito:</span>
+                        <span className="text-text-primary">{lemma.IdAmbito}</span>
                       </div>
                     )}
                   </div>
