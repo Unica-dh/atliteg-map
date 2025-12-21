@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useApp } from '@/context/AppContext';
 import { Header } from '@/components/Header';
 import { MetricsSummary } from '@/components/MetricsSummary';
@@ -16,7 +17,7 @@ const GeographicalMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[500px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="h-[820px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
         <p className="text-gray-600">Caricamento mappa...</p>
       </div>
     )
@@ -25,6 +26,7 @@ const GeographicalMap = dynamic(
 
 export default function Home() {
   const { isLoading, error } = useApp();
+  const [isIndiceOpen, setIsIndiceOpen] = React.useState(false);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -48,34 +50,48 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
       <MetricsSummary />
-      <CompactToolbar />
+      <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
 
-      <main className="max-w-container mx-auto px-lg py-lg space-y-lg">
-        {/* Layout principale: Mappa + Dettaglio Lemma */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-lg">
-          {/* Mappa con mini-timeline - 2 colonne */}
-          <div className="xl:col-span-2">
+      <main className="max-w-container mx-auto px-lg py-3 flex-1">
+        {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-3">
+          {/* Mappa con mini-timeline - 4 colonne (80%) */}
+          <div className="xl:col-span-4">
             <div className="card p-0 overflow-hidden">
               <GeographicalMap />
             </div>
             <MiniTimeline />
           </div>
 
-          {/* Dettaglio Lemma - 1 colonna */}
+          {/* Dettaglio Forme - 1 colonna (20%) */}
           <div className="xl:col-span-1">
             <LemmaDetail />
           </div>
         </div>
-
-        {/* Indice alfabetico compatto - full width */}
-        <AlphabeticalIndex />
       </main>
 
-      <footer className="bg-white border-t border-border mt-lg px-lg py-lg">
-        <div className="max-w-container mx-auto text-center text-xs text-text-secondary">
+      {/* Indice alfabetico - Modal/Drawer */}
+      {isIndiceOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsIndiceOpen(false)}>
+          <div className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+            <AlphabeticalIndex />
+            <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
+              <button
+                onClick={() => setIsIndiceOpen(false)}
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-fast text-sm font-medium"
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="bg-white border-t border-border px-lg py-1.5">
+        <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary">
           <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
         </div>
       </footer>

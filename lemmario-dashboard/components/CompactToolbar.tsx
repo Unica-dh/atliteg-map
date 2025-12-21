@@ -1,13 +1,17 @@
 'use client';
 
 import { useApp } from '@/context/AppContext';
-import { Search, X } from 'lucide-react';
+import { Search, X, ListOrdered } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Lemma } from '@/types/lemma';
 import { getUniqueCategorie, getUniquePeriodi } from '@/services/dataLoader';
 import { useMemo } from 'react';
 
-export function CompactToolbar() {
+interface CompactToolbarProps {
+  onToggleIndice?: () => void;
+}
+
+export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
   const { lemmi, filters, setFilters, resetFilters } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Lemma[]>([]);
@@ -54,8 +58,8 @@ export function CompactToolbar() {
 
   return (
     <div className="bg-white border-b border-border">
-      <div className="max-w-container mx-auto px-lg py-2">
-        <div className="flex items-center gap-4 flex-wrap">
+      <div className="max-w-container mx-auto px-lg py-1.5">
+        <div className="flex items-center gap-3 flex-wrap">
           {/* Search Bar - Compatta */}
           <div className="relative flex-1 min-w-[300px]" ref={searchRef}>
             <div className="relative">
@@ -65,7 +69,7 @@ export function CompactToolbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cerca lemma o forma..."
-                className="w-full pl-9 pr-9 py-2 text-sm bg-background-muted border border-border rounded-md focus:outline-none focus:border-accent"
+                className="w-full pl-9 pr-9 py-1.5 text-sm bg-background-muted border border-border rounded-md focus:outline-none focus:border-accent"
               />
               {searchQuery && (
                 <button
@@ -94,8 +98,20 @@ export function CompactToolbar() {
             )}
           </div>
 
+          {/* Indice Alfabetico Button */}
+          {onToggleIndice && (
+            <button
+              onClick={onToggleIndice}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-background-muted hover:bg-primary-light border border-border rounded-md transition-fast text-xs font-medium text-primary"
+              aria-label="Apri indice alfabetico"
+            >
+              <ListOrdered className="w-3.5 h-3.5" />
+              Indice
+            </button>
+          )}
+
           {/* Filtri Inline */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="text-xs text-text-secondary">Filtri:</span>
 
             <select
