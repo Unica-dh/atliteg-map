@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
-import { FileText, MapPin, Calendar, Tag, Hash, ExternalLink } from 'lucide-react';
+import { FileText, MapPin, Calendar, Hash } from 'lucide-react';
 
 export const LemmaDetail: React.FC = () => {
   const { filteredLemmi, filters } = useApp();
@@ -54,122 +54,60 @@ export const LemmaDetail: React.FC = () => {
   }
 
   return (
-    <div className="card h-full flex flex-col overflow-hidden">
-      <div className="p-5 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50">
-        <h2 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Dettaglio Lemmi</h2>
-        <p className="text-sm text-emerald-700 mt-1 font-medium">
-          {displayedLemmas.length} occorrenze • {groupedByLemma.length} lemmi
+    <div className="card flex flex-col overflow-hidden p-0" style={{ height: '820px' }}>
+      {/* Header Sticky */}
+      <div className="px-md pt-md pb-3 border-b border-border mb-3 sticky top-0 bg-white z-10">
+        <h2 className="text-lg font-semibold text-text-primary">Dettaglio Forme</h2>
+        <p className="text-xs text-text-secondary">
+          {groupedByLemma.length} forme • {displayedLemmas.length} occorrenze
         </p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-6">
+      {/* Content con scroll interno */}
+      <div className="flex-1 overflow-y-auto space-y-3 px-md pb-md">
         {groupedByLemma.map(([lemmaText, occurrences]) => (
-          <div key={lemmaText} className="border border-gray-100 rounded-xl p-5 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-all">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2 pb-3 border-b border-gray-100">
-              <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg shadow-md">
-                <FileText className="w-5 h-5 text-white" />
-              </div>
-              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">{lemmaText}</span>
-              <span className="text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                {occurrences.length} forme
+          <div key={lemmaText} className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast">
+            <h3 className="text-base font-semibold text-text-primary mb-2 flex items-center gap-2 pb-2 border-b border-border">
+              <FileText className="w-4 h-4 text-primary" />
+              {lemmaText}
+              <span className="text-xs font-normal text-text-muted bg-background-muted px-1.5 py-0.5 rounded">
+                {occurrences.length}
               </span>
             </h3>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {occurrences.map((lemma, idx) => (
                 <div
                   key={`${lemma.IdLemma}-${idx}`}
-                  className="bg-white rounded-lg p-4 border border-gray-100 hover:border-emerald-200 hover:shadow-sm transition-all"
+                  className="bg-background-muted rounded p-2 text-xs"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="flex items-start gap-2">
-                      <FileText className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <div className="text-xs text-gray-500">Forma</div>
-                        <div className="font-semibold text-gray-900">
-                          {lemma.Forma}
-                        </div>
-                      </div>
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                    <div className="flex items-center gap-1">
+                      <span className="text-text-muted">Forma:</span>
+                      <span className="font-medium text-text-primary truncate">{lemma.Forma}</span>
                     </div>
 
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <div className="text-xs text-gray-500">Località</div>
-                        <div className="font-medium text-gray-900">
-                          {lemma.CollGeografica}
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-text-muted flex-shrink-0" />
+                      <span className="font-medium text-text-primary truncate">{lemma.CollGeografica}</span>
                     </div>
 
-                    <div className="flex items-start gap-2">
-                      <Calendar className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <div className="text-xs text-gray-500">Anno / Periodo</div>
-                        <div className="font-medium text-gray-900">
-                          {lemma.Anno || lemma.Periodo || 'N/D'}
-                        </div>
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-text-muted flex-shrink-0" />
+                      <span className="text-text-primary">{lemma.Anno || lemma.Periodo || 'N/D'}</span>
                     </div>
 
                     {lemma.Frequenza && (
-                      <div className="flex items-start gap-2">
-                        <Hash className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <div className="text-xs text-gray-500">Frequenza</div>
-                          <div className="font-medium text-gray-900">
-                            {lemma.Frequenza}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {lemma.Categoria && (
-                      <div className="flex items-start gap-2 md:col-span-2">
-                        <Tag className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <div className="flex-1">
-                          <div className="text-xs text-gray-500 mb-1">Categorie</div>
-                          <div className="flex flex-wrap gap-1">
-                            {lemma.Categoria.split(',').map((cat, i) => (
-                              <span
-                                key={i}
-                                className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                              >
-                                {cat.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {lemma.URL && (
-                      <div className="flex items-start gap-2 md:col-span-2">
-                        <ExternalLink className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <div className="text-xs text-gray-500">Risorsa</div>
-                          <a
-                            href={lemma.URL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 underline text-sm break-all"
-                            aria-label={`Apri risorsa esterna per ${lemma.Lemma}`}
-                          >
-                            {lemma.URL}
-                          </a>
-                        </div>
+                      <div className="flex items-center gap-1">
+                        <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <span className="text-text-primary">{lemma.Frequenza}</span>
                       </div>
                     )}
 
                     {lemma.IdAmbito && (
-                      <div className="flex items-start gap-2">
-                        <div className="w-4 h-4 text-gray-400 mt-0.5">🗺️</div>
-                        <div>
-                          <div className="text-xs text-gray-500">ID Ambito</div>
-                          <div className="font-medium text-gray-900">
-                            {lemma.IdAmbito}
-                          </div>
-                        </div>
+                      <div className="flex items-center gap-1 col-span-2">
+                        <span className="text-text-muted">ID Ambito:</span>
+                        <span className="text-text-primary">{lemma.IdAmbito}</span>
                       </div>
                     )}
                   </div>

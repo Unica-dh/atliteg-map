@@ -1,23 +1,23 @@
 'use client';
 
+import React from 'react';
 import { useApp } from '@/context/AppContext';
 import { Header } from '@/components/Header';
-import { Filters } from '@/components/Filters';
 import { MetricsSummary } from '@/components/MetricsSummary';
+import { CompactToolbar } from '@/components/CompactToolbar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AlphabeticalIndex } from '@/components/AlphabeticalIndex';
-import { SearchBar } from '@/components/SearchBar';
-import { Timeline } from '@/components/Timeline';
+import { MiniTimeline } from '@/components/MiniTimeline';
 import { LemmaDetail } from '@/components/LemmaDetail';
 import dynamic from 'next/dynamic';
 
 // Importa la mappa dinamicamente per evitare problemi SSR
 const GeographicalMap = dynamic(
   () => import('@/components/GeographicalMap').then(mod => ({ default: mod.GeographicalMap })),
-  { 
+  {
     ssr: false,
     loading: () => (
-      <div className="h-[600px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="h-[820px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
         <p className="text-gray-600">Caricamento mappa...</p>
       </div>
     )
@@ -26,6 +26,7 @@ const GeographicalMap = dynamic(
 
 export default function Home() {
   const { isLoading, error } = useApp();
+  const [isIndiceOpen, setIsIndiceOpen] = React.useState(false);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -49,43 +50,48 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <Filters />
       <MetricsSummary />
-      
-      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Barra di ricerca */}
-        <div className="flex justify-center">
-          <SearchBar />
-        </div>
+      <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
 
-        {/* Layout principale: Mappa + Dettaglio Lemma */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
-          {/* Mappa - 2 colonne */}
-          <div className="xl:col-span-2 space-y-6 lg:space-y-8">
+      <main className="w-full px-lg py-3 flex-1">
+        {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-3 w-full">
+          {/* Mappa con mini-timeline - 4 colonne (80%) */}
+          <div className="xl:col-span-4">
             <div className="card p-0 overflow-hidden">
               <GeographicalMap />
             </div>
-            
-            {/* Timeline */}
-            <Timeline />
+            <MiniTimeline />
           </div>
 
-          {/* Dettaglio Lemma - 1 colonna */}
+          {/* Dettaglio Forme - 1 colonna (20%) */}
           <div className="xl:col-span-1">
             <LemmaDetail />
           </div>
         </div>
-
-        {/* Indice alfabetico - full width */}
-        <div className="w-full">
-          <AlphabeticalIndex />
-        </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 mt-8 px-6 py-4">
-        <div className="max-w-7xl mx-auto text-center text-sm text-gray-600">
+      {/* Indice alfabetico - Modal/Drawer */}
+      {isIndiceOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsIndiceOpen(false)}>
+          <div className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+            <AlphabeticalIndex />
+            <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
+              <button
+                onClick={() => setIsIndiceOpen(false)}
+                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-fast text-sm font-medium"
+              >
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="bg-white border-t border-border px-lg py-1.5">
+        <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary">
           <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
         </div>
       </footer>

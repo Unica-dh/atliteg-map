@@ -77,7 +77,7 @@ export function GeographicalMap() {
   const totalLemmas = new Set(filteredLemmi.map(l => l.IdLemma)).size;
 
   return (
-    <div className="relative h-[600px] w-full">
+    <div className="relative h-[820px] w-full">
       {/* Contatore in alto a destra */}
       <div className="absolute top-4 right-4 z-[800] bg-white px-4 py-2 rounded-md shadow-lg">
         <p className="text-sm font-medium text-gray-700">
