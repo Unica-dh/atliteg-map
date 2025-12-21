@@ -77,7 +77,7 @@ export default function Home() {
       {isIndiceOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsIndiceOpen(false)}>
           <div className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
-            <AlphabeticalIndex />
+            <AlphabeticalIndex onClose={() => setIsIndiceOpen(false)} />
             <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
               <button
                 onClick={() => setIsIndiceOpen(false)}

@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
-import { FileText, MapPin, Calendar, Hash } from 'lucide-react';
+import { FileText, MapPin, Calendar, Hash, ExternalLink } from 'lucide-react';
 
 export const LemmaDetail: React.FC = () => {
   const { filteredLemmi, filters } = useApp();
@@ -97,12 +97,27 @@ export const LemmaDetail: React.FC = () => {
                       <span className="text-text-primary">{lemma.Anno || lemma.Periodo || 'N/D'}</span>
                     </div>
 
-                    {lemma.Frequenza && (
-                      <div className="flex items-center gap-1">
-                        <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
-                        <span className="text-text-primary">{lemma.Frequenza}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1">
+                      {lemma.Frequenza ? (
+                        <>
+                          <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
+                          <span className="text-text-primary">{lemma.Frequenza}</span>
+                        </>
+                      ) : (
+                        <span className="text-text-muted text-xs">—</span>
+                      )}
+                      {lemma.URL && lemma.URL.trim() && (
+                        <a
+                          href={lemma.URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-auto text-primary hover:text-primary-dark transition-colors"
+                          title="Vedi attestazione"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
 
                     {lemma.IdAmbito && (
                       <div className="flex items-center gap-1 col-span-2">
