@@ -54,9 +54,9 @@ export const LemmaDetail: React.FC = () => {
   }
 
   return (
-    <div className="card h-[560px] flex flex-col overflow-hidden p-md">
+    <div className="card flex flex-col overflow-hidden p-0" style={{ height: '568px' }}>
       {/* Header Sticky */}
-      <div className="pb-3 border-b border-border mb-3 sticky top-0 bg-white z-10">
+      <div className="px-md pt-md pb-3 border-b border-border mb-3 sticky top-0 bg-white z-10">
         <h2 className="text-lg font-semibold text-text-primary">Dettaglio Forme</h2>
         <p className="text-xs text-text-secondary">
           {groupedByLemma.length} forme • {displayedLemmas.length} occorrenze
@@ -64,7 +64,7 @@ export const LemmaDetail: React.FC = () => {
       </div>
 
       {/* Content con scroll interno */}
-      <div className="flex-1 overflow-y-auto space-y-3">
+      <div className="flex-1 overflow-y-auto space-y-3 px-md pb-md">
         {groupedByLemma.map(([lemmaText, occurrences]) => (
           <div key={lemmaText} className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast">
             <h3 className="text-base font-semibold text-text-primary mb-2 flex items-center gap-2 pb-2 border-b border-border">
