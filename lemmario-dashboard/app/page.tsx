@@ -17,7 +17,7 @@ const GeographicalMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[820px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="h-[580px] w-full bg-gray-100 rounded-lg flex items-center justify-center">
         <p className="text-gray-600">Caricamento mappa...</p>
       </div>
     )
@@ -55,9 +55,9 @@ export default function Home() {
       <MetricsSummary />
       <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
 
-      <main className="w-full px-lg py-3 flex-1">
+      <main className="w-full px-lg py-2 flex-1">
         {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-3 w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 w-full">
           {/* Mappa - 4 colonne (80%) */}
           <div className="xl:col-span-4">
             <div className="card p-0 overflow-hidden">
@@ -72,7 +72,7 @@ export default function Home() {
         </div>
 
         {/* Linea del tempo unificata - Full Width */}
-        <div className="mt-3 w-full">
+        <div className="mt-2 w-full">
           <Timeline />
         </div>
       </main>
