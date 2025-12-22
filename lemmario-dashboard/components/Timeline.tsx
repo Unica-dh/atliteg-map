@@ -2,8 +2,11 @@
 
 import React, { useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
 import { Lemma } from '@/types/lemma';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { motionConfig } from '@/lib/motion-config';
 
 // Funzione per convertire anno in quarto di secolo
 const getQuartCentury = (year: number): string => {
@@ -25,6 +28,7 @@ const getYearRangeFromQuartCentury = (quartCentury: string): [number, number] =>
 
 export const Timeline: React.FC = () => {
   const { lemmi, filteredLemmi, filters, setFilters } = useApp();
+  const { highlightMultiple, clearHighlight, isYearHighlighted } = useHighlight();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 12; // Mostra 12 quarti di secolo per volta
 
@@ -91,8 +95,43 @@ export const Timeline: React.FC = () => {
   const handleQuartClick = (quart: string) => {
     if (selectedQuart === quart) {
       setSelectedQuart(null);
+      clearHighlight();
     } else {
       setSelectedQuart(quart);
+      
+      // Evidenzia lemmi di questo periodo
+      const quartData = quartCenturies.find(q => q.quartCentury === quart);
+      if (quartData) {
+        const lemmiIds = filteredLemmi
+          .filter(l => {
+            const year = parseInt(l.Anno);
+            return quartData.years.includes(year);
+          })
+          .map(l => l.IdLemma);
+        
+        highlightMultiple({
+          lemmaIds: lemmiIds,
+          years: quartData.years,
+          source: 'timeline',
+          type: 'select'
+        });
+      }
+    }
+  };
+
+  const handleQuartHover = (quart: string | null) => {
+    if (!quart || selectedQuart) {
+      // Non fare hover highlight se c'è una selezione attiva
+      return;
+    }
+    
+    const quartData = quartCenturies.find(q => q.quartCentury === quart);
+    if (quartData) {
+      highlightMultiple({
+        years: quartData.years,
+        source: 'timeline',
+        type: 'hover'
+      });
     }
   };
 
@@ -126,67 +165,102 @@ export const Timeline: React.FC = () => {
       {/* Timeline con frecce */}
       <div className="flex items-end gap-3">
         {/* Freccia sinistra */}
-        <button
+        <motion.button
           onClick={handlePrevPage}
           disabled={currentPage === 0}
+          whileHover={currentPage > 0 ? { scale: 1.1, x: -2 } : {}}
+          whileTap={currentPage > 0 ? { scale: 0.9 } : {}}
           className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Periodo precedente"
         >
           <ChevronLeft className="w-5 h-5 text-blue-600" />
-        </button>
+        </motion.button>
 
         {/* Barre verticali */}
-        <div className="flex-1 flex items-end justify-around gap-1 h-24">
-          {visibleQuarts.map((quartItem) => {
-            const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
-            const isSelected = selectedQuart === quartItem.quartCentury;
-            const heightPx = Math.max((quartItem.attestazioni / maxAttestazioni) * 80, 10);
+        <LayoutGroup>
+          <div className="flex-1 flex items-end justify-around gap-1 h-24">
+            <AnimatePresence mode="wait">
+              {visibleQuarts.map((quartItem) => {
+                const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
+                const isSelected = selectedQuart === quartItem.quartCentury;
+                const isHighlighted = quartItem.years.some(year => isYearHighlighted(year));
+                const heightPx = Math.max((quartItem.attestazioni / maxAttestazioni) * 80, 10);
 
-            return (
-              <div
-                key={quartItem.quartCentury}
-                className="flex flex-col items-center flex-1 min-w-0"
-              >
-                {/* Barra verticale */}
-                <button
-                  onClick={() => handleQuartClick(quartItem.quartCentury)}
-                  className={`w-full rounded-t transition-all ${
-                    isSelected
-                      ? 'bg-blue-600 shadow-md'
-                      : 'bg-blue-400 hover:bg-blue-500'
-                  }`}
-                  style={{ height: `${heightPx}px` }}
-                  title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
-                />
-                
-                {/* Label con periodo */}
-                <div className="mt-1 text-center">
-                  <div className={`text-[10px] font-semibold ${isSelected ? 'text-blue-600' : 'text-gray-600'}`}>
-                    {quartItem.quartCentury}
-                  </div>
-                  <div className="text-[9px] text-gray-400">
-                    {startYear}-{endYear}
-                  </div>
-                  {isSelected && (
-                    <div className="text-[10px] font-medium text-blue-600 mt-0.5">
-                      {quartItem.attestazioni} occ.
+                return (
+                  <motion.div
+                    key={quartItem.quartCentury}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={motionConfig.spring.soft}
+                    className="flex flex-col items-center flex-1 min-w-0"
+                  >
+                    {/* Barra verticale */}
+                    <motion.button
+                      layout
+                      onClick={() => handleQuartClick(quartItem.quartCentury)}
+                      onMouseEnter={() => handleQuartHover(quartItem.quartCentury)}
+                      onMouseLeave={() => !selectedQuart && clearHighlight()}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: `${heightPx}px`, opacity: 1 }}
+                      whileHover={{ 
+                        scale: 1.1, 
+                        y: -4,
+                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{
+                        height: { ...motionConfig.spring.soft, delay: 0.1 },
+                        scale: motionConfig.spring.fast,
+                        y: motionConfig.spring.fast
+                      }}
+                      className={`w-full rounded-t transition-colors ${
+                        isSelected
+                          ? 'bg-blue-600 shadow-md'
+                          : isHighlighted
+                            ? 'bg-blue-500 shadow-sm ring-2 ring-blue-400 ring-opacity-50'
+                            : 'bg-blue-400 hover:bg-blue-500'
+                      }`}
+                      title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
+                    />
+                    
+                    {/* Label con periodo */}
+                    <div className="mt-1 text-center">
+                      <div className={`text-[10px] font-semibold ${isSelected || isHighlighted ? 'text-blue-600' : 'text-gray-600'}`}>
+                        {quartItem.quartCentury}
+                      </div>
+                      <div className="text-[9px] text-gray-400">
+                        {startYear}-{endYear}
+                      </div>
+                      {isSelected && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-[10px] font-medium text-blue-600 mt-0.5"
+                        >
+                          {quartItem.attestazioni} occ.
+                        </motion.div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </LayoutGroup>
 
         {/* Freccia destra */}
-        <button
+        <motion.button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages - 1}
+          whileHover={currentPage < totalPages - 1 ? { scale: 1.1, x: 2 } : {}}
+          whileTap={currentPage < totalPages - 1 ? { scale: 0.9 } : {}}
           className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Periodo successivo"
         >
           <ChevronRight className="w-5 h-5 text-blue-600" />
-        </button>
+        </motion.button>
       </div>
     </div>
   );

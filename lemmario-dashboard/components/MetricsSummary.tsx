@@ -2,48 +2,51 @@
 
 import { useApp } from '@/context/AppContext';
 import { MapPin, FileText, Calendar, Hash, Layers } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { motionConfig } from '@/lib/motion-config';
 
 export function MetricsSummary() {
   const { metrics } = useApp();
+
+  const metricsArray = [
+    { icon: FileText, label: 'Lemmi', value: metrics.totalLemmi, color: 'text-accent', delay: 0 },
+    { icon: Layers, label: 'Forme', value: metrics.totalForme, color: 'text-primary', delay: 0.05 },
+    { icon: Hash, label: 'Occorrenze', value: metrics.totalOccorrenze, color: 'text-accent-hover', delay: 0.1 },
+    { icon: Calendar, label: 'Anni', value: metrics.totalAnni, color: 'text-primary-hover', delay: 0.15 },
+    { icon: MapPin, label: 'Località', value: metrics.totalLocalita, color: 'text-primary', delay: 0.2 },
+  ];
 
   return (
     <div className="bg-white border-b border-border">
       <div className="max-w-container mx-auto px-lg py-1.5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          {/* 1. Lemmi */}
-          <div className="flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5 text-accent" />
-            <span className="text-xs text-text-secondary">Lemmi:</span>
-            <span className="text-base font-semibold text-text-primary">{metrics.totalLemmi}</span>
-          </div>
-
-          {/* 2. Forme */}
-          <div className="flex items-center gap-1.5">
-            <Layers className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs text-text-secondary">Forme:</span>
-            <span className="text-base font-semibold text-text-primary">{metrics.totalForme}</span>
-          </div>
-
-          {/* 3. Occorrenze (ex Attestazioni) */}
-          <div className="flex items-center gap-1.5">
-            <Hash className="w-3.5 h-3.5 text-accent-hover" />
-            <span className="text-xs text-text-secondary">Occorrenze:</span>
-            <span className="text-base font-semibold text-text-primary">{metrics.totalOccorrenze}</span>
-          </div>
-
-          {/* 4. Anni */}
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-primary-hover" />
-            <span className="text-xs text-text-secondary">Anni:</span>
-            <span className="text-base font-semibold text-text-primary">{metrics.totalAnni}</span>
-          </div>
-
-          {/* 5. Località */}
-          <div className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-primary" />
-            <span className="text-xs text-text-secondary">Località:</span>
-            <span className="text-base font-semibold text-text-primary">{metrics.totalLocalita}</span>
-          </div>
+          {metricsArray.map(({ icon: Icon, label, value, color, delay }) => (
+            <motion.div
+              key={label}
+              className="flex items-center gap-1.5 cursor-default"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...motionConfig.transitions.medium, delay }}
+              whileHover={{ scale: 1.05, y: -2 }}
+            >
+              <motion.div
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Icon className={`w-3.5 h-3.5 ${color}`} />
+              </motion.div>
+              <span className="text-xs text-text-secondary">{label}:</span>
+              <motion.span 
+                className="text-base font-semibold text-text-primary"
+                key={value}
+                initial={{ scale: 1.2, color: '#0B5FA5' }}
+                animate={{ scale: 1, color: '#1F2937' }}
+                transition={motionConfig.spring.fast}
+              >
+                {value}
+              </motion.span>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>

@@ -4,6 +4,9 @@ import React, { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
 import { FileText, MapPin, Calendar, Hash, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { StaggerContainer, StaggerItem, FadeIn } from '@/components/MotionWrapper';
+import { motionConfig } from '@/lib/motion-config';
 
 export const LemmaDetail: React.FC = () => {
   const { filteredLemmi, filters } = useApp();
@@ -40,16 +43,30 @@ export const LemmaDetail: React.FC = () => {
   // Empty state - render after all hooks
   if (displayedLemmas.length === 0) {
     return (
-      <div className="card p-8 h-full flex flex-col items-center justify-center text-center">
-        <FileText className="w-16 h-16 text-gray-300 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">
-          Nessun lemma selezionato
-        </h3>
-        <p className="text-gray-500 max-w-sm">
-          Seleziona un punto sulla mappa, effettua una ricerca o usa i filtri per
-          visualizzare i dettagli dei lemmi
-        </p>
-      </div>
+      <FadeIn>
+        <div className="card p-8 h-full flex flex-col items-center justify-center text-center">
+          <motion.div
+            animate={{ 
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              repeatType: 'reverse'
+            }}
+          >
+            <FileText className="w-16 h-16 text-gray-300 mb-4" />
+          </motion.div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Nessun lemma selezionato
+          </h3>
+          <p className="text-gray-500 max-w-sm">
+            Seleziona un punto sulla mappa, effettua una ricerca o usa i filtri per
+            visualizzare i dettagli dei lemmi
+          </p>
+        </div>
+      </FadeIn>
     );
   }
 
@@ -58,15 +75,30 @@ export const LemmaDetail: React.FC = () => {
       {/* Header Sticky */}
       <div className="px-md pt-md pb-3 border-b border-border sticky top-0 bg-white z-10">
         <h2 className="text-lg font-semibold text-text-primary mb-1">Dettaglio Forme</h2>
-        <div className="flex items-center gap-3 text-xs text-text-secondary">
+        <motion.div 
+          key={`header-${groupedByLemma.length}`}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={motionConfig.transitions.fast}
+          className="flex items-center gap-3 text-xs text-text-secondary"
+        >
           <span><strong>{groupedByLemma.length}</strong> forme</span>
           <span>•</span>
           <span><strong>{displayedLemmas.length}</strong> occorrenze</span>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Content con scroll interno */}
-      <div className="flex-1 overflow-y-auto space-y-3 px-md pb-md pt-3">
+      {/* Content con scroll interno e layout animations */}
+      <LayoutGroup>
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={filters.selectedLemmaId || filters.searchQuery || filters.selectedLetter || 'all'}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={motionConfig.transitions.medium}
+            className="flex-1 overflow-y-auto space-y-3 px-md pb-md pt-3"
+          >
         {groupedByLemma.map(([lemmaText, occurrences]) => {
           // Estrai proprietà comuni a livello Lemma
           const firstOccurrence = occurrences[0];
@@ -74,7 +106,15 @@ export const LemmaDetail: React.FC = () => {
           const url = firstOccurrence.URL || '';
 
           return (
-            <div key={lemmaText} className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast">
+            <motion.div 
+              key={lemmaText}
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={motionConfig.spring.soft}
+              className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast"
+            >
               {/* Header Lemma con link esterno */}
               <div className="mb-2 pb-2 border-b border-border">
                 <div className="flex items-center gap-2 mb-1">
@@ -141,10 +181,12 @@ export const LemmaDetail: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+          </motion.div>
+        </AnimatePresence>
+      </LayoutGroup>
     </div>
   );
 };

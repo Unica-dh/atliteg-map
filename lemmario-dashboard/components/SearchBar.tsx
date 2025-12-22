@@ -2,11 +2,16 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
 import { Lemma } from '@/types/lemma';
 import { Search, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { StaggerContainer, StaggerItem } from '@/components/MotionWrapper';
+import { motionConfig } from '@/lib/motion-config';
 
 export const SearchBar: React.FC = () => {
   const { lemmi, setFilters } = useApp();
+  const { highlightMultiple, clearHighlight, isLemmaHighlighted } = useHighlight();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Lemma[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -67,6 +72,15 @@ export const SearchBar: React.FC = () => {
     setQuery(lemma.Lemma);
     setIsOpen(false);
     setHighlightedIndex(-1);
+    
+    // Evidenzia lemma selezionato e correlati
+    highlightMultiple({
+      lemmaIds: [lemma.IdLemma],
+      geoAreaIds: [lemma.CollGeografica],
+      years: [parseInt(lemma.Anno)],
+      source: 'search',
+      type: 'select'
+    });
   };
 
   const handleClear = () => {
@@ -74,7 +88,21 @@ export const SearchBar: React.FC = () => {
     setFilters({ searchQuery: '', selectedLemmaId: null });
     setSuggestions([]);
     setIsOpen(false);
+    clearHighlight();
     inputRef.current?.focus();
+  };
+
+  const handleSuggestionHover = (lemma: Lemma, index: number) => {
+    setHighlightedIndex(index);
+    
+    // Evidenzia temporaneamente al hover
+    highlightMultiple({
+      lemmaIds: [lemma.IdLemma],
+      geoAreaIds: [lemma.CollGeografica],
+      years: [parseInt(lemma.Anno)],
+      source: 'search',
+      type: 'hover'
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -120,7 +148,12 @@ export const SearchBar: React.FC = () => {
 
   return (
     <div className="relative w-full max-w-3xl">
-      <div className="relative card overflow-hidden">
+      <motion.div 
+        className="relative card overflow-hidden"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={motionConfig.transitions.medium}
+      >
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-muted w-5 h-5" />
         <input
           ref={inputRef}
@@ -129,7 +162,7 @@ export const SearchBar: React.FC = () => {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Cerca per lemma o forma..."
-          className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-0 focus:outline-none focus:border-accent text-text-primary"
+          className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-0 focus:outline-none focus:border-accent text-text-primary focus:ring-2 focus:ring-accent/20 transition-all duration-200"
           style={{
             boxShadow: 'none'
           }}
@@ -138,47 +171,68 @@ export const SearchBar: React.FC = () => {
           aria-controls="search-suggestions"
           aria-expanded={isOpen}
         />
-        {query && (
-          <button
-            onClick={handleClear}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-accent transition-fast p-1 hover:bg-background-muted rounded-md"
-            aria-label="Cancella ricerca"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
-      </div>
-
-      {isOpen && suggestions.length > 0 && (
-        <div
-          ref={suggestionsRef}
-          id="search-suggestions"
-          className="absolute z-[1000] w-full mt-3 card shadow-card-hover max-h-[500px] overflow-y-auto"
-          role="listbox"
-        >
-          {suggestions.map((lemma, index) => (
-            <div
-              key={`${lemma.IdLemma}-${index}`}
-              onClick={() => handleSelect(lemma)}
-              onMouseEnter={() => setHighlightedIndex(index)}
-              className={`px-5 py-4 cursor-pointer border-b border-border last:border-b-0 transition-normal ${
-                highlightedIndex === index
-                  ? 'bg-primary-light border-l-4 border-l-primary'
-                  : 'hover:bg-background-muted'
-              }`}
-              role="option"
-              aria-selected={highlightedIndex === index}
+        <AnimatePresence>
+          {query && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={motionConfig.transitions.fast}
+              onClick={handleClear}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-accent transition-fast p-1 hover:bg-background-muted rounded-md"
+              aria-label="Cancella ricerca"
             >
-              <div className="font-semibold text-text-primary text-lg mb-1">
-                {highlightText(lemma.Lemma, query)}
-              </div>
-              <div className="text-sm text-text-secondary">
-                Forma: {highlightText(lemma.Forma, query)}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+              <X className="w-5 h-5" />
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      <AnimatePresence>
+        {isOpen && suggestions.length > 0 && (
+          <motion.div
+            ref={suggestionsRef}
+            id="search-suggestions"
+            className="absolute z-[1000] w-full mt-3 card shadow-card-hover max-h-[500px] overflow-y-auto"
+            role="listbox"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={motionConfig.transitions.medium}
+          >
+            <StaggerContainer staggerDelay={0.05}>
+              {suggestions.map((lemma, index) => (
+                <StaggerItem key={`${lemma.IdLemma}-${index}`}>
+                  <motion.div
+                    layoutId={`lemma-card-${lemma.IdLemma}`}
+                    onClick={() => handleSelect(lemma)}
+                    onMouseEnter={() => handleSuggestionHover(lemma, index)}
+                    onMouseLeave={() => clearHighlight()}
+                    className={`px-5 py-4 cursor-pointer border-b border-border last:border-b-0 transition-normal ${
+                      highlightedIndex === index || isLemmaHighlighted(lemma.IdLemma)
+                        ? 'bg-primary-light border-l-4 border-l-primary'
+                        : 'hover:bg-background-muted'
+                    }`}
+                    role="option"
+                    aria-selected={highlightedIndex === index}
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <div className="font-semibold text-text-primary text-lg mb-1">
+                      {highlightText(lemma.Lemma, query)}
+                    </div>
+                    <div className="text-sm text-text-secondary">
+                      Forma: {highlightText(lemma.Forma, query)}
+                    </div>
+                  </motion.div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {query.length > 0 && suggestions.length === 0 && !isOpen && (
         <div className="absolute z-[1000] w-full mt-3 card shadow-card-hover p-6 text-center text-text-muted">
