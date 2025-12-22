@@ -1,17 +1,18 @@
 'use client';
 
+import Image from 'next/image';
+
 export function Header() {
   return (
     <header
-      className="relative shadow-sm overflow-hidden"
+      className="relative shadow-md overflow-hidden"
       style={{
-        height: '70px',
-        background: '#0B5FA5'
+        background: 'linear-gradient(135deg, #0B5FA5 0%, #0D4A8F 100%)'
       }}
     >
       {/* Background Image with Overlay */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-30"
+        className="absolute inset-0 bg-cover bg-center opacity-25"
         style={{
           backgroundImage: 'url(/immagine-testata.jpg)',
           backgroundPosition: 'center center',
@@ -19,24 +20,31 @@ export function Header() {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-container mx-auto px-lg h-full flex items-center">
-        <div className="flex items-center gap-3 w-full">
-          {/* Logo placeholder - smaller */}
-          <div
-            className="flex-shrink-0 bg-white rounded-md p-1.5 w-12 h-12 flex items-center justify-center shadow-md"
-            role="img"
-            aria-label="AtLiTeG logo"
-          >
-            <span className="text-primary font-bold text-sm leading-tight">AtLi<br/>TeG</span>
-          </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-6">
+        <div className="flex items-start gap-6">
+          {/* Logo AtLiTeG */}
+          <Image
+            src="/AtLiTeG_logo.webp"
+            alt="AtLiTeG Logo"
+            width={100}
+            height={140}
+            priority
+            className="flex-shrink-0 object-contain"
+          />
 
-          {/* Title and description */}
+          {/* Title and full information */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-text-inverse text-base md:text-lg font-semibold mb-0.5 leading-tight">
+            <h1 className="text-white text-xl md:text-2xl font-bold mb-2 leading-tight">
               Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità
             </h1>
-            <p className="text-text-inverse/90 text-[10px] leading-tight line-clamp-1">
-              PRIN 2017X8CZTM - PI prof.essoressa Giovanna Frosini, Università per Stranieri di Siena
+            <p className="text-white/95 text-sm leading-relaxed mb-2">
+              <strong>PRIN 2017XRCZTM</strong> - P.I. prof.ssa Giovanna Frosini, Università per Stranieri di Siena
+            </p>
+            <p className="text-white/95 text-xs leading-relaxed mb-2">
+              Unità di ricerca: Università di Cagliari, Università di Napoli "Federico II", Università di Salerno. L'Atlante è elaborato sui dati del VoSLIG (Vocabolario storico della lingua italiana della gastronomia)
+            </p>
+            <p className="text-white/95 text-xs leading-relaxed mb-2">
+              Responsabili Atlante e VoSLIG: Giovanni Urraci e Monica Alba - Partner informatici: DH Unica, diretto da: prof. Giampaolo Salice, Università di Cagliari
             </p>
           </div>
         </div>
