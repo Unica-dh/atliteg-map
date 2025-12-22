@@ -33,7 +33,7 @@ export const DataFlowVisualizer: React.FC<DataFlowVisualizerProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   // Calcola posizioni elementi
   const positions = useMemo(() => {
