@@ -7,7 +7,7 @@ import { MetricsSummary } from '@/components/MetricsSummary';
 import { CompactToolbar } from '@/components/CompactToolbar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AlphabeticalIndex } from '@/components/AlphabeticalIndex';
-import { MiniTimeline } from '@/components/MiniTimeline';
+import { Timeline } from '@/components/Timeline';
 import { LemmaDetail } from '@/components/LemmaDetail';
 import dynamic from 'next/dynamic';
 
@@ -58,18 +58,22 @@ export default function Home() {
       <main className="w-full px-lg py-3 flex-1">
         {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
         <div className="grid grid-cols-1 xl:grid-cols-5 gap-3 w-full">
-          {/* Mappa con mini-timeline - 4 colonne (80%) */}
+          {/* Mappa - 4 colonne (80%) */}
           <div className="xl:col-span-4">
             <div className="card p-0 overflow-hidden">
               <GeographicalMap />
             </div>
-            <MiniTimeline />
           </div>
 
           {/* Dettaglio Forme - 1 colonna (20%) */}
           <div className="xl:col-span-1">
             <LemmaDetail />
           </div>
+        </div>
+
+        {/* Linea del tempo unificata - Full Width */}
+        <div className="mt-3 w-full">
+          <Timeline />
         </div>
       </main>
 

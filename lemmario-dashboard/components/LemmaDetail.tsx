@@ -54,83 +54,96 @@ export const LemmaDetail: React.FC = () => {
   }
 
   return (
-    <div className="card flex flex-col overflow-hidden p-0" style={{ height: '820px' }}>
+    <div className="card flex flex-col overflow-hidden" style={{ height: '820px' }}>
       {/* Header Sticky */}
-      <div className="px-md pt-md pb-3 border-b border-border mb-3 sticky top-0 bg-white z-10">
-        <h2 className="text-lg font-semibold text-text-primary">Dettaglio Forme</h2>
-        <p className="text-xs text-text-secondary">
-          {groupedByLemma.length} forme • {displayedLemmas.length} occorrenze
-        </p>
+      <div className="px-md pt-md pb-3 border-b border-border sticky top-0 bg-white z-10">
+        <h2 className="text-lg font-semibold text-text-primary mb-1">Dettaglio Forme</h2>
+        <div className="flex items-center gap-3 text-xs text-text-secondary">
+          <span><strong>{groupedByLemma.length}</strong> forme</span>
+          <span>•</span>
+          <span><strong>{displayedLemmas.length}</strong> occorrenze</span>
+        </div>
       </div>
 
       {/* Content con scroll interno */}
-      <div className="flex-1 overflow-y-auto space-y-3 px-md pb-md">
-        {groupedByLemma.map(([lemmaText, occurrences]) => (
-          <div key={lemmaText} className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast">
-            <h3 className="text-base font-semibold text-text-primary mb-2 flex items-center gap-2 pb-2 border-b border-border">
-              <FileText className="w-4 h-4 text-primary" />
-              {lemmaText}
-              <span className="text-xs font-normal text-text-muted bg-background-muted px-1.5 py-0.5 rounded">
-                {occurrences.length}
-              </span>
-            </h3>
+      <div className="flex-1 overflow-y-auto space-y-3 px-md pb-md pt-3">
+        {groupedByLemma.map(([lemmaText, occurrences]) => {
+          // Estrai proprietà comuni a livello Lemma
+          const firstOccurrence = occurrences[0];
+          const categoria = firstOccurrence.Categoria || '';
+          const url = firstOccurrence.URL || '';
 
-            <div className="space-y-2">
-              {occurrences.map((lemma, idx) => (
-                <div
-                  key={`${lemma.IdLemma}-${idx}`}
-                  className="bg-background-muted rounded p-2 text-xs"
-                >
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
-                    <div className="flex items-center gap-1">
-                      <span className="text-text-muted">Forma:</span>
-                      <span className="font-medium text-text-primary truncate">{lemma.Forma}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-text-muted flex-shrink-0" />
-                      <span className="font-medium text-text-primary truncate">{lemma.CollGeografica}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-text-muted flex-shrink-0" />
-                      <span className="text-text-primary">{lemma.Anno || lemma.Periodo || 'N/D'}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      {lemma.Frequenza ? (
-                        <>
-                          <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
-                          <span className="text-text-primary">{lemma.Frequenza}</span>
-                        </>
-                      ) : (
-                        <span className="text-text-muted text-xs">—</span>
-                      )}
-                      {lemma.URL && lemma.URL.trim() && (
-                        <a
-                          href={lemma.URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="ml-auto text-primary hover:text-primary-dark transition-colors"
-                          title="Vedi attestazione"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-
-                    {lemma.IdAmbito && (
-                      <div className="flex items-center gap-1 col-span-2">
-                        <span className="text-text-muted">ID Ambito:</span>
-                        <span className="text-text-primary">{lemma.IdAmbito}</span>
-                      </div>
-                    )}
-                  </div>
+          return (
+            <div key={lemmaText} className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast">
+              {/* Header Lemma con link esterno */}
+              <div className="mb-2 pb-2 border-b border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <h3 className="text-base font-semibold text-text-primary">{lemmaText}</h3>
+                  <span className="text-xs font-normal text-text-muted bg-background-muted px-1.5 py-0.5 rounded">
+                    {occurrences.length}
+                  </span>
+                  {url && url.trim() && (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto text-primary hover:text-primary-dark transition-colors"
+                      title="Vedi su vocabolario.atliteg.org"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
-              ))}
+
+                {/* Metadati a livello Lemma */}
+                {categoria && (
+                  <div className="text-xs text-text-secondary mt-1">
+                    <span className="font-medium">Categoria:</span> {categoria}
+                  </div>
+                )}
+              </div>
+
+              {/* Lista Forme */}
+              <div className="space-y-2">
+                {occurrences.map((lemma, idx) => (
+                  <div
+                    key={`${lemma.IdLemma}-${idx}`}
+                    className="bg-background-muted rounded p-2 text-xs"
+                  >
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                      <div className="flex items-center gap-1">
+                        <span className="text-text-muted">Forma:</span>
+                        <span className="font-medium text-text-primary truncate">{lemma.Forma}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <span className="font-medium text-text-primary truncate">{lemma.CollGeografica}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <span className="text-text-primary">{lemma.Anno || lemma.Periodo || 'N/D'}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {lemma.Frequenza && lemma.Frequenza !== '1' ? (
+                          <>
+                            <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
+                            <span className="text-text-primary">freq: {lemma.Frequenza}</span>
+                          </>
+                        ) : (
+                          <span className="text-text-muted text-xs">—</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

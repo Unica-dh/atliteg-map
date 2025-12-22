@@ -47,8 +47,9 @@ export interface AppState {
 }
 
 export interface Metrics {
-  totalLocalita: number;
   totalLemmi: number;
+  totalForme: number;
+  totalOccorrenze: number;
   totalAnni: number;
-  totalAttestazioni: number;
+  totalLocalita: number;
 }
