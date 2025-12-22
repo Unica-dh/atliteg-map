@@ -61,7 +61,7 @@ export const MiniTimeline: React.FC = () => {
   return (
     <div className="bg-background-muted rounded-md p-2 mt-2">
       <div className="flex items-center gap-1 mb-1">
-        <span className="text-xs font-medium text-text-secondary">Timeline:</span>
+        <span className="text-xs font-medium text-text-secondary">Linea del tempo:</span>
         <span className="text-xs text-text-muted">
           {years[0].year} - {years[years.length - 1].year}
         </span>

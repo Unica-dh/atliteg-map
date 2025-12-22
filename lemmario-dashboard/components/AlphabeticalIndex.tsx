@@ -25,14 +25,15 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
     return letters;
   }, [lemmi]);
 
-  // Lemmi visualizzati per la lettera selezionata
+  // Lemmi visualizzati per la lettera selezionata (usa lemmi originali, non filteredLemmi)
   const displayedLemmi = useMemo(() => {
     if (!filters.selectedLetter) return [];
-    
-    const lemmiForLetter = filteredLemmi.filter(lemma =>
+
+    // Usa lemmi originali per evitare che selectedLemmaId filtri l'indice stesso
+    const lemmiForLetter = lemmi.filter(lemma =>
       lemma.Lemma.toLowerCase().startsWith(filters.selectedLetter!.toLowerCase())
     );
-    
+
     // Ordina alfabeticamente e raggruppa per lemma
     const grouped = lemmiForLetter.reduce((acc, lemma) => {
       if (!acc[lemma.Lemma]) {
@@ -41,15 +42,23 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
       acc[lemma.Lemma].push(lemma);
       return acc;
     }, {} as Record<string, typeof lemmi>);
-    
+
     return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
-  }, [filteredLemmi, filters.selectedLetter]);
+  }, [lemmi, filters.selectedLetter]);
 
   const handleLetterClick = (letter: string) => {
     if (filters.selectedLetter === letter) {
       setFilters({ selectedLetter: null });
     } else {
       setFilters({ selectedLetter: letter });
+    }
+  };
+
+  const handleLemmaClick = (lemma: string, idLemma: string) => {
+    setFilters({ selectedLemmaId: idLemma, searchQuery: lemma });
+    // Chiude l'indice dopo la selezione (opzionale)
+    if (onClose) {
+      onClose();
     }
   };
 
@@ -109,7 +118,11 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
         <div className="border-t border-border pt-3">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
             {displayedLemmi.map(([lemma, occorrenze]) => (
-              <div key={lemma} className="bg-background-muted rounded p-2 hover:bg-primary-light transition-fast">
+              <button
+                key={lemma}
+                onClick={() => handleLemmaClick(lemma, occorrenze[0].IdLemma)}
+                className="bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer"
+              >
                 <h4 className="font-medium text-text-primary text-sm truncate">{lemma}</h4>
                 <p className="text-xs text-text-muted">
                   {occorrenze.length} {occorrenze.length === 1 ? 'occ.' : 'occ.'}
@@ -117,7 +130,7 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
                 <div className="text-[10px] text-text-muted truncate">
                   {[...new Set(occorrenze.map(o => o.CollGeografica))].slice(0, 2).join(', ')}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
