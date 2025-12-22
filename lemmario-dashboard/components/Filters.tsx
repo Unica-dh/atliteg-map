@@ -5,6 +5,9 @@ import { getUniqueCategorie, getUniquePeriodi } from '@/services/dataLoader';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ChevronDown, Search, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { StaggerContainer, StaggerItem } from '@/components/MotionWrapper';
+import { motionConfig } from '@/lib/motion-config';
 
 interface MultiSelectProps {
   label: string;
@@ -133,18 +136,24 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
           <ChevronDown className={`w-3 h-3 text-text-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        {isOpen && mounted && createPortal(
-          <div
-            ref={dropdownRef}
-            style={{
-              position: 'fixed',
-              top: `${dropdownPosition.top}px`,
-              left: `${dropdownPosition.left}px`,
-              width: `${dropdownPosition.width}px`,
-              zIndex: 9999
-            }}
-            className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
-          >
+        {mounted && createPortal(
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={dropdownRef}
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={motionConfig.transitions.fast}
+                style={{
+                  position: 'fixed',
+                  top: `${dropdownPosition.top}px`,
+                  left: `${dropdownPosition.left}px`,
+                  width: `${dropdownPosition.width}px`,
+                  zIndex: 9999
+                }}
+                className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+              >
             {/* Barra di ricerca */}
             <div className="p-3 border-b border-gray-200 bg-gray-50">
               <div className="relative">
@@ -180,37 +189,53 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
             </div>
 
             {/* Lista opzioni */}
-            <div className="max-h-[32rem] overflow-y-auto">
-              {filteredOptions.length === 0 ? (
-                <div className="px-4 py-8 text-center text-sm text-gray-500">
-                  Nessun risultato trovato
-                </div>
-              ) : (
-                filteredOptions.map(option => {
-                  const isSelected = selectedValues.includes(option);
-                  return (
-                    <label
-                      key={option}
-                      className={`flex items-center gap-3 px-4 py-3 cursor-pointer ${colors.hover} transition-colors border-b border-gray-100 last:border-b-0`}
-                    >
-                      <div className="relative flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleOption(option)}
-                          className={`w-4 h-4 rounded border-gray-300 ${colors.checkbox} focus:ring-offset-0`}
-                        />
-                        {isSelected && (
-                          <Check className="absolute w-3 h-3 text-white pointer-events-none left-0.5" />
-                        )}
-                      </div>
-                      <span className="text-sm text-gray-700 flex-1">{option}</span>
-                    </label>
-                  );
-                })
-              )}
-            </div>
-          </div>,
+            <StaggerContainer staggerDelay={0.02}>
+              <div className="max-h-[32rem] overflow-y-auto">
+                {filteredOptions.length === 0 ? (
+                  <div className="px-4 py-8 text-center text-sm text-gray-500">
+                    Nessun risultato trovato
+                  </div>
+                ) : (
+                  filteredOptions.map(option => {
+                    const isSelected = selectedValues.includes(option);
+                    return (
+                      <StaggerItem key={option}>
+                        <motion.label
+                          whileHover={{ x: 4, backgroundColor: 'rgba(59, 130, 246, 0.05)' }}
+                          whileTap={{ scale: 0.98 }}
+                          className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0`}
+                        >
+                          <div className="relative flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => toggleOption(option)}
+                              className={`w-4 h-4 rounded border-gray-300 ${colors.checkbox} focus:ring-offset-0`}
+                            />
+                            <AnimatePresence>
+                              {isSelected && (
+                                <motion.div
+                                  initial={{ scale: 0, rotate: -180 }}
+                                  animate={{ scale: 1, rotate: 0 }}
+                                  exit={{ scale: 0, rotate: 180 }}
+                                  transition={motionConfig.spring.fast}
+                                >
+                                  <Check className="absolute w-3 h-3 text-white pointer-events-none left-0.5" />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                          <span className="text-sm text-gray-700 flex-1">{option}</span>
+                        </motion.label>
+                      </StaggerItem>
+                    );
+                  })
+                )}
+              </div>
+            </StaggerContainer>
+              </motion.div>
+            )}
+          </AnimatePresence>,
           document.body
         )}
       </div>
@@ -262,51 +287,83 @@ export function Filters() {
             color="purple"
           />
 
-          {hasActiveFilters && (
-            <button
-              onClick={resetFilters}
-              className="flex items-center gap-2 px-3 py-2 bg-accent text-white rounded-md hover:bg-accent-hover transition-fast text-xs font-medium"
-              aria-label="Reset filtri"
-            >
-              <X className="w-3 h-3" />
-              Reset
-            </button>
-          )}
+          <AnimatePresence>
+            {hasActiveFilters && (
+              <motion.button
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={resetFilters}
+                className="flex items-center gap-2 px-3 py-2 bg-accent text-white rounded-md hover:bg-accent-hover transition-fast text-xs font-medium"
+                aria-label="Reset filtri"
+              >
+                <X className="w-3 h-3" />
+                Reset
+              </motion.button>
+            )}
+          </AnimatePresence>
 
-          {hasActiveFilters && (
-            <div className="flex flex-wrap gap-2">
-              {filters.categorie.map(cat => (
-                <span
-                  key={cat}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-primary-light text-primary rounded-sm text-xs font-medium"
-                >
-                  {cat}
-                  <button
-                    onClick={() => toggleCategoria(cat)}
-                    className="hover:bg-primary/10 rounded-sm p-0.5 transition-fast"
-                    aria-label={`Rimuovi ${cat}`}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-              {filters.periodi.map(per => (
-                <span
-                  key={per}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-primary-light text-accent rounded-sm text-xs font-medium"
-                >
-                  {per}
-                  <button
-                    onClick={() => togglePeriodo(per)}
-                    className="hover:bg-accent/10 rounded-sm p-0.5 transition-fast"
-                    aria-label={`Rimuovi ${per}`}
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {hasActiveFilters && (
+              <motion.div 
+                className="flex flex-wrap gap-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <StaggerContainer staggerDelay={0.05}>
+                  {filters.categorie.map(cat => (
+                    <StaggerItem key={cat}>
+                      <motion.span
+                        layout
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-primary-light text-primary rounded-sm text-xs font-medium"
+                      >
+                        {cat}
+                        <motion.button
+                          whileHover={{ rotate: 90 }}
+                          whileTap={{ scale: 0.8 }}
+                          onClick={() => toggleCategoria(cat)}
+                          className="hover:bg-primary/10 rounded-sm p-0.5 transition-fast"
+                          aria-label={`Rimuovi ${cat}`}
+                        >
+                          <X className="w-3 h-3" />
+                        </motion.button>
+                      </motion.span>
+                    </StaggerItem>
+                  ))}
+                  {filters.periodi.map(per => (
+                    <StaggerItem key={per}>
+                      <motion.span
+                        layout
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-primary-light text-accent rounded-sm text-xs font-medium"
+                      >
+                        {per}
+                        <motion.button
+                          whileHover={{ rotate: 90 }}
+                          whileTap={{ scale: 0.8 }}
+                          onClick={() => togglePeriodo(per)}
+                          className="hover:bg-accent/10 rounded-sm p-0.5 transition-fast"
+                          aria-label={`Rimuovi ${per}`}
+                        >
+                          <X className="w-3 h-3" />
+                        </motion.button>
+                      </motion.span>
+                    </StaggerItem>
+                  ))}
+                </StaggerContainer>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

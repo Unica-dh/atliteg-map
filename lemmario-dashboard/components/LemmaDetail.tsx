@@ -4,6 +4,9 @@ import React, { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
 import { FileText, MapPin, Calendar, Hash, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { StaggerContainer, StaggerItem, FadeIn } from '@/components/MotionWrapper';
+import { motionConfig } from '@/lib/motion-config';
 
 export const LemmaDetail: React.FC = () => {
   const { filteredLemmi, filters } = useApp();
@@ -40,16 +43,30 @@ export const LemmaDetail: React.FC = () => {
   // Empty state - render after all hooks
   if (displayedLemmas.length === 0) {
     return (
-      <div className="card p-8 h-full flex flex-col items-center justify-center text-center">
-        <FileText className="w-16 h-16 text-gray-300 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">
-          Nessun lemma selezionato
-        </h3>
-        <p className="text-gray-500 max-w-sm">
-          Seleziona un punto sulla mappa, effettua una ricerca o usa i filtri per
-          visualizzare i dettagli dei lemmi
-        </p>
-      </div>
+      <FadeIn>
+        <div className="card p-8 h-full flex flex-col items-center justify-center text-center">
+          <motion.div
+            animate={{ 
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{ 
+              duration: 3, 
+              repeat: Infinity,
+              repeatType: 'reverse'
+            }}
+          >
+            <FileText className="w-16 h-16 text-gray-300 mb-4" />
+          </motion.div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Nessun lemma selezionato
+          </h3>
+          <p className="text-gray-500 max-w-sm">
+            Seleziona un punto sulla mappa, effettua una ricerca o usa i filtri per
+            visualizzare i dettagli dei lemmi
+          </p>
+        </div>
+      </FadeIn>
     );
   }
 
