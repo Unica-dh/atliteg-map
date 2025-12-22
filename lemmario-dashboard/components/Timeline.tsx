@@ -81,7 +81,9 @@ export const Timeline: React.FC = () => {
   const startIndex = currentPage * itemsPerPage;
   const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
 
-  const totalAttestazioni = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
+  // Calcola statistiche corrette
+  const totalOccorrenze = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
+  const totalLemmi = new Set(quartCenturies.flatMap(q => q.lemmas)).size;
   const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
 
   const [selectedQuart, setSelectedQuart] = useState<string | null>(null);
@@ -116,8 +118,8 @@ export const Timeline: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-700">Linea del tempo</h2>
         <div className="text-xs text-gray-500">
-          <span className="font-semibold text-blue-600">{quartCenturies.length}</span> quarti di secolo •{' '}
-          <span className="font-semibold text-blue-600">{totalAttestazioni}</span> anni con attestazioni
+          <span className="font-semibold text-blue-600">{totalLemmi}</span> lemmi •{' '}
+          <span className="font-semibold text-blue-600">{totalOccorrenze}</span> occorrenze
         </div>
       </div>
 
@@ -138,7 +140,7 @@ export const Timeline: React.FC = () => {
           {visibleQuarts.map((quartItem) => {
             const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
             const isSelected = selectedQuart === quartItem.quartCentury;
-            const height = Math.max((quartItem.attestazioni / maxAttestazioni) * 100, 8);
+            const heightPx = Math.max((quartItem.attestazioni / maxAttestazioni) * 120, 10);
 
             return (
               <div
@@ -153,8 +155,8 @@ export const Timeline: React.FC = () => {
                       ? 'bg-blue-600 shadow-md'
                       : 'bg-blue-400 hover:bg-blue-500'
                   }`}
-                  style={{ height: `${height}%` }}
-                  title={`${startYear}-${endYear}: ${quartItem.attestazioni} attestazioni`}
+                  style={{ height: `${heightPx}px` }}
+                  title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
                 />
                 
                 {/* Label con periodo */}
@@ -167,7 +169,7 @@ export const Timeline: React.FC = () => {
                   </div>
                   {isSelected && (
                     <div className="text-[10px] font-medium text-blue-600 mt-0.5">
-                      {quartItem.attestazioni} att.
+                      {quartItem.attestazioni} occ.
                     </div>
                   )}
                 </div>
