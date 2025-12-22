@@ -1,0 +1,519 @@
+'use client';
+
+import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
+import { Lemma } from '@/types/lemma';
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Calendar } from 'lucide-react';
+import { motion, AnimatePresence, LayoutGroup, useMotionValue, useTransform } from 'framer-motion';
+import { motionConfig } from '@/lib/motion-config';
+
+// Funzione per convertire anno in quarto di secolo
+const getQuartCentury = (year: number): string => {
+  const century = Math.floor(year / 100);
+  const quarterInCentury = Math.floor((year % 100) / 25);
+  const quarters = ['I', 'II', 'III', 'IV'];
+  return `${century}${quarters[quarterInCentury]}`;
+};
+
+// Funzione per ottenere range anni da quarto di secolo
+const getYearRangeFromQuartCentury = (quartCentury: string): [number, number] => {
+  const century = parseInt(quartCentury.slice(0, -1));
+  const quarter = quartCentury.slice(-1);
+  const quarterIndex = ['I', 'II', 'III', 'IV'].indexOf(quarter);
+  const start = century * 100 + quarterIndex * 25;
+  const end = start + 24;
+  return [start, end];
+};
+
+// Componente Progress Bar per scrubbing
+const TimelineProgressBar: React.FC<{ 
+  currentPage: number; 
+  totalPages: number;
+  onScrub: (page: number) => void;
+}> = ({ currentPage, totalPages, onScrub }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const progress = (currentPage + 1) / totalPages;
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    updatePosition(e);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      updatePosition(e);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const updatePosition = (e: MouseEvent | React.MouseEvent) => {
+    if (!progressRef.current) return;
+    
+    const rect = progressRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    const newProgress = x / rect.width;
+    const newPage = Math.floor(newProgress * totalPages);
+    
+    if (newPage !== currentPage && newPage >= 0 && newPage < totalPages) {
+      onScrub(newPage);
+    }
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging]);
+
+  return (
+    <div className="w-full mb-3">
+      <div 
+        ref={progressRef}
+        className="relative h-1 bg-gray-200 rounded-full cursor-pointer overflow-hidden"
+        onMouseDown={handleMouseDown}
+      >
+        {/* Background fill */}
+        <motion.div
+          className="absolute inset-y-0 left-0 bg-blue-600 rounded-full"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: progress }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          style={{ transformOrigin: "left" }}
+        />
+        
+        {/* Scrubber handle */}
+        <motion.div
+          className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-blue-600 rounded-full shadow-md ${
+            isDragging ? 'scale-125' : ''
+          }`}
+          animate={{ left: `${progress * 100}%` }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          style={{ marginLeft: '-6px' }}
+          whileHover={{ scale: 1.3 }}
+          whileTap={{ scale: 1.4 }}
+        />
+      </div>
+      
+      {/* Page indicators */}
+      <div className="flex justify-between mt-1 text-[9px] text-gray-400">
+        <span>Pag. {currentPage + 1}</span>
+        <span>{totalPages} pagine</span>
+      </div>
+    </div>
+  );
+};
+
+// Componente Heatmap View
+const TimelineHeatmap: React.FC<{
+  quartCenturies: Array<{
+    quartCentury: string;
+    years: number[];
+    lemmas: string[];
+    locations: string[];
+    attestazioni: number;
+  }>;
+  onCellClick: (quart: string) => void;
+  selectedQuart: string | null;
+}> = ({ quartCenturies, onCellClick, selectedQuart }) => {
+  const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
+  
+  // Group by century
+  const centuryGroups = useMemo(() => {
+    const groups = new Map<number, typeof quartCenturies>();
+    quartCenturies.forEach(q => {
+      const century = parseInt(q.quartCentury.slice(0, -1));
+      if (!groups.has(century)) {
+        groups.set(century, []);
+      }
+      groups.get(century)!.push(q);
+    });
+    return Array.from(groups.entries()).sort((a, b) => a[0] - b[0]);
+  }, [quartCenturies]);
+
+  return (
+    <div className="space-y-2">
+      {centuryGroups.map(([century, quarts]) => (
+        <div key={century} className="flex items-center gap-2">
+          <div className="text-xs font-semibold text-gray-600 w-16">
+            {century * 100}s
+          </div>
+          <div className="flex-1 grid grid-cols-4 gap-1">
+            {['I', 'II', 'III', 'IV'].map(quarter => {
+              const quartData = quarts.find(q => q.quartCentury === `${century}${quarter}`);
+              const intensity = quartData ? quartData.attestazioni / maxAttestazioni : 0;
+              const isSelected = selectedQuart === quartData?.quartCentury;
+              
+              return (
+                <motion.button
+                  key={`${century}${quarter}`}
+                  onClick={() => quartData && onCellClick(quartData.quartCentury)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`
+                    h-8 rounded transition-all relative
+                    ${quartData ? 'cursor-pointer' : 'cursor-not-allowed opacity-20'}
+                    ${isSelected ? 'ring-2 ring-blue-600 ring-offset-1' : ''}
+                  `}
+                  style={{
+                    backgroundColor: quartData 
+                      ? `rgba(37, 99, 235, ${Math.max(intensity, 0.15)})`
+                      : '#f3f4f6'
+                  }}
+                  title={quartData ? `${quartData.quartCentury}: ${quartData.attestazioni} occ.` : 'Nessun dato'}
+                >
+                  <span className="text-[10px] font-medium text-white drop-shadow">
+                    {quarter}
+                  </span>
+                  {quartData && (
+                    <span className="absolute bottom-0.5 right-0.5 text-[8px] text-white/80">
+                      {quartData.attestazioni}
+                    </span>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const TimelineEnhanced: React.FC = () => {
+  const { lemmi, filteredLemmi } = useApp();
+  const { highlightMultiple, clearHighlight, isYearHighlighted } = useHighlight();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [viewMode, setViewMode] = useState<'bar' | 'heatmap'>('bar');
+  const [zoomLevel, setZoomLevel] = useState<'quarter' | 'decade' | 'century'>('quarter');
+  const itemsPerPage = zoomLevel === 'quarter' ? 12 : zoomLevel === 'decade' ? 20 : 8;
+
+  // Raggruppa per quarti di secolo
+  const quartCenturies = useMemo(() => {
+    if (lemmi.length === 0) return [];
+
+    const quartData = new Map<string, {
+      years: Set<number>;
+      lemmas: Set<string>;
+      locations: Set<string>;
+      attestazioni: number;
+    }>();
+
+    filteredLemmi.forEach((lemma: Lemma) => {
+      const year = lemma.Anno ? parseInt(lemma.Anno) : null;
+      if (year && !isNaN(year)) {
+        const quart = getQuartCentury(year);
+
+        if (!quartData.has(quart)) {
+          quartData.set(quart, {
+            years: new Set(),
+            lemmas: new Set(),
+            locations: new Set(),
+            attestazioni: 0
+          });
+        }
+
+        const data = quartData.get(quart)!;
+        data.years.add(year);
+        data.lemmas.add(lemma.Lemma);
+        data.locations.add(lemma.CollGeografica);
+        data.attestazioni++;
+      }
+    });
+
+    return Array.from(quartData.entries())
+      .map(([quart, data]) => ({
+        quartCentury: quart,
+        hasData: data.years.size > 0,
+        years: Array.from(data.years).sort((a, b) => a - b),
+        lemmas: Array.from(data.lemmas),
+        locations: Array.from(data.locations),
+        attestazioni: data.attestazioni
+      }))
+      .sort((a, b) => {
+        const [startA] = getYearRangeFromQuartCentury(a.quartCentury);
+        const [startB] = getYearRangeFromQuartCentury(b.quartCentury);
+        return startA - startB;
+      });
+  }, [lemmi, filteredLemmi]);
+
+  const totalPages = Math.ceil(quartCenturies.length / itemsPerPage);
+  const startIndex = currentPage * itemsPerPage;
+  const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
+
+  // Calcola statistiche
+  const totalOccorrenze = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
+  const totalLemmi = new Set(quartCenturies.flatMap(q => q.lemmas)).size;
+  const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
+
+  const [selectedQuart, setSelectedQuart] = useState<string | null>(null);
+  const [hoveredQuart, setHoveredQuart] = useState<string | null>(null);
+
+  const handleQuartClick = (quart: string) => {
+    if (selectedQuart === quart) {
+      setSelectedQuart(null);
+      clearHighlight();
+    } else {
+      setSelectedQuart(quart);
+      
+      const quartData = quartCenturies.find(q => q.quartCentury === quart);
+      if (quartData) {
+        const lemmiIds = filteredLemmi
+          .filter(l => {
+            const year = parseInt(l.Anno);
+            return quartData.years.includes(year);
+          })
+          .map(l => l.IdLemma);
+        
+        highlightMultiple({
+          lemmaIds: lemmiIds,
+          years: quartData.years,
+          source: 'timeline',
+          type: 'select'
+        });
+      }
+    }
+  };
+
+  const handleQuartHover = (quart: string | null) => {
+    if (!quart || selectedQuart) return;
+    
+    setHoveredQuart(quart);
+    const quartData = quartCenturies.find(q => q.quartCentury === quart);
+    if (quartData) {
+      highlightMultiple({
+        years: quartData.years,
+        source: 'timeline',
+        type: 'hover'
+      });
+    }
+  };
+
+  const handleScrub = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  if (quartCenturies.length === 0) {
+    return null;
+  }
+
+  return (
+    <motion.div 
+      className="bg-white rounded-lg p-4 shadow-sm border border-gray-200"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={motionConfig.spring.soft}
+    >
+      {/* Header con controlli */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-blue-600" />
+            Linea del tempo
+          </h2>
+          
+          {/* View mode toggle */}
+          <div className="flex gap-1 bg-gray-100 rounded-md p-0.5">
+            <motion.button
+              onClick={() => setViewMode('bar')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                viewMode === 'bar' 
+                  ? 'bg-white text-blue-600 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Barre
+            </motion.button>
+            <motion.button
+              onClick={() => setViewMode('heatmap')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                viewMode === 'heatmap' 
+                  ? 'bg-white text-blue-600 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Heatmap
+            </motion.button>
+          </div>
+        </div>
+
+        <div className="text-xs text-gray-500">
+          <span className="font-semibold text-blue-600">{totalLemmi}</span> lemmi •{' '}
+          <span className="font-semibold text-blue-600">{totalOccorrenze}</span> occorrenze
+        </div>
+      </div>
+
+      {/* Progress Bar (solo in modalità bar) */}
+      {viewMode === 'bar' && totalPages > 1 && (
+        <TimelineProgressBar 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onScrub={handleScrub}
+        />
+      )}
+
+      {/* Timeline Views */}
+      <AnimatePresence mode="wait">
+        {viewMode === 'bar' ? (
+          <motion.div
+            key="bar-view"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={motionConfig.spring.soft}
+            className="flex items-end gap-3"
+          >
+            {/* Freccia sinistra */}
+            <motion.button
+              onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+              disabled={currentPage === 0}
+              whileHover={currentPage > 0 ? { scale: 1.1, x: -2 } : {}}
+              whileTap={currentPage > 0 ? { scale: 0.9 } : {}}
+              className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-5 h-5 text-blue-600" />
+            </motion.button>
+
+            {/* Barre verticali */}
+            <LayoutGroup>
+              <div className="flex-1 flex items-end justify-around gap-1 h-28">
+                <AnimatePresence mode="popLayout">
+                  {visibleQuarts.map((quartItem) => {
+                    const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
+                    const isSelected = selectedQuart === quartItem.quartCentury;
+                    const isHovered = hoveredQuart === quartItem.quartCentury;
+                    const isHighlighted = quartItem.years.some(year => isYearHighlighted(year));
+                    const heightPx = Math.max((quartItem.attestazioni / maxAttestazioni) * 96, 12);
+
+                    return (
+                      <motion.div
+                        key={quartItem.quartCentury}
+                        layout
+                        layoutId={`timeline-${quartItem.quartCentury}`}
+                        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.8 }}
+                        transition={motionConfig.spring.soft}
+                        className="flex flex-col items-center flex-1 min-w-0"
+                      >
+                        {/* Barra verticale con gradiente */}
+                        <motion.button
+                          layout
+                          onClick={() => handleQuartClick(quartItem.quartCentury)}
+                          onMouseEnter={() => handleQuartHover(quartItem.quartCentury)}
+                          onMouseLeave={() => {
+                            setHoveredQuart(null);
+                            !selectedQuart && clearHighlight();
+                          }}
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ 
+                            height: `${heightPx}px`, 
+                            opacity: 1,
+                            backgroundColor: isSelected 
+                              ? '#2563eb'
+                              : isHighlighted || isHovered
+                                ? '#3b82f6'
+                                : '#60a5fa'
+                          }}
+                          whileHover={{ 
+                            scale: 1.08,
+                            y: -6,
+                            boxShadow: '0 8px 16px rgba(37, 99, 235, 0.4)'
+                          }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{
+                            height: { ...motionConfig.spring.soft, delay: 0.05 },
+                            scale: motionConfig.spring.fast,
+                            y: motionConfig.spring.fast,
+                            backgroundColor: { duration: 0.2 }
+                          }}
+                          className={`
+                            w-full rounded-t-md relative overflow-hidden
+                            ${isSelected ? 'shadow-lg ring-2 ring-blue-600' : 'shadow-sm'}
+                          `}
+                          title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
+                        >
+                          {/* Shine effect */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                            initial={{ x: '-100%' }}
+                            animate={isHovered || isSelected ? { x: '100%' } : { x: '-100%' }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                          />
+                          
+                          {/* Count badge */}
+                          {(isHovered || isSelected) && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.5 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="absolute top-1 right-1 bg-white/90 text-blue-600 text-[8px] font-bold px-1 rounded"
+                            >
+                              {quartItem.attestazioni}
+                            </motion.div>
+                          )}
+                        </motion.button>
+                        
+                        {/* Label con periodo */}
+                        <div className="mt-1.5 text-center">
+                          <motion.div 
+                            className={`text-[10px] font-semibold transition-colors ${
+                              isSelected || isHighlighted || isHovered ? 'text-blue-600' : 'text-gray-600'
+                            }`}
+                            animate={{ scale: isSelected ? 1.1 : 1 }}
+                          >
+                            {quartItem.quartCentury}
+                          </motion.div>
+                          <div className="text-[9px] text-gray-400">
+                            {startYear}-{endYear}
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </LayoutGroup>
+
+            {/* Freccia destra */}
+            <motion.button
+              onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+              disabled={currentPage >= totalPages - 1}
+              whileHover={currentPage < totalPages - 1 ? { scale: 1.1, x: 2 } : {}}
+              whileTap={currentPage < totalPages - 1 ? { scale: 0.9 } : {}}
+              className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="w-5 h-5 text-blue-600" />
+            </motion.button>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="heatmap-view"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={motionConfig.spring.soft}
+          >
+            <TimelineHeatmap 
+              quartCenturies={quartCenturies}
+              onCellClick={handleQuartClick}
+              selectedQuart={selectedQuart}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};

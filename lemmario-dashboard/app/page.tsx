@@ -8,7 +8,7 @@ import { MetricsSummary } from '@/components/MetricsSummary';
 import { CompactToolbar } from '@/components/CompactToolbar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AlphabeticalIndex } from '@/components/AlphabeticalIndex';
-import { Timeline } from '@/components/Timeline';
+import { TimelineEnhanced } from '@/components/TimelineEnhanced';
 import { LemmaDetail } from '@/components/LemmaDetail';
 import { FlowLine } from '@/components/DataFlowVisualizer';
 import dynamic from 'next/dynamic';
@@ -107,7 +107,7 @@ export default function Home() {
 
           {/* Linea del tempo unificata - Full Width */}
           <motion.div layout className="mt-2 w-full" ref={timelineRef}>
-            <Timeline />
+            <TimelineEnhanced />
           </motion.div>
         </LayoutGroup>
       </main>
