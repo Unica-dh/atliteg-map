@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
-import { Search, X, MapPin, Calendar } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 
 export const SearchBar: React.FC = () => {
   const { lemmi, setFilters } = useApp();
@@ -17,13 +17,26 @@ export const SearchBar: React.FC = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (query.length > 0) {
-        const filtered = lemmi.filter(
-          (lemma: Lemma) =>
-            lemma.Lemma.toLowerCase().includes(query.toLowerCase()) ||
-            lemma.Forma.toLowerCase().includes(query.toLowerCase())
-        );
-        setSuggestions(filtered.slice(0, 10));
-        setIsOpen(filtered.length > 0);
+        const uniqueResults = new Map<string, Lemma>();
+        const lowerQuery = query.toLowerCase();
+        
+        for (const lemma of lemmi) {
+          if (uniqueResults.size >= 10) break;
+          
+          const matches = 
+            lemma.Lemma.toLowerCase().includes(lowerQuery) ||
+            lemma.Forma.toLowerCase().includes(lowerQuery);
+            
+          if (matches) {
+            const key = `${lemma.Lemma}|${lemma.Forma}`;
+            if (!uniqueResults.has(key)) {
+              uniqueResults.set(key, lemma);
+            }
+          }
+        }
+        
+        setSuggestions(Array.from(uniqueResults.values()));
+        setIsOpen(uniqueResults.size > 0);
       } else {
         setSuggestions([]);
         setIsOpen(false);
@@ -159,19 +172,8 @@ export const SearchBar: React.FC = () => {
               <div className="font-semibold text-text-primary text-lg mb-1">
                 {highlightText(lemma.Lemma, query)}
               </div>
-              <div className="text-sm text-text-secondary mb-2">
+              <div className="text-sm text-text-secondary">
                 Forma: {highlightText(lemma.Forma, query)}
-              </div>
-              <div className="flex items-center gap-3 text-xs text-text-muted">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
-                  {lemma.CollGeografica}
-                </span>
-                <span>•</span>
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  {lemma.Anno || lemma.Periodo}
-                </span>
               </div>
             </div>
           ))}
