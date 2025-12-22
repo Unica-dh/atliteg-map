@@ -136,11 +136,11 @@ export const Timeline: React.FC = () => {
         </button>
 
         {/* Barre verticali */}
-        <div className="flex-1 flex items-end justify-around gap-1 h-32">
+        <div className="flex-1 flex items-end justify-around gap-1 h-24">
           {visibleQuarts.map((quartItem) => {
             const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
             const isSelected = selectedQuart === quartItem.quartCentury;
-            const heightPx = Math.max((quartItem.attestazioni / maxAttestazioni) * 120, 10);
+            const heightPx = Math.max((quartItem.attestazioni / maxAttestazioni) * 80, 10);
 
             return (
               <div
