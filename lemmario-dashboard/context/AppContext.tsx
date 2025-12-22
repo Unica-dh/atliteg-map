@@ -104,16 +104,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Calcolo metriche
   const metrics = useMemo((): Metrics => {
-    const localita = new Set(filteredLemmi.map(l => l.CollGeografica)).size;
     const lemmiUnici = new Set(filteredLemmi.map(l => l.IdLemma)).size;
+    const formeUniche = filteredLemmi.length; // Totale attestazioni come richiesto
+    const occorrenze = filteredLemmi.length; // Alias per chiarezza
     const anni = new Set(filteredLemmi.map(l => l.Anno)).size;
-    const attestazioni = filteredLemmi.length;
+    const localita = new Set(filteredLemmi.map(l => l.CollGeografica)).size;
 
     return {
-      totalLocalita: localita,
       totalLemmi: lemmiUnici,
+      totalForme: formeUniche,
+      totalOccorrenze: occorrenze,
       totalAnni: anni,
-      totalAttestazioni: attestazioni
+      totalLocalita: localita
     };
   }, [filteredLemmi]);
 

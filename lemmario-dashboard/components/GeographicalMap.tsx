@@ -13,13 +13,20 @@ if (typeof window !== 'undefined') {
   require('leaflet.markercluster');
 }
 
-// Fix per icone Leaflet in Next.js
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Icona marker minimale senza ombra (custom)
+const createMinimalIcon = () => {
+  return L.divIcon({
+    html: `<svg width="20" height="28" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 0C4.48 0 0 4.48 0 10c0 7 10 18 10 18s10-11 10-18c0-5.52-4.48-10-10-10z"
+            fill="#3b82f6" stroke="#2563eb" stroke-width="1.5"/>
+      <circle cx="10" cy="10" r="4" fill="white"/>
+    </svg>`,
+    className: 'minimal-marker-icon',
+    iconSize: [20, 28],
+    iconAnchor: [10, 28],
+    popupAnchor: [0, -28]
+  });
+};
 
 function MapUpdater({ markers }: { markers: any[] }) {
   const map = useMap();
@@ -79,15 +86,47 @@ function MarkerClusterGroup({ children, markers }: { children?: React.ReactNode;
 
     // Aggiungi marker al cluster
     markers.forEach(marker => {
-      const leafletMarker = L.marker([marker.lat, marker.lng]);
-      leafletMarker.bindPopup(`
-        <div class="p-2">
-          <h3 class="font-bold text-lg">${marker.lemma.Lemma}</h3>
-          <p class="text-sm"><strong>Forma:</strong> ${marker.lemma.Forma}</p>
-          <p class="text-sm"><strong>Località:</strong> ${marker.lemma.CollGeografica}</p>
-          <p class="text-sm"><strong>Anno:</strong> ${marker.lemma.Anno}</p>
-        </div>
-      `);
+      const leafletMarker = L.marker([marker.lat, marker.lng], {
+        icon: createMinimalIcon()
+      });
+
+      // Raggruppa per Lemma per una visualizzazione organizzata
+      const lemmaGroups = new Map<string, any[]>();
+      marker.lemmi.forEach((lemma: any) => {
+        const lemmaKey = lemma.Lemma;
+        if (!lemmaGroups.has(lemmaKey)) {
+          lemmaGroups.set(lemmaKey, []);
+        }
+        lemmaGroups.get(lemmaKey)!.push(lemma);
+      });
+
+      // Costruisci HTML del popup con tutte le forme
+      let popupContent = '<div class="p-2" style="max-height: 300px; overflow-y: auto;">';
+
+      lemmaGroups.forEach((lemmi, lemmaName) => {
+        popupContent += `<div class="mb-3"><h3 class="font-bold text-base">${lemmaName}</h3>`;
+
+        // Estrai categoria (comune a tutti)
+        const categoria = lemmi[0].Categoria || '';
+        if (categoria) {
+          popupContent += `<p class="text-xs text-gray-600 mb-1"><strong>Categoria:</strong> ${categoria}</p>`;
+        }
+
+        // Lista forme
+        popupContent += '<ul class="text-sm space-y-0.5 ml-2">';
+        lemmi.forEach((lemma: any) => {
+          popupContent += `<li><em>${lemma.Forma}</em> (${lemma.Anno || lemma.Periodo || 'n.d.'})`;
+          if (lemma.Frequenza && lemma.Frequenza !== '1') {
+            popupContent += ` - freq: ${lemma.Frequenza}`;
+          }
+          popupContent += '</li>';
+        });
+        popupContent += '</ul></div>';
+      });
+
+      popupContent += '</div>';
+
+      leafletMarker.bindPopup(popupContent, { maxWidth: 300 });
       markerClusterGroup.addLayer(leafletMarker);
     });
 
@@ -115,9 +154,10 @@ export function GeographicalMap() {
     return map;
   }, [geoAreas]);
 
-  // Prepara marker per località puntuali
+  // Prepara marker per località puntuali (raggruppati per coordinate)
   const markers = useMemo(() => {
-    const result: Array<{ lat: number; lng: number; lemma: any }> = [];
+    // Raggruppa per coordinate per gestire forme multiple nella stessa località
+    const coordMap = new Map<string, { lat: number; lng: number; lemmi: any[] }>();
 
     filteredLemmi.forEach(lemma => {
       // Solo località con coordinate valide
@@ -127,12 +167,17 @@ export function GeographicalMap() {
         const lng = parseFloat(lemma.Longitudine.replace(',', '.'));
 
         if (!isNaN(lat) && !isNaN(lng)) {
-          result.push({ lat, lng, lemma });
+          const key = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+
+          if (!coordMap.has(key)) {
+            coordMap.set(key, { lat, lng, lemmi: [] });
+          }
+          coordMap.get(key)!.lemmi.push(lemma);
         }
       }
     });
 
-    return result;
+    return Array.from(coordMap.values());
   }, [filteredLemmi]);
 
   // Prepara aree geografiche poligonali (OTTIMIZZATO con Map)
@@ -183,27 +228,61 @@ export function GeographicalMap() {
         {markers.length > 0 && <MarkerClusterGroup markers={markers} />}
 
         {/* Poligoni aree geografiche */}
-        {polygons.map((poly, idx) => (
-          <GeoJSON
-            key={`polygon-${idx}`}
-            data={poly.geoArea as any}
-            style={{
-              fillColor: '#3b82f6',
-              fillOpacity: 0.3,
-              color: '#2563eb',
-              weight: 2
-            }}
-            onEachFeature={(_, layer) => {
-              layer.bindPopup(`
-                <div class="p-2">
-                  <h3 class="font-bold text-lg">${poly.geoArea.properties.dialetto}</h3>
-                  <p class="text-sm"><strong>Attestazioni:</strong> ${poly.lemmi.length}</p>
-                  <p class="text-sm"><strong>Lemmi:</strong> ${[...new Set(poly.lemmi.map((l: any) => l.Lemma))].join(', ')}</p>
-                </div>
-              `);
-            }}
-          />
-        ))}
+        {polygons.map((poly, idx) => {
+          // Raggruppa per Lemma per visualizzazione organizzata
+          const lemmaGroups = new Map<string, any[]>();
+          poly.lemmi.forEach((lemma: any) => {
+            const lemmaKey = lemma.Lemma;
+            if (!lemmaGroups.has(lemmaKey)) {
+              lemmaGroups.set(lemmaKey, []);
+            }
+            lemmaGroups.get(lemmaKey)!.push(lemma);
+          });
+
+          // Costruisci popup con tutte le forme raggruppate
+          let popupContent = '<div class="p-2" style="max-height: 300px; overflow-y: auto;">';
+          popupContent += `<h3 class="font-bold text-base mb-2">${poly.geoArea.properties.dialetto}</h3>`;
+          popupContent += `<p class="text-xs text-gray-600 mb-2"><strong>Attestazioni:</strong> ${poly.lemmi.length}</p>`;
+
+          lemmaGroups.forEach((lemmi, lemmaName) => {
+            popupContent += `<div class="mb-2"><h4 class="font-semibold text-sm">${lemmaName}</h4>`;
+
+            // Categoria (comune)
+            const categoria = lemmi[0].Categoria || '';
+            if (categoria) {
+              popupContent += `<p class="text-xs text-gray-600"><strong>Categoria:</strong> ${categoria}</p>`;
+            }
+
+            // Forme
+            popupContent += '<ul class="text-xs ml-2 mt-1">';
+            lemmi.forEach((lemma: any) => {
+              popupContent += `<li><em>${lemma.Forma}</em> (${lemma.Anno || lemma.Periodo || 'n.d.'})`;
+              if (lemma.Frequenza && lemma.Frequenza !== '1') {
+                popupContent += ` - freq: ${lemma.Frequenza}`;
+              }
+              popupContent += '</li>';
+            });
+            popupContent += '</ul></div>';
+          });
+
+          popupContent += '</div>';
+
+          return (
+            <GeoJSON
+              key={`polygon-${idx}`}
+              data={poly.geoArea as any}
+              style={{
+                fillColor: '#3b82f6',
+                fillOpacity: 0.3,
+                color: '#2563eb',
+                weight: 2
+              }}
+              onEachFeature={(_, layer) => {
+                layer.bindPopup(popupContent, { maxWidth: 350 });
+              }}
+            />
+          );
+        })}
 
         {markers.length > 0 && <MapUpdater markers={markers} />}
       </MapContainer>

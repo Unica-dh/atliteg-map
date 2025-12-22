@@ -128,6 +128,16 @@ textarea {
   z-index: 1 !important;
 }
 
+/* Icona marker minimale - rimuove ombra */
+.minimal-marker-icon {
+  background: none !important;
+  border: none !important;
+}
+
+.leaflet-marker-icon.minimal-marker-icon + .leaflet-marker-shadow {
+  display: none !important;
+}
+
 .leaflet-pane,
 .leaflet-top,
 .leaflet-bottom {

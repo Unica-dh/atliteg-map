@@ -121,7 +121,8 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
                   setFilters({ categorie: [...filters.categorie, e.target.value] });
                 }
               }}
-              className="px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white"
+              className="relative z-50 px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white"
+              style={{ position: 'relative', zIndex: 9999 }}
             >
               <option value="">Categoria</option>
               {categorie.filter(c => !filters.categorie.includes(c)).map(cat => (
@@ -136,7 +137,8 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
                   setFilters({ periodi: [...filters.periodi, e.target.value] });
                 }
               }}
-              className="px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white"
+              className="relative z-50 px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white"
+              style={{ position: 'relative', zIndex: 9999 }}
             >
               <option value="">Periodo</option>
               {periodi.filter(p => !filters.periodi.includes(p)).map(per => (
