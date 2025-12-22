@@ -6,7 +6,7 @@
     "dev": "next dev",
     "prebuild": "node scripts/preprocess-data.js",
     "build": "next build",
-    "start": "next start",
+    "start": "npx serve@latest out -l 3000",
     "preprocess": "node scripts/preprocess-data.js"
   },
   "dependencies": {
