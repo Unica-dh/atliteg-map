@@ -24,7 +24,7 @@ const createMinimalIcon = (highlighted = false, selected = false) => {
       <path d="M10 0C4.48 0 0 4.48 0 10c0 7 10 18 10 18s10-11 10-18c0-5.52-4.48-10-10-10z"
             fill="${fillColor}" stroke="#1e40af" stroke-width="1.5"/>
       <circle cx="10" cy="10" r="4" fill="white"/>
-    </svg>${selected ? '<div class="marker-pulse-ring"></div>' : ''}`,
+    </svg>`,
     className,
     iconSize: [20, 28],
     iconAnchor: [10, 28],
