@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Funzione per convertire anno in quarto di secolo
 const getQuartCentury = (year: number): string => {
@@ -26,7 +26,7 @@ const getYearRangeFromQuartCentury = (quartCentury: string): [number, number] =>
 export const Timeline: React.FC = () => {
   const { lemmi, filteredLemmi, filters, setFilters } = useApp();
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 8; // Ridotto per mostrare quarti di secolo
+  const itemsPerPage = 12; // Mostra 12 quarti di secolo per volta
 
   // Raggruppa per quarti di secolo
   const quartCenturies = useMemo(() => {
@@ -82,6 +82,7 @@ export const Timeline: React.FC = () => {
   const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
 
   const totalAttestazioni = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
+  const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
 
   const [selectedQuart, setSelectedQuart] = useState<string | null>(null);
 
@@ -106,127 +107,83 @@ export const Timeline: React.FC = () => {
   };
 
   if (quartCenturies.length === 0) {
-    return (
-      <div className="card p-8">
-        <div className="text-center text-gray-500">
-          Nessun dato temporale disponibile
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-text-primary">Linea del tempo</h2>
-        <div className="text-sm text-text-secondary bg-background-muted px-3 py-1.5 rounded-md">
-          <span className="font-semibold text-primary">{quartCenturies.length}</span> quarti di secolo •{' '}
-          <span className="font-semibold text-primary">{totalAttestazioni}</span> anni con attestazioni
+    <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold text-gray-700">Linea del tempo</h2>
+        <div className="text-xs text-gray-500">
+          <span className="font-semibold text-blue-600">{quartCenturies.length}</span> quarti di secolo •{' '}
+          <span className="font-semibold text-blue-600">{totalAttestazioni}</span> anni con attestazioni
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        {/* Pulsanti navigazione */}
+      {/* Timeline con frecce */}
+      <div className="flex items-end gap-3">
+        {/* Freccia sinistra */}
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 0}
-          className="p-2 rounded-md bg-background-muted hover:bg-primary-light transition-normal disabled:opacity-30 disabled:cursor-not-allowed"
+          className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Periodo precedente"
         >
-          <ChevronLeft className="w-5 h-5 text-primary" />
+          <ChevronLeft className="w-5 h-5 text-blue-600" />
         </button>
 
-        {/* Timeline con scroll minimale */}
-        <div className="flex-1">
-          <div className="flex items-start gap-4 overflow-x-auto px-2">
-            {visibleQuarts.map((quartItem) => {
-              const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
-              const isSelected = selectedQuart === quartItem.quartCentury;
+        {/* Barre verticali */}
+        <div className="flex-1 flex items-end justify-around gap-1 h-32">
+          {visibleQuarts.map((quartItem) => {
+            const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
+            const isSelected = selectedQuart === quartItem.quartCentury;
+            const height = Math.max((quartItem.attestazioni / maxAttestazioni) * 100, 8);
 
-              return (
-                <div
-                  key={quartItem.quartCentury}
-                  className="flex flex-col items-center min-w-[120px]"
-                >
-                  <button
-                    onClick={() => handleQuartClick(quartItem.quartCentury)}
-                    className={`rounded-lg transition-all px-4 py-3 border-2 ${
-                      isSelected
-                        ? 'bg-primary text-white border-primary-hover scale-105 shadow-md'
-                        : 'bg-white border-accent hover:bg-primary-light hover:border-primary'
-                    }`}
-                  >
-                    <div className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-primary'}`}>
-                      {quartItem.quartCentury}
-                    </div>
-                    <div className={`text-xs mt-1 ${isSelected ? 'text-white opacity-90' : 'text-text-muted'}`}>
-                      {startYear}-{endYear}
-                    </div>
-                  </button>
-
-                  {/* Info quarto selezionato */}
+            return (
+              <div
+                key={quartItem.quartCentury}
+                className="flex flex-col items-center flex-1 min-w-0"
+              >
+                {/* Barra verticale */}
+                <button
+                  onClick={() => handleQuartClick(quartItem.quartCentury)}
+                  className={`w-full rounded-t transition-all ${
+                    isSelected
+                      ? 'bg-blue-600 shadow-md'
+                      : 'bg-blue-400 hover:bg-blue-500'
+                  }`}
+                  style={{ height: `${height}%` }}
+                  title={`${startYear}-${endYear}: ${quartItem.attestazioni} attestazioni`}
+                />
+                
+                {/* Label con periodo */}
+                <div className="mt-1 text-center">
+                  <div className={`text-[10px] font-semibold ${isSelected ? 'text-blue-600' : 'text-gray-600'}`}>
+                    {quartItem.quartCentury}
+                  </div>
+                  <div className="text-[9px] text-gray-400">
+                    {startYear}-{endYear}
+                  </div>
                   {isSelected && (
-                    <div className="text-[10px] text-text-muted mt-2 text-center max-w-[140px] space-y-1">
-                      <div className="font-medium text-primary">
-                        {quartItem.attestazioni} attestazioni
-                      </div>
-                      <div className="text-text-muted">
-                        {quartItem.years.length} anni • {quartItem.locations.length} località
-                      </div>
-                      <div className="truncate" title={quartItem.lemmas.join(', ')}>
-                        {quartItem.lemmas.slice(0, 3).join(', ')}
-                        {quartItem.lemmas.length > 3 && '...'}
-                      </div>
+                    <div className="text-[10px] font-medium text-blue-600 mt-0.5">
+                      {quartItem.attestazioni} att.
                     </div>
                   )}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
 
+        {/* Freccia destra */}
         <button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages - 1}
-          className="p-2 rounded-md bg-background-muted hover:bg-primary-light transition-normal disabled:opacity-30 disabled:cursor-not-allowed"
+          className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Periodo successivo"
         >
-          <ChevronRight className="w-5 h-5 text-primary" />
-        </button>
-      </div>
-
-      {/* Slider minimale per navigazione rapida */}
-      <div className="mt-6 flex items-center justify-center gap-2">
-        <button
-          onClick={() => setCurrentPage(0)}
-          disabled={currentPage === 0}
-          className="p-1 disabled:opacity-30"
-          aria-label="Prima pagina"
-        >
-          <ChevronsLeft className="w-4 h-4 text-primary" />
-        </button>
-
-        {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => {
-          const pageIndex = totalPages <= 10 ? i : Math.floor((i / 10) * totalPages);
-          return (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(pageIndex)}
-              className={`h-2 rounded-full transition-normal ${
-                currentPage === pageIndex ? 'bg-primary w-6' : 'bg-border-divider w-2 hover:bg-border'
-              }`}
-              aria-label={`Pagina ${pageIndex + 1}`}
-            />
-          );
-        })}
-
-        <button
-          onClick={() => setCurrentPage(totalPages - 1)}
-          disabled={currentPage >= totalPages - 1}
-          className="p-1 disabled:opacity-30"
-          aria-label="Ultima pagina"
-        >
-          <ChevronsRight className="w-4 h-4 text-primary" />
+          <ChevronRight className="w-5 h-5 text-blue-600" />
         </button>
       </div>
     </div>
