@@ -72,11 +72,12 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
       const years = [...new Set(
         lemmi
           .filter(l => l.Lemma.toLowerCase().startsWith(letter.toLowerCase()))
-          .map(l => l.Anno)
+          .map(l => parseInt(l.Anno))
+          .filter(y => !isNaN(y))
       )];
       
       highlightMultiple({
-        lemmaIds,
+        lemmaIds: lemmiIds,
         geoAreaIds: geoAreas,
         years,
         letters: [letter],
@@ -98,7 +99,7 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
       .map(l => l.IdLemma);
     
     highlightMultiple({
-      lemmaIds,
+      lemmaIds: lemmiIds,
       letters: [letter],
       source: 'index',
       type: 'hover'

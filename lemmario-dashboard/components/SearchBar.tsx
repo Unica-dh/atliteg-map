@@ -77,7 +77,7 @@ export const SearchBar: React.FC = () => {
     highlightMultiple({
       lemmaIds: [lemma.IdLemma],
       geoAreaIds: [lemma.CollGeografica],
-      years: [lemma.Anno],
+      years: [parseInt(lemma.Anno)],
       source: 'search',
       type: 'select'
     });
@@ -99,7 +99,7 @@ export const SearchBar: React.FC = () => {
     highlightMultiple({
       lemmaIds: [lemma.IdLemma],
       geoAreaIds: [lemma.CollGeografica],
-      years: [lemma.Anno],
+      years: [parseInt(lemma.Anno)],
       source: 'search',
       type: 'hover'
     });
