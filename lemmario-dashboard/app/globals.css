@@ -1,3 +1,6 @@
+/* Fase 5: Map Animations */
+@import '../styles/map-animations.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
