@@ -1,15 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
 import { Header } from '@/components/Header';
 import { MetricsSummary } from '@/components/MetricsSummary';
 import { CompactToolbar } from '@/components/CompactToolbar';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AlphabeticalIndex } from '@/components/AlphabeticalIndex';
-import { Timeline } from '@/components/Timeline';
+import { TimelineEnhanced } from '@/components/TimelineEnhanced';
 import { LemmaDetail } from '@/components/LemmaDetail';
+import { FlowLine } from '@/components/DataFlowVisualizer';
 import dynamic from 'next/dynamic';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
 // Importa la mappa dinamicamente per evitare problemi SSR
 const GeographicalMap = dynamic(
@@ -26,7 +29,34 @@ const GeographicalMap = dynamic(
 
 export default function Home() {
   const { isLoading, error } = useApp();
+  const { highlightState } = useHighlight();
   const [isIndiceOpen, setIsIndiceOpen] = React.useState(false);
+  
+  // Refs per elementi UI (per data flow visualization)
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+  
+  // Stato per attivare flow lines
+  const [showFlowToMap, setShowFlowToMap] = useState(false);
+  const [showFlowToTimeline, setShowFlowToTimeline] = useState(false);
+  
+  // Attiva flow lines quando highlight è attivo
+  useEffect(() => {
+    if (highlightState.highlightSource && highlightState.highlightType === 'select') {
+      setShowFlowToMap(true);
+      setShowFlowToTimeline(true);
+      
+      // Disattiva dopo animazione
+      const timeout = setTimeout(() => {
+        setShowFlowToMap(false);
+        setShowFlowToTimeline(false);
+      }, 1500);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [highlightState.highlightSource, highlightState.highlightType]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -53,46 +83,89 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <MetricsSummary />
-      <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
+      <div ref={toolbarRef}>
+        <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
+      </div>
 
       <main className="w-full px-lg py-2 flex-1">
-        {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 w-full">
-          {/* Mappa - 4 colonne (80%) */}
-          <div className="xl:col-span-4">
-            <div className="card p-0 overflow-hidden">
-              <GeographicalMap />
-            </div>
+        {/* Layout principale con LayoutGroup per animazioni responsive */}
+        <LayoutGroup>
+          {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 w-full">
+            {/* Mappa - 4 colonne (80%) */}
+            <motion.div layout className="xl:col-span-4" ref={mapRef}>
+              <div className="card p-0 overflow-hidden">
+                <GeographicalMap />
+              </div>
+            </motion.div>
+
+            {/* Dettaglio Forme - 1 colonna (20%) */}
+            <motion.div layout className="xl:col-span-1" ref={detailRef}>
+              <LemmaDetail />
+            </motion.div>
           </div>
 
-          {/* Dettaglio Forme - 1 colonna (20%) */}
-          <div className="xl:col-span-1">
-            <LemmaDetail />
-          </div>
-        </div>
-
-        {/* Linea del tempo unificata - Full Width */}
-        <div className="mt-2 w-full">
-          <Timeline />
-        </div>
+          {/* Linea del tempo unificata - Full Width */}
+          <motion.div layout className="mt-2 w-full" ref={timelineRef}>
+            <TimelineEnhanced />
+          </motion.div>
+        </LayoutGroup>
       </main>
+      
+      {/* Data Flow Visualizers - Fase 4 Cross-Component Effects */}
+      <FlowLine 
+        active={showFlowToMap}
+        fromElement={toolbarRef.current}
+        toElement={mapRef.current}
+        color="#3B82F6"
+        duration={800}
+      />
+      <FlowLine 
+        active={showFlowToTimeline}
+        fromElement={toolbarRef.current}
+        toElement={timelineRef.current}
+        color="#8B5CF6"
+        duration={900}
+      />
 
-      {/* Indice alfabetico - Modal/Drawer */}
-      {isIndiceOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsIndiceOpen(false)}>
-          <div className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
-            <AlphabeticalIndex onClose={() => setIsIndiceOpen(false)} />
-            <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
-              <button
-                onClick={() => setIsIndiceOpen(false)}
-                className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-fast text-sm font-medium"
+      {/* Indice alfabetico - Modal/Drawer con animazioni */}
+      <AnimatePresence mode="wait">
+        {isIndiceOpen && (
+          <>
+            {/* Backdrop con blur animato */}
+            <motion.div
+              initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+              animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
+              exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+              onClick={() => setIsIndiceOpen(false)}
+            >
+              {/* Modal content con scale + slide animation */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4"
+                onClick={(e) => e.stopPropagation()}
               >
-                Chiudi
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                <AlphabeticalIndex onClose={() => setIsIndiceOpen(false)} />
+                <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsIndiceOpen(false)}
+                    className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-fast text-sm font-medium"
+                  >
+                    Chiudi
+                  </motion.button>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <footer className="bg-white border-t border-border px-lg py-1.5">
         <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary">

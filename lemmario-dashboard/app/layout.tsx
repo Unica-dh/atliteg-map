@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
+import { HighlightProvider } from "@/context/HighlightContext";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,8 +27,11 @@ export default function RootLayout({
     <html lang="it">
       <body className={inter.className}>
         <GoogleAnalytics />
+        <AccessibilityProvider />
         <AppProvider>
-          {children}
+          <HighlightProvider>
+            {children}
+          </HighlightProvider>
         </AppProvider>
       </body>
     </html>

@@ -8,18 +8,41 @@ Dashboard web interattiva per la navigazione, analisi e visualizzazione dei dati
 - **Filtri Dinamici**: Filtro per categoria e periodo con aggiornamento real-time
 - **Indice Alfabetico**: Navigazione per lettera con visualizzazione occorrenze
 - **Metriche Real-time**: Statistiche sempre aggiornate su località, lemmi, anni e attestazioni
+- **Animazioni Fluide**: Sistema motion completo con Framer Motion per UX premium
 - **Responsive Design**: Ottimizzato per desktop e tablet
-- **Accessibilità**: Conforme WCAG 2.1 AA
+- **Accessibilità**: Conforme WCAG 2.1 AA con supporto `prefers-reduced-motion`
 
 ## 🛠️ Stack Tecnologico
 
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **Linguaggio**: TypeScript
 - **UI**: React 18.3, Tailwind CSS
+- **Animazioni**: Framer Motion 11+
 - **Mappa**: Leaflet, React-Leaflet
 - **Parsing**: PapaParse (CSV)
 - **Icone**: Lucide React
 - **Deployment**: Docker, Nginx
+
+## 🎨 Motion System
+
+Il progetto include un sistema motion completo e accessibile:
+
+- **Configurazione centralizzata** in `/lib/motion-config.ts`
+- **Hooks personalizzati** per accessibilità (`useReducedMotion`)
+- **Componenti wrapper** (`FadeIn`, `SlideIn`, `ScaleIn`, `StaggerContainer`)
+- **Supporto completo** per `prefers-reduced-motion`
+- **Documentazione** in `/docs/MOTION_SYSTEM.md`
+
+### Test Animazioni
+
+Visita `/motion-test` per vedere tutti gli effetti in azione:
+```bash
+# Locale
+http://localhost:3000/motion-test
+
+# Docker
+http://localhost:9000/motion-test
+```
 
 ## 📋 Requisiti
 
