@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
 import { Header } from '@/components/Header';
 import { MetricsSummary } from '@/components/MetricsSummary';
 import { CompactToolbar } from '@/components/CompactToolbar';
@@ -9,6 +10,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { AlphabeticalIndex } from '@/components/AlphabeticalIndex';
 import { Timeline } from '@/components/Timeline';
 import { LemmaDetail } from '@/components/LemmaDetail';
+import { FlowLine } from '@/components/DataFlowVisualizer';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 
@@ -27,7 +29,34 @@ const GeographicalMap = dynamic(
 
 export default function Home() {
   const { isLoading, error } = useApp();
+  const { highlightState } = useHighlight();
   const [isIndiceOpen, setIsIndiceOpen] = React.useState(false);
+  
+  // Refs per elementi UI (per data flow visualization)
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+  
+  // Stato per attivare flow lines
+  const [showFlowToMap, setShowFlowToMap] = useState(false);
+  const [showFlowToTimeline, setShowFlowToTimeline] = useState(false);
+  
+  // Attiva flow lines quando highlight è attivo
+  useEffect(() => {
+    if (highlightState.highlightSource && highlightState.highlightType === 'select') {
+      setShowFlowToMap(true);
+      setShowFlowToTimeline(true);
+      
+      // Disattiva dopo animazione
+      const timeout = setTimeout(() => {
+        setShowFlowToMap(false);
+        setShowFlowToTimeline(false);
+      }, 1500);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [highlightState.highlightSource, highlightState.highlightType]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -54,7 +83,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <MetricsSummary />
-      <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
+      <div ref={toolbarRef}>
+        <CompactToolbar onToggleIndice={() => setIsIndiceOpen(!isIndiceOpen)} />
+      </div>
 
       <main className="w-full px-lg py-2 flex-1">
         {/* Layout principale con LayoutGroup per animazioni responsive */}
@@ -62,24 +93,40 @@ export default function Home() {
           {/* Layout principale: Mappa 80% + Dettaglio Forme 20% - Full Width */}
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 w-full">
             {/* Mappa - 4 colonne (80%) */}
-            <motion.div layout className="xl:col-span-4">
+            <motion.div layout className="xl:col-span-4" ref={mapRef}>
               <div className="card p-0 overflow-hidden">
                 <GeographicalMap />
               </div>
             </motion.div>
 
             {/* Dettaglio Forme - 1 colonna (20%) */}
-            <motion.div layout className="xl:col-span-1">
+            <motion.div layout className="xl:col-span-1" ref={detailRef}>
               <LemmaDetail />
             </motion.div>
           </div>
 
           {/* Linea del tempo unificata - Full Width */}
-          <motion.div layout className="mt-2 w-full">
+          <motion.div layout className="mt-2 w-full" ref={timelineRef}>
             <Timeline />
           </motion.div>
         </LayoutGroup>
       </main>
+      
+      {/* Data Flow Visualizers - Fase 4 Cross-Component Effects */}
+      <FlowLine 
+        active={showFlowToMap}
+        fromElement={toolbarRef.current}
+        toElement={mapRef.current}
+        color="#3B82F6"
+        duration={800}
+      />
+      <FlowLine 
+        active={showFlowToTimeline}
+        fromElement={toolbarRef.current}
+        toElement={timelineRef.current}
+        color="#8B5CF6"
+        duration={900}
+      />
 
       {/* Indice alfabetico - Modal/Drawer con animazioni */}
       <AnimatePresence mode="wait">

@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StaggerContainer, StaggerItem } from '@/components/MotionWrapper';
@@ -13,6 +14,7 @@ interface AlphabeticalIndexProps {
 
 export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
   const { lemmi, filteredLemmi, filters, setFilters } = useApp();
+  const { highlightMultiple, clearHighlight, isLetterHighlighted, isLemmaHighlighted } = useHighlight();
 
   // Genera alfabeto completo
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -52,9 +54,55 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
   const handleLetterClick = (letter: string) => {
     if (filters.selectedLetter === letter) {
       setFilters({ selectedLetter: null });
+      clearHighlight();
     } else {
       setFilters({ selectedLetter: letter });
+      
+      // Evidenzia tutti i lemmi che iniziano con questa lettera
+      const lemmiIds = lemmi
+        .filter(l => l.Lemma.toLowerCase().startsWith(letter.toLowerCase()))
+        .map(l => l.IdLemma);
+      
+      const geoAreas = [...new Set(
+        lemmi
+          .filter(l => l.Lemma.toLowerCase().startsWith(letter.toLowerCase()))
+          .map(l => l.CollGeografica)
+      )];
+      
+      const years = [...new Set(
+        lemmi
+          .filter(l => l.Lemma.toLowerCase().startsWith(letter.toLowerCase()))
+          .map(l => l.Anno)
+      )];
+      
+      highlightMultiple({
+        lemmaIds,
+        geoAreaIds: geoAreas,
+        years,
+        letters: [letter],
+        source: 'index',
+        type: 'select'
+      });
     }
+  };
+
+  const handleLetterHover = (letter: string | null) => {
+    if (!letter) {
+      clearHighlight();
+      return;
+    }
+    
+    // Evidenzia temporaneamente al hover
+    const lemmiIds = lemmi
+      .filter(l => l.Lemma.toLowerCase().startsWith(letter.toLowerCase()))
+      .map(l => l.IdLemma);
+    
+    highlightMultiple({
+      lemmaIds,
+      letters: [letter],
+      source: 'index',
+      type: 'hover'
+    });
   };
 
   const handleLemmaClick = (lemma: string, idLemma: string) => {
@@ -102,19 +150,23 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
               <StaggerItem key={letter}>
                 <motion.button
                   onClick={() => hasLemmi && handleLetterClick(letter)}
+                  onMouseEnter={() => hasLemmi && !filters.selectedLetter && handleLetterHover(letter)}
+                  onMouseLeave={() => !filters.selectedLetter && clearHighlight()}
                   disabled={!hasLemmi}
                   whileHover={hasLemmi ? { scale: 1.15, y: -2 } : {}}
                   whileTap={hasLemmi ? { scale: 0.95 } : {}}
-                  animate={isSelected ? { scale: [1, 1.2, 1] } : {}}
+                  animate={isSelected || isLetterHighlighted(letter) ? { scale: [1, 1.2, 1] } : {}}
                   transition={motionConfig.spring.fast}
                   className={`
                     w-7 h-7 text-center font-medium text-xs rounded transition-fast
                     ${hasLemmi ? 'cursor-pointer' : 'cursor-not-allowed opacity-20'}
                     ${isSelected
                       ? 'bg-primary text-white shadow-md'
-                      : hasLemmi
-                        ? 'bg-background-muted text-primary hover:bg-primary-light'
-                        : 'bg-background-muted text-text-muted'
+                      : isLetterHighlighted(letter)
+                        ? 'bg-primary-light text-primary shadow-sm ring-2 ring-primary ring-opacity-30'
+                        : hasLemmi
+                          ? 'bg-background-muted text-primary hover:bg-primary-light'
+                          : 'bg-background-muted text-text-muted'
                     }
                   `}
                   aria-label={`Lettera ${letter}${hasLemmi ? '' : ' (nessun lemma)'}`}
@@ -142,10 +194,14 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
                 {displayedLemmi.map(([lemma, occorrenze]) => (
                   <StaggerItem key={lemma}>
                     <motion.button
+                      layoutId={`lemma-card-${occorrenze[0].IdLemma}`}
                       onClick={() => handleLemmaClick(lemma, occorrenze[0].IdLemma)}
                       whileHover={{ scale: 1.03, y: -2 }}
                       whileTap={{ scale: 0.98 }}
-                      className="bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer hover:shadow-md"
+                      className={`
+                        bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer hover:shadow-md
+                        ${isLemmaHighlighted(occorrenze[0].IdLemma) ? 'ring-2 ring-primary ring-opacity-50 bg-primary-light shadow-lg' : ''}
+                      `}
                     >
                       <h4 className="font-medium text-text-primary text-sm truncate">{lemma}</h4>
                       <p className="text-xs text-text-muted">

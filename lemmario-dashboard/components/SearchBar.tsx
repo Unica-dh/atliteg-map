@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
+import { useHighlight } from '@/context/HighlightContext';
 import { Lemma } from '@/types/lemma';
 import { Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +11,7 @@ import { motionConfig } from '@/lib/motion-config';
 
 export const SearchBar: React.FC = () => {
   const { lemmi, setFilters } = useApp();
+  const { highlightMultiple, clearHighlight, isLemmaHighlighted } = useHighlight();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Lemma[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -70,6 +72,15 @@ export const SearchBar: React.FC = () => {
     setQuery(lemma.Lemma);
     setIsOpen(false);
     setHighlightedIndex(-1);
+    
+    // Evidenzia lemma selezionato e correlati
+    highlightMultiple({
+      lemmaIds: [lemma.IdLemma],
+      geoAreaIds: [lemma.CollGeografica],
+      years: [lemma.Anno],
+      source: 'search',
+      type: 'select'
+    });
   };
 
   const handleClear = () => {
@@ -77,7 +88,21 @@ export const SearchBar: React.FC = () => {
     setFilters({ searchQuery: '', selectedLemmaId: null });
     setSuggestions([]);
     setIsOpen(false);
+    clearHighlight();
     inputRef.current?.focus();
+  };
+
+  const handleSuggestionHover = (lemma: Lemma, index: number) => {
+    setHighlightedIndex(index);
+    
+    // Evidenzia temporaneamente al hover
+    highlightMultiple({
+      lemmaIds: [lemma.IdLemma],
+      geoAreaIds: [lemma.CollGeografica],
+      years: [lemma.Anno],
+      source: 'search',
+      type: 'hover'
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -181,10 +206,12 @@ export const SearchBar: React.FC = () => {
               {suggestions.map((lemma, index) => (
                 <StaggerItem key={`${lemma.IdLemma}-${index}`}>
                   <motion.div
+                    layoutId={`lemma-card-${lemma.IdLemma}`}
                     onClick={() => handleSelect(lemma)}
-                    onMouseEnter={() => setHighlightedIndex(index)}
+                    onMouseEnter={() => handleSuggestionHover(lemma, index)}
+                    onMouseLeave={() => clearHighlight()}
                     className={`px-5 py-4 cursor-pointer border-b border-border last:border-b-0 transition-normal ${
-                      highlightedIndex === index
+                      highlightedIndex === index || isLemmaHighlighted(lemma.IdLemma)
                         ? 'bg-primary-light border-l-4 border-l-primary'
                         : 'hover:bg-background-muted'
                     }`}
