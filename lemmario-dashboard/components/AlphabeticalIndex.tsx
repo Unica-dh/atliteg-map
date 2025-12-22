@@ -3,6 +3,9 @@
 import { useMemo } from 'react';
 import { useApp } from '@/context/AppContext';
 import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { StaggerContainer, StaggerItem } from '@/components/MotionWrapper';
+import { motionConfig } from '@/lib/motion-config';
 
 interface AlphabeticalIndexProps {
   onClose?: () => void;
@@ -73,68 +76,92 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
             </span>
           )}
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-background-muted rounded transition-fast text-text-muted hover:text-text-primary"
-            aria-label="Chiudi indice"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
+        <AnimatePresence>
+          {onClose && (
+            <motion.button
+              onClick={onClose}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-1 hover:bg-background-muted rounded transition-fast text-text-muted hover:text-text-primary"
+              aria-label="Chiudi indice"
+            >
+              <X className="w-5 h-5" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Alfabeto inline - single row */}
-      <div className="flex flex-wrap gap-1 mb-4">
-        {alphabet.map(letter => {
-          const hasLemmi = lettersWithLemmi.has(letter);
-          const isSelected = filters.selectedLetter === letter;
+      <StaggerContainer staggerDelay={0.02}>
+        <div className="flex flex-wrap gap-1 mb-4">
+          {alphabet.map((letter, index) => {
+            const hasLemmi = lettersWithLemmi.has(letter);
+            const isSelected = filters.selectedLetter === letter;
 
-          return (
-            <button
-              key={letter}
-              onClick={() => hasLemmi && handleLetterClick(letter)}
-              disabled={!hasLemmi}
-              className={`
-                w-7 h-7 text-center font-medium text-xs rounded transition-fast
-                ${hasLemmi ? 'cursor-pointer' : 'cursor-not-allowed opacity-20'}
-                ${isSelected
-                  ? 'bg-primary text-white'
-                  : hasLemmi
-                    ? 'bg-background-muted text-primary hover:bg-primary-light'
-                    : 'bg-background-muted text-text-muted'
-                }
-              `}
-              aria-label={`Lettera ${letter}${hasLemmi ? '' : ' (nessun lemma)'}`}
-            >
-              {letter}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <StaggerItem key={letter}>
+                <motion.button
+                  onClick={() => hasLemmi && handleLetterClick(letter)}
+                  disabled={!hasLemmi}
+                  whileHover={hasLemmi ? { scale: 1.15, y: -2 } : {}}
+                  whileTap={hasLemmi ? { scale: 0.95 } : {}}
+                  animate={isSelected ? { scale: [1, 1.2, 1] } : {}}
+                  transition={motionConfig.spring.fast}
+                  className={`
+                    w-7 h-7 text-center font-medium text-xs rounded transition-fast
+                    ${hasLemmi ? 'cursor-pointer' : 'cursor-not-allowed opacity-20'}
+                    ${isSelected
+                      ? 'bg-primary text-white shadow-md'
+                      : hasLemmi
+                        ? 'bg-background-muted text-primary hover:bg-primary-light'
+                        : 'bg-background-muted text-text-muted'
+                    }
+                  `}
+                  aria-label={`Lettera ${letter}${hasLemmi ? '' : ' (nessun lemma)'}`}
+                >
+                  {letter}
+                </motion.button>
+              </StaggerItem>
+            );
+          })}
+        </div>
+      </StaggerContainer>
 
       {/* Elenco lemmi compatto - grid layout */}
-      {filters.selectedLetter && displayedLemmi.length > 0 && (
-        <div className="border-t border-border pt-3">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
-            {displayedLemmi.map(([lemma, occorrenze]) => (
-              <button
-                key={lemma}
-                onClick={() => handleLemmaClick(lemma, occorrenze[0].IdLemma)}
-                className="bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer"
-              >
-                <h4 className="font-medium text-text-primary text-sm truncate">{lemma}</h4>
-                <p className="text-xs text-text-muted">
-                  {occorrenze.length} {occorrenze.length === 1 ? 'occ.' : 'occ.'}
-                </p>
-                <div className="text-[10px] text-text-muted truncate">
-                  {[...new Set(occorrenze.map(o => o.CollGeografica))].slice(0, 2).join(', ')}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {filters.selectedLetter && displayedLemmi.length > 0 && (
+          <motion.div 
+            className="border-t border-border pt-3"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={motionConfig.transitions.medium}
+          >
+            <StaggerContainer staggerDelay={0.03}>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                {displayedLemmi.map(([lemma, occorrenze]) => (
+                  <StaggerItem key={lemma}>
+                    <motion.button
+                      onClick={() => handleLemmaClick(lemma, occorrenze[0].IdLemma)}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer hover:shadow-md"
+                    >
+                      <h4 className="font-medium text-text-primary text-sm truncate">{lemma}</h4>
+                      <p className="text-xs text-text-muted">
+                        {occorrenze.length} {occorrenze.length === 1 ? 'occ.' : 'occ.'}
+                      </p>
+                      <div className="text-[10px] text-text-muted truncate">
+                        {[...new Set(occorrenze.map(o => o.CollGeografica))].slice(0, 2).join(', ')}
+                      </div>
+                    </motion.button>
+                  </StaggerItem>
+                ))}
+              </div>
+            </StaggerContainer>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

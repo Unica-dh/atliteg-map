@@ -368,9 +368,169 @@ textarea {
   border-radius: 4px;
 }
 
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
     background: #f0f0f0;
+  }
+  .skeleton-shimmer::after {
+    animation: none;
+  }
+}
+
+/* ========================================
+   FOCUS INDICATORS & KEYBOARD NAVIGATION
+   ======================================== */
+
+/* Skip links per accessibilità */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #0B5FA5;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  z-index: 10000;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #FDB022;
+  outline-offset: 2px;
+}
+
+/* Focus visibile per tutti gli elementi interattivi */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 3px solid #3B82F6;
+  outline-offset: 2px;
+  border-radius: 4px;
+  animation: focusPulse 0.3s ease-out;
+}
+
+/* Focus ring animato */
+@keyframes focusPulse {
+  0% {
+    outline-width: 0px;
+    outline-offset: 0px;
+  }
+  50% {
+    outline-width: 5px;
+    outline-offset: 4px;
+  }
+  100% {
+    outline-width: 3px;
+    outline-offset: 2px;
+  }
+}
+
+/* Focus per link e bottoni */
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #3B82F6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Focus per input e select */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #3B82F6;
+  outline-offset: 0px;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Focus per checkbox e radio */
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+  outline: 3px solid #3B82F6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Focus per card interattive */
+.card:focus-visible {
+  outline: 3px solid #3B82F6;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Indicatore di navigazione da tastiera */
+body.user-is-tabbing *:focus {
+  outline: 3px solid #3B82F6 !important;
+  outline-offset: 2px !important;
+}
+
+/* Disabilita focus outline quando si usa il mouse */
+body:not(.user-is-tabbing) *:focus {
+  outline: none;
+}
+
+/* Ripple effect per click */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ripple:active::after {
+  width: 200px;
+  height: 200px;
+  animation: ripple 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes focusPulse {
+    0%, 100% {
+      outline-width: 3px;
+      outline-offset: 2px;
+    }
+  }
+  
+  .ripple:active::after {
+    animation: none;
   }
 }

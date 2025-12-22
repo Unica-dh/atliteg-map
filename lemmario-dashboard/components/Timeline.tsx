@@ -4,6 +4,8 @@ import React, { useMemo, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Lemma } from '@/types/lemma';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { motionConfig } from '@/lib/motion-config';
 
 // Funzione per convertire anno in quarto di secolo
 const getQuartCentury = (year: number): string => {
@@ -126,14 +128,16 @@ export const Timeline: React.FC = () => {
       {/* Timeline con frecce */}
       <div className="flex items-end gap-3">
         {/* Freccia sinistra */}
-        <button
+        <motion.button
           onClick={handlePrevPage}
           disabled={currentPage === 0}
+          whileHover={currentPage > 0 ? { scale: 1.1, x: -2 } : {}}
+          whileTap={currentPage > 0 ? { scale: 0.9 } : {}}
           className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Periodo precedente"
         >
           <ChevronLeft className="w-5 h-5 text-blue-600" />
-        </button>
+        </motion.button>
 
         {/* Barre verticali */}
         <div className="flex-1 flex items-end justify-around gap-1 h-24">
@@ -148,14 +152,26 @@ export const Timeline: React.FC = () => {
                 className="flex flex-col items-center flex-1 min-w-0"
               >
                 {/* Barra verticale */}
-                <button
+                <motion.button
                   onClick={() => handleQuartClick(quartItem.quartCentury)}
-                  className={`w-full rounded-t transition-all ${
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: `${heightPx}px`, opacity: 1 }}
+                  whileHover={{ 
+                    scale: 1.1, 
+                    y: -4,
+                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{
+                    height: { ...motionConfig.spring.soft, delay: 0.1 },
+                    scale: motionConfig.spring.fast,
+                    y: motionConfig.spring.fast
+                  }}
+                  className={`w-full rounded-t transition-colors ${
                     isSelected
                       ? 'bg-blue-600 shadow-md'
                       : 'bg-blue-400 hover:bg-blue-500'
                   }`}
-                  style={{ height: `${heightPx}px` }}
                   title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
                 />
                 
@@ -179,14 +195,16 @@ export const Timeline: React.FC = () => {
         </div>
 
         {/* Freccia destra */}
-        <button
+        <motion.button
           onClick={handleNextPage}
           disabled={currentPage >= totalPages - 1}
+          whileHover={currentPage < totalPages - 1 ? { scale: 1.1, x: 2 } : {}}
+          whileTap={currentPage < totalPages - 1 ? { scale: 0.9 } : {}}
           className="flex-shrink-0 p-2 rounded-md bg-gray-100 hover:bg-blue-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Periodo successivo"
         >
           <ChevronRight className="w-5 h-5 text-blue-600" />
-        </button>
+        </motion.button>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Lemma } from '@/types/lemma';
 import { getUniqueCategorie, getUniquePeriodi } from '@/services/dataLoader';
 import { useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { motionConfig } from '@/lib/motion-config';
 
 interface CompactToolbarProps {
   onToggleIndice?: () => void;
@@ -71,14 +73,21 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
                 placeholder="Cerca lemma o forma..."
                 className="w-full pl-9 pr-9 py-1.5 text-sm bg-background-muted border border-border rounded-md focus:outline-none focus:border-accent"
               />
-              {searchQuery && (
-                <button
-                  onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-accent"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+              <AnimatePresence>
+                {searchQuery && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={handleClearSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-muted hover:text-accent transition-fast"
+                  >
+                    <X className="w-4 h-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Search Suggestions - Compatte */}
