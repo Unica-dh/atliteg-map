@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
-import { FunnelIcon } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface MapBoundedPopupProps {
@@ -16,51 +15,10 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
   // Stati
   const [expandedLemmi, setExpandedLemmi] = useState<Set<string>>(new Set());
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [filterCategoria, setFilterCategoria] = useState<string>('');
-  const [filterPeriodo, setFilterPeriodo] = useState<string>('');
-
-  // Estrai categorie e periodi unici
-  const { categorie, periodi } = useMemo(() => {
-    const cats = new Set<string>();
-    const pers = new Set<string>();
-    
-    lemmaGroups.forEach(lemmi => {
-      lemmi.forEach(l => {
-        if (l.Categoria) cats.add(l.Categoria);
-        if (l.Periodo) pers.add(l.Periodo);
-      });
-    });
-    
-    return {
-      categorie: Array.from(cats).sort(),
-      periodi: Array.from(pers).sort()
-    };
-  }, [lemmaGroups]);
-
-  // Filtra lemmi
-  const filteredLemmaGroups = useMemo(() => {
-    if (!filterCategoria && !filterPeriodo) return lemmaGroups;
-    
-    const filtered = new Map<string, any[]>();
-    
-    lemmaGroups.forEach((lemmi, lemmaName) => {
-      const filteredLemmi = lemmi.filter(l => {
-        const matchCategoria = !filterCategoria || l.Categoria === filterCategoria;
-        const matchPeriodo = !filterPeriodo || l.Periodo === filterPeriodo;
-        return matchCategoria && matchPeriodo;
-      });
-      
-      if (filteredLemmi.length > 0) {
-        filtered.set(lemmaName, filteredLemmi);
-      }
-    });
-    
-    return filtered;
-  }, [lemmaGroups, filterCategoria, filterPeriodo]);
 
   // Dividi lemmi in 3 colonne (responsive)
   const columns = useMemo(() => {
-    const lemmiArray = Array.from(filteredLemmaGroups.entries());
+    const lemmiArray = Array.from(lemmaGroups.entries());
     const numCols = 3;
     const cols: Array<Array<[string, any[]]>> = [[], [], []];
     
@@ -69,7 +27,7 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
     });
     
     return cols;
-  }, [filteredLemmaGroups]);
+  }, [lemmaGroups]);
 
   const toggleLemma = (lemmaName: string) => {
     setExpandedLemmi(prev => {
@@ -77,11 +35,6 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
       next.has(lemmaName) ? next.delete(lemmaName) : next.add(lemmaName);
       return next;
     });
-  };
-
-  const resetFilters = () => {
-    setFilterCategoria('');
-    setFilterPeriodo('');
   };
 
   // Rendering accordion item
@@ -137,8 +90,6 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
     );
   };
 
-  const activeFiltersCount = [filterCategoria, filterPeriodo].filter(Boolean).length;
-
   return (
     <>
       {/* Overlay quando in fullscreen */}
@@ -162,12 +113,7 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-sm truncate">{locationName}</h3>
             <p className="text-xs text-gray-600">
-              {filteredLemmaGroups.size} {filteredLemmaGroups.size === 1 ? 'lemma' : 'lemmi'}
-              {activeFiltersCount > 0 && (
-                <span className="ml-1 text-blue-600">
-                  (filtrati)
-                </span>
-              )}
+              {lemmaGroups.size} {lemmaGroups.size === 1 ? 'lemma' : 'lemmi'}
             </p>
           </div>
           
@@ -191,77 +137,19 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
           </div>
         </div>
 
-        {/* FILTRI */}
-        <div className="p-3 border-b bg-white sticky top-[57px] z-10">
-          <div className="flex items-center gap-2 mb-2">
-            <FunnelIcon className="w-4 h-4 text-gray-500" />
-            <span className="text-xs font-semibold text-gray-700">Filtri</span>
-            {activeFiltersCount > 0 && (
-              <button
-                onClick={resetFilters}
-                className="ml-auto text-xs text-blue-600 hover:underline"
-                aria-label="Reset filtri"
-              >
-                Reset
-              </button>
-            )}
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2">
-            <select
-              value={filterCategoria}
-              onChange={e => setFilterCategoria(e.target.value)}
-              className="px-2 py-1.5 text-xs border rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              aria-label="Filtra per categoria"
-            >
-              <option value="">Tutte le categorie</option>
-              {categorie.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-            
-            <select
-              value={filterPeriodo}
-              onChange={e => setFilterPeriodo(e.target.value)}
-              className="px-2 py-1.5 text-xs border rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              aria-label="Filtra per periodo"
-            >
-              <option value="">Tutti i periodi</option>
-              {periodi.map(per => (
-                <option key={per} value={per}>{per}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
         {/* CONTENT - 3 COLONNE RESPONSIVE */}
         <div 
           className={`overflow-y-auto ${
-            isFullscreen ? 'flex-1 p-3' : 'max-h-[320px] p-3 pt-2'
+            isFullscreen ? 'flex-1 p-3' : 'max-h-[400px] p-3'
           }`}
         >
-          {filteredLemmaGroups.size === 0 ? (
-            <div className="text-center py-8 text-gray-500 text-sm">
-              <FunnelIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>Nessun lemma corrisponde ai filtri selezionati</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {columns.map((col, colIdx) => (
-                <div key={colIdx} className="space-y-2">
-                  {col.map(renderAccordionItem)}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* FOOTER */}
-        <div className="p-2 border-t bg-gray-50 text-center rounded-b-lg">
-          <p className="text-[10px] text-gray-500">
-            {expandedLemmi.size > 0 && `${expandedLemmi.size} espanso • `}
-            Click sui lemmi per espandere i dettagli
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {columns.map((col, colIdx) => (
+              <div key={colIdx} className="space-y-2">
+                {col.map(renderAccordionItem)}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>
