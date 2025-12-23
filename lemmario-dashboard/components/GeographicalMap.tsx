@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import { useApp } from '@/context/AppContext';
 import { useHighlight } from '@/context/HighlightContext';
+import { MapBoundedPopup } from './MapBoundedPopup';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -156,33 +158,42 @@ function MarkerClusterGroup({
         lemmaGroups.get(lemmaKey)!.push(lemma);
       });
 
-      // Costruisci HTML del popup con tutte le forme
-      let popupContent = '<div class="p-2" style="max-height: 300px; overflow-y: auto;">';
+      // Determina nome località per il popup
+      const locationName = marker.lemmi[0]?.CollGeografica || 'Località';
 
-      lemmaGroups.forEach((lemmi, lemmaName) => {
-        popupContent += `<div class="mb-3"><h3 class="font-bold text-base">${lemmaName}</h3>`;
+      // Crea un container per il popup React
+      const popupContainer = document.createElement('div');
+      popupContainer.className = 'map-popup-container';
 
-        // Estrai categoria (comune a tutti)
-        const categoria = lemmi[0].Categoria || '';
-        if (categoria) {
-          popupContent += `<p class="text-xs text-gray-600 mb-1"><strong>Categoria:</strong> ${categoria}</p>`;
-        }
-
-        // Lista forme
-        popupContent += '<ul class="text-sm space-y-0.5 ml-2">';
-        lemmi.forEach((lemma: any) => {
-          popupContent += `<li><em>${lemma.Forma}</em> (${lemma.Anno || lemma.Periodo || 'n.d.'})`;
-          if (lemma.Frequenza && lemma.Frequenza !== '1') {
-            popupContent += ` - freq: ${lemma.Frequenza}`;
-          }
-          popupContent += '</li>';
-        });
-        popupContent += '</ul></div>';
+      // Configura popup con dimensioni ottimizzate
+      const popup = L.popup({
+        maxWidth: 450,
+        minWidth: 420,
+        className: 'map-bounded-popup',
+        closeButton: false, // Usiamo il bottone custom del componente
       });
 
-      popupContent += '</div>';
+      // Bind popup al marker
+      leafletMarker.bindPopup(popup);
 
-      leafletMarker.bindPopup(popupContent, { maxWidth: 300 });
+      // Render componente React quando popup si apre
+      leafletMarker.on('popupopen', () => {
+        const root = createRoot(popupContainer);
+        root.render(
+          <MapBoundedPopup
+            lemmaGroups={lemmaGroups}
+            locationName={locationName}
+            onClose={() => leafletMarker.closePopup()}
+          />
+        );
+        popup.setContent(popupContainer);
+      });
+
+      // Cleanup quando popup si chiude
+      leafletMarker.on('popupclose', () => {
+        // Unmount React component
+        popupContainer.innerHTML = '';
+      });
       
       // Store marker reference con key unico
       const markerKey = `${marker.lat}-${marker.lng}`;
@@ -350,33 +361,7 @@ export function GeographicalMap() {
             lemmaGroups.get(lemmaKey)!.push(lemma);
           });
 
-          // Costruisci popup con tutte le forme raggruppate
-          let popupContent = '<div class="p-2" style="max-height: 300px; overflow-y: auto;">';
-          popupContent += `<h3 class="font-bold text-base mb-2">${poly.geoArea.properties.dialetto}</h3>`;
-          popupContent += `<p class="text-xs text-gray-600 mb-2"><strong>Attestazioni:</strong> ${poly.lemmi.length}</p>`;
-
-          lemmaGroups.forEach((lemmi, lemmaName) => {
-            popupContent += `<div class="mb-2"><h4 class="font-semibold text-sm">${lemmaName}</h4>`;
-
-            // Categoria (comune)
-            const categoria = lemmi[0].Categoria || '';
-            if (categoria) {
-              popupContent += `<p class="text-xs text-gray-600"><strong>Categoria:</strong> ${categoria}</p>`;
-            }
-
-            // Forme
-            popupContent += '<ul class="text-xs ml-2 mt-1">';
-            lemmi.forEach((lemma: any) => {
-              popupContent += `<li><em>${lemma.Forma}</em> (${lemma.Anno || lemma.Periodo || 'n.d.'})`;
-              if (lemma.Frequenza && lemma.Frequenza !== '1') {
-                popupContent += ` - freq: ${lemma.Frequenza}`;
-              }
-              popupContent += '</li>';
-            });
-            popupContent += '</ul></div>';
-          });
-
-          popupContent += '</div>';
+          const locationName = poly.geoArea.properties.dialetto || 'Area Geografica';
 
           return (
             <GeoJSON
@@ -390,7 +375,36 @@ export function GeographicalMap() {
                 className: isHighlighted ? 'highlighted' : ''
               }}
               onEachFeature={(_, layer) => {
-                layer.bindPopup(popupContent, { maxWidth: 350 });
+                // Crea container per popup React
+                const popupContainer = document.createElement('div');
+                popupContainer.className = 'map-popup-container';
+
+                const popup = L.popup({
+                  maxWidth: 450,
+                  minWidth: 420,
+                  className: 'map-bounded-popup',
+                  closeButton: false,
+                });
+
+                layer.bindPopup(popup);
+
+                // Render React component on popup open
+                layer.on('popupopen', () => {
+                  const root = createRoot(popupContainer);
+                  root.render(
+                    <MapBoundedPopup
+                      lemmaGroups={lemmaGroups}
+                      locationName={locationName}
+                      onClose={() => layer.closePopup()}
+                    />
+                  );
+                  popup.setContent(popupContainer);
+                });
+
+                // Cleanup on popup close
+                layer.on('popupclose', () => {
+                  popupContainer.innerHTML = '';
+                });
               }}
             />
           );
