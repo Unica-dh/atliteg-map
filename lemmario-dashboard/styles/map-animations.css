@@ -108,11 +108,12 @@
   /* Removed polygon-pulse animation per user request */
 }
 
-/* Popup Animations */
+/* Popup Animations - DISABLED per evitare sfarfallio */
 .leaflet-popup {
-  animation: popup-appear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* animation: popup-appear 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
+/* Animazione disabilitata - popup appare direttamente nella posizione corretta
 @keyframes popup-appear {
   0% {
     opacity: 0;
@@ -123,6 +124,7 @@
     transform: translateY(0) scale(1);
   }
 }
+*/
 
 .leaflet-popup-content-wrapper {
   border-radius: 8px;
