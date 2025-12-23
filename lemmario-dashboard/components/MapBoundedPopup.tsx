@@ -109,7 +109,7 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
         }`}
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between p-3 border-b bg-gray-50 sticky top-0 z-10 rounded-t-lg">
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-t-lg">
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-sm truncate">{locationName}</h3>
             <p className="text-xs text-gray-600">
@@ -140,7 +140,7 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
         {/* CONTENT - 3 COLONNE RESPONSIVE */}
         <div 
           className={`overflow-y-auto ${
-            isFullscreen ? 'flex-1 p-3' : 'max-h-[400px] p-3'
+            isFullscreen ? 'flex-1 p-4' : 'h-[500px] p-4'
           }`}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
