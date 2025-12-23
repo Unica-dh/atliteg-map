@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 interface MapBoundedPopupProps {
@@ -14,7 +13,6 @@ interface MapBoundedPopupProps {
 export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBoundedPopupProps) {
   // Stati
   const [expandedLemmi, setExpandedLemmi] = useState<Set<string>>(new Set());
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Dividi lemmi in 3 colonne (responsive)
   const columns = useMemo(() => {
@@ -91,67 +89,36 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
   };
 
   return (
-    <>
-      {/* Overlay quando in fullscreen */}
-      {isFullscreen && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-40 animate-fadeIn"
-          onClick={() => setIsFullscreen(false)}
-        />
-      )}
-
-      {/* Popup Container */}
-      <div 
-        className={`bg-white rounded-lg shadow-xl transition-all duration-300 ${
-          isFullscreen 
-            ? 'fixed top-16 left-4 right-4 bottom-4 z-50 flex flex-col' 
-            : 'w-[840px] max-w-full'
-        }`}
-      >
-        {/* HEADER */}
-        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-t-lg">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-sm truncate">{locationName}</h3>
-            <p className="text-xs text-gray-600">
-              {lemmaGroups.size} {lemmaGroups.size === 1 ? 'lemma' : 'lemmi'}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2 ml-3">
-            <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="p-1.5 hover:bg-gray-200 rounded transition-colors"
-              title={isFullscreen ? "Riduci" : "Espandi"}
-              aria-label={isFullscreen ? "Riduci popup" : "Espandi popup a schermo intero"}
-            >
-              <ArrowsPointingOutIcon className="w-4 h-4 text-gray-600" />
-            </button>
-            <button
-              onClick={onClose}
-              className="p-1.5 hover:bg-gray-200 rounded transition-colors"
-              title="Chiudi"
-              aria-label="Chiudi popup"
-            >
-              <XMarkIcon className="w-4 h-4 text-gray-600" />
-            </button>
-          </div>
+    <div className="bg-white rounded-lg shadow-xl w-[840px] max-w-full">
+      {/* HEADER */}
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 rounded-t-lg border-b">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-base">{locationName}</h3>
+          <p className="text-xs text-gray-600">
+            {lemmaGroups.size} {lemmaGroups.size === 1 ? 'lemma' : 'lemmi'}
+          </p>
         </div>
 
-        {/* CONTENT - 3 COLONNE RESPONSIVE */}
-        <div 
-          className={`overflow-y-auto ${
-            isFullscreen ? 'flex-1 p-4' : 'h-[500px] p-4'
-          }`}
+        <button
+          onClick={onClose}
+          className="p-1.5 hover:bg-gray-200 rounded transition-colors ml-3"
+          title="Chiudi"
+          aria-label="Chiudi popup"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {columns.map((col, colIdx) => (
-              <div key={colIdx} className="space-y-2">
-                {col.map(renderAccordionItem)}
-              </div>
-            ))}
-          </div>
+          <XMarkIcon className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      {/* CONTENT - 3 COLONNE RESPONSIVE */}
+      <div className="overflow-y-auto h-[500px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
+          {columns.map((col, colIdx) => (
+            <div key={colIdx} className="space-y-2">
+              {col.map(renderAccordionItem)}
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
