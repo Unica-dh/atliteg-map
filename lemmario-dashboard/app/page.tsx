@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useApp } from '@/context/AppContext';
 import { useHighlight } from '@/context/HighlightContext';
 import { Header } from '@/components/Header';
@@ -128,44 +129,47 @@ export default function Home() {
         duration={900}
       />
 
-      {/* Indice alfabetico - Modal/Drawer con animazioni */}
-      <AnimatePresence mode="wait">
-        {isIndiceOpen && (
-          <>
-            {/* Backdrop con blur animato */}
-            <motion.div
-              initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-              animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
-              exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-              onClick={() => setIsIndiceOpen(false)}
-            >
-              {/* Modal content con scale + slide animation */}
+      {/* Indice alfabetico - Modal/Drawer con animazioni usando Portal */}
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence mode="wait">
+          {isIndiceOpen && (
+            <>
+              {/* Backdrop con blur animato */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4"
-                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
+                exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50"
+                onClick={() => setIsIndiceOpen(false)}
               >
-                <AlphabeticalIndex onClose={() => setIsIndiceOpen(false)} />
-                <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsIndiceOpen(false)}
-                    className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-fast text-sm font-medium"
-                  >
-                    Chiudi
-                  </motion.button>
-                </div>
+                {/* Modal content con scale + slide animation */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  className="bg-white rounded-lg shadow-card-hover max-w-4xl w-full max-h-[80vh] overflow-y-auto m-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <AlphabeticalIndex onClose={() => setIsIndiceOpen(false)} />
+                  <div className="sticky bottom-0 bg-white border-t border-border p-3 flex justify-end">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setIsIndiceOpen(false)}
+                      className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-fast text-sm font-medium"
+                    >
+                      Chiudi
+                    </motion.button>
+                  </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       <footer className="bg-white border-t border-border px-lg py-1.5">
         <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary">
