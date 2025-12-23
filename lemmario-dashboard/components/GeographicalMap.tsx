@@ -103,9 +103,9 @@ function MarkerClusterGroup({
       zoomToBoundsOnClick: true,
       disableClusteringAtZoom: 16,
       
-      // Animazioni
-      animate: true,
-      animateAddingMarkers: true,
+      // Animazioni - disabilitate per evitare movimento pin
+      animate: false,
+      animateAddingMarkers: false,
       spiderfyDistanceMultiplier: 1.5,
 
       // Icone cluster personalizzate con animazioni
@@ -145,14 +145,6 @@ function MarkerClusterGroup({
       const leafletMarker = L.marker([marker.lat, marker.lng], {
         icon: createMinimalIcon(isHighlighted, isSelected)
       });
-
-      // Aggiungi classe per spawn animation
-      setTimeout(() => {
-        const markerElement = leafletMarker.getElement();
-        if (markerElement) {
-          markerElement.classList.add('marker-spawning');
-        }
-      }, index * 30); // Stagger spawn
 
       // Raggruppa per Lemma
       const lemmaGroups = new Map<string, any[]>();
