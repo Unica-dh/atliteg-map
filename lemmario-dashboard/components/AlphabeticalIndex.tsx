@@ -180,7 +180,7 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
         </div>
       </StaggerContainer>
 
-      {/* Elenco lemmi compatto - grid layout */}
+      {/* Elenco lemmi compatto - masonry layout */}
       <AnimatePresence mode="wait">
         {filters.selectedLetter && displayedLemmi.length > 0 && (
           <motion.div 
@@ -191,7 +191,7 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
             transition={motionConfig.transitions.medium}
           >
             <StaggerContainer staggerDelay={0.03}>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto overflow-x-hidden" style={{ gridAutoRows: 'min-content' }}>
                 {displayedLemmi.map(([lemma, occorrenze]) => (
                   <StaggerItem key={lemma}>
                     <motion.button
@@ -200,15 +200,16 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
                       whileHover={{ scale: 1.03, y: -2 }}
                       whileTap={{ scale: 0.98 }}
                       className={`
+                        w-full h-auto
                         bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer hover:shadow-md
                         ${isLemmaHighlighted(occorrenze[0].IdLemma) ? 'ring-2 ring-primary ring-opacity-50 bg-primary-light shadow-lg' : ''}
                       `}
                     >
-                      <h4 className="font-medium text-text-primary text-sm truncate">{lemma}</h4>
+                      <h4 className="font-medium text-text-primary text-sm break-words">{lemma}</h4>
                       <p className="text-xs text-text-muted">
                         {occorrenze.length} {occorrenze.length === 1 ? 'occ.' : 'occ.'}
                       </p>
-                      <div className="text-[10px] text-text-muted truncate">
+                      <div className="text-[10px] text-text-muted break-words line-clamp-2">
                         {[...new Set(occorrenze.map(o => o.CollGeografica))].slice(0, 2).join(', ')}
                       </div>
                     </motion.button>
