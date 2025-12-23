@@ -154,7 +154,7 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
         className={`bg-white rounded-lg shadow-xl transition-all duration-300 ${
           isFullscreen 
             ? 'fixed top-16 left-4 right-4 bottom-4 z-50 flex flex-col' 
-            : 'w-[420px] max-w-full'
+            : 'w-[840px] max-w-full'
         }`}
       >
         {/* HEADER */}
@@ -236,8 +236,8 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
 
         {/* CONTENT - 3 COLONNE RESPONSIVE */}
         <div 
-          className={`p-3 overflow-y-auto ${
-            isFullscreen ? 'flex-1' : 'max-h-[320px]'
+          className={`overflow-y-auto ${
+            isFullscreen ? 'flex-1 p-3' : 'max-h-[320px] p-3 pt-2'
           }`}
         >
           {filteredLemmaGroups.size === 0 ? (
