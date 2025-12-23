@@ -167,8 +167,8 @@ function MarkerClusterGroup({
 
       // Configura popup con dimensioni ottimizzate
       const popup = L.popup({
-        maxWidth: 450,
-        minWidth: 420,
+        maxWidth: 900,
+        minWidth: 840,
         className: 'map-bounded-popup',
         closeButton: false, // Usiamo il bottone custom del componente
       });
@@ -380,8 +380,8 @@ export function GeographicalMap() {
                 popupContainer.className = 'map-popup-container';
 
                 const popup = L.popup({
-                  maxWidth: 450,
-                  minWidth: 420,
+                  maxWidth: 900,
+                  minWidth: 840,
                   className: 'map-bounded-popup',
                   closeButton: false,
                 });
