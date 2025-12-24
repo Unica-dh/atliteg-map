@@ -107,7 +107,16 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
   };
 
   const handleLemmaClick = (lemma: string, idLemma: string) => {
-    setFilters({ selectedLemmaId: idLemma, searchQuery: lemma });
+    // Reset completo di tutti i filtri quando si seleziona un lemma dall'indice
+    setFilters({
+      selectedLemmaId: idLemma,
+      searchQuery: lemma,
+      selectedLetter: null,
+      selectedYear: null,
+      categorie: [],
+      periodi: []
+    });
+    clearHighlight();
     // Chiude l'indice dopo la selezione (opzionale)
     if (onClose) {
       onClose();
@@ -156,7 +165,7 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
                   disabled={!hasLemmi}
                   whileHover={hasLemmi ? { scale: 1.15, y: -2 } : {}}
                   whileTap={hasLemmi ? { scale: 0.95 } : {}}
-                  animate={isSelected || isLetterHighlighted(letter) ? { scale: [1, 1.2, 1] } : {}}
+                  animate={isSelected || isLetterHighlighted(letter) ? { scale: 1.1 } : { scale: 1 }}
                   transition={motionConfig.spring.fast}
                   className={`
                     w-7 h-7 text-center font-medium text-xs rounded transition-fast
@@ -192,26 +201,37 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
           >
             <StaggerContainer staggerDelay={0.03}>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-64 overflow-y-auto overflow-x-hidden" style={{ gridAutoRows: 'min-content' }}>
-                {displayedLemmi.map(([lemma, occorrenze]) => (
-                  <StaggerItem key={lemma}>
-                    <motion.button
-                      layoutId={`lemma-card-${occorrenze[0].IdLemma}`}
-                      onClick={() => handleLemmaClick(lemma, occorrenze[0].IdLemma)}
-                      whileHover={{ scale: 1.03, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`
-                        w-full h-auto
-                        bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer hover:shadow-md
-                        ${isLemmaHighlighted(occorrenze[0].IdLemma) ? 'ring-2 ring-primary ring-opacity-50 bg-primary-light shadow-lg' : ''}
-                      `}
-                    >
-                      <h4 className="font-medium text-text-primary text-sm break-words">{lemma}</h4>
-                      <p className="text-xs text-text-muted">
-                        {occorrenze.reduce((sum: number, o: any) => sum + (parseInt(o.Frequenza) || 0), 0)} occ.
-                      </p>
-                    </motion.button>
-                  </StaggerItem>
-                ))}
+                {displayedLemmi.map(([lemma, occorrenze]) => {
+                  // Safety check per array vuoto
+                  if (!occorrenze || occorrenze.length === 0) return null;
+
+                  const firstOccurrence = occorrenze[0];
+                  const totalFreq = occorrenze.reduce((sum: number, o: any) => {
+                    const freq = parseInt(o.Frequenza);
+                    return sum + (isNaN(freq) ? 0 : freq);
+                  }, 0);
+
+                  return (
+                    <StaggerItem key={lemma}>
+                      <motion.button
+                        layoutId={`lemma-card-${firstOccurrence.IdLemma}`}
+                        onClick={() => handleLemmaClick(lemma, firstOccurrence.IdLemma)}
+                        whileHover={{ scale: 1.03, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`
+                          w-full h-auto
+                          bg-background-muted rounded p-2 hover:bg-primary-light transition-fast text-left cursor-pointer hover:shadow-md
+                          ${isLemmaHighlighted(firstOccurrence.IdLemma) ? 'ring-2 ring-primary ring-opacity-50 bg-primary-light shadow-lg' : ''}
+                        `}
+                      >
+                        <h4 className="font-medium text-text-primary text-sm break-words">{lemma}</h4>
+                        <p className="text-xs text-text-muted">
+                          {totalFreq} occ.
+                        </p>
+                      </motion.button>
+                    </StaggerItem>
+                  );
+                })}
               </div>
             </StaggerContainer>
           </motion.div>

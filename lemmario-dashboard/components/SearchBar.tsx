@@ -82,10 +82,11 @@ export const SearchBar: React.FC = () => {
     setHighlightedIndex(-1);
 
     // Evidenzia lemma selezionato e correlati
+    const year = parseInt(lemma.Anno);
     highlightMultiple({
       lemmaIds: [lemma.IdLemma],
       geoAreaIds: [lemma.CollGeografica],
-      years: [parseInt(lemma.Anno)],
+      years: !isNaN(year) ? [year] : [],
       source: 'search',
       type: 'select'
     });
@@ -110,12 +111,13 @@ export const SearchBar: React.FC = () => {
 
   const handleSuggestionHover = (lemma: Lemma, index: number) => {
     setHighlightedIndex(index);
-    
+
     // Evidenzia temporaneamente al hover
+    const year = parseInt(lemma.Anno);
     highlightMultiple({
       lemmaIds: [lemma.IdLemma],
       geoAreaIds: [lemma.CollGeografica],
-      years: [parseInt(lemma.Anno)],
+      years: !isNaN(year) ? [year] : [],
       source: 'search',
       type: 'hover'
     });
