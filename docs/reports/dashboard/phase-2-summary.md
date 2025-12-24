@@ -68,7 +68,7 @@ Completata implementazione della **Fase 2 - Micro-interazioni** del piano effett
 - ✅ `components/SkeletonLoaders.tsx` - 9 skeleton components (436 righe)
 - ✅ `components/AccessibilityProvider.tsx` - Client component per init accessibility
 - ✅ `lib/accessibility.ts` - Keyboard nav, skip links, ripple, shortcuts (215 righe)
-- ✅ `docs/TEST_REPORT_FASE_2.md` - Test report completo (800+ righe)
+- ✅ `../tests/phase-2.md` - Test report completo (800+ righe)
 
 ### CSS & Config (2)
 - ✅ `app/globals.css` - Focus indicators, skip links, ripple (+150 righe)
@@ -222,12 +222,12 @@ Completata implementazione della **Fase 2 - Micro-interazioni** del piano effett
 ## 📚 Documentazione Aggiornata
 
 ### Nuovi Documenti
-1. `docs/TEST_REPORT_FASE_2.md` - Report test completo (800+ righe)
+1. `../tests/phase-2.md` - Report test completo (800+ righe)
 2. Questo file - Riepilogo implementazione
 
 ### File Esistenti
-- `docs/MOTION_SYSTEM.md` - Da aggiornare con pattern Fase 2
-- `docs/EFFETTI_GRAFICI_DINAMICI.md` - Piano master (già completo)
+- `../../architecture/motion-system.md` - Da aggiornare con pattern Fase 2
+- `../../architecture/dynamic-graphics.md` - Piano master (già completo)
 
 ---
 

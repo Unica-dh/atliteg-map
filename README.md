@@ -129,8 +129,8 @@ Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy auto
 5. 🔍 Verifica deployment
 
 **Setup:**
-- 🚀 [docs/DEPLOY_QUICKSTART.md](docs/DEPLOY_QUICKSTART.md) - Guida rapida
-- 📖 [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) - Setup completo
+- 🚀 [docs/guides/deploy-quickstart.md](docs/guides/deploy-quickstart.md) - Guida rapida
+- 📖 [docs/guides/github-actions.md](docs/guides/github-actions.md) - Setup completo
 - ⚙️ [install-github-runner.sh](install-github-runner.sh) - Script installazione runner
 - 📄 [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml) - Workflow
 
@@ -171,9 +171,18 @@ atliteg-map/
 ```
 
 
-Per dettagli su architettura e dataset, vedi `docs/ARCHITECTURE.md` e `docs/DATASET_SPECIFICATION.md`.
+Per dettagli su architettura e dataset, vedi [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md) e [docs/architecture/dataset-specification.md](docs/architecture/dataset-specification.md).
 
 ---
+
+## 📚 Documentazione
+
+La documentazione completa è disponibile nella cartella [`docs/`](docs/README.md).
+
+- **[Indice Completo](docs/README.md)**: Elenco di tutti i documenti disponibili.
+- **[Architecture](docs/architecture/system-architecture.md)**: Design e specifiche tecniche.
+- **[User Guide](docs/guides/user-guide.md)**: Manuale utente.
+- **[Quick Start](docs/guides/quick-start.md)**: Guida rapida.
 
 ---
 
