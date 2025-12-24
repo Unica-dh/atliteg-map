@@ -207,11 +207,8 @@ export function AlphabeticalIndex({ onClose }: AlphabeticalIndexProps = {}) {
                     >
                       <h4 className="font-medium text-text-primary text-sm break-words">{lemma}</h4>
                       <p className="text-xs text-text-muted">
-                        {occorrenze.length} {occorrenze.length === 1 ? 'occ.' : 'occ.'}
+                        {occorrenze.reduce((sum: number, o: any) => sum + (parseInt(o.Frequenza) || 0), 0)} occ.
                       </p>
-                      <div className="text-[10px] text-text-muted break-words line-clamp-2">
-                        {[...new Set(occorrenze.map(o => o.CollGeografica))].slice(0, 2).join(', ')}
-                      </div>
                     </motion.button>
                   </StaggerItem>
                 ))}
