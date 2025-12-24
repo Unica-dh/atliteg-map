@@ -110,7 +110,7 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
       </div>
 
       {/* CONTENT - 3 COLONNE RESPONSIVE */}
-      <div className="overflow-y-auto h-[500px]">
+      <div className="overflow-y-auto max-h-[300px]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
           {columns.map((col, colIdx) => (
             <div key={colIdx} className="space-y-2">
