@@ -179,7 +179,7 @@ function MarkerClusterGroup({
       leafletMarker.bindPopup(popup);
 
       // Render componente React quando popup si apre
-      leafletMarker.on('popupopen', () => {
+      leafletMarker.on('popupopen', (e) => {
         const root = createRoot(popupContainer);
         root.render(
           <MapBoundedPopup
@@ -189,6 +189,14 @@ function MarkerClusterGroup({
           />
         );
         popup.setContent(popupContainer);
+
+        // Centra la mappa sul popup con un leggero offset verso l'alto
+        // per assicurarsi che il popup sia completamente visibile
+        setTimeout(() => {
+          const px = map.project(e.target.getLatLng());
+          px.y -= 100; // Offset di 100px verso l'alto per centrare meglio il popup
+          map.panTo(map.unproject(px), { animate: true, duration: 0.5 });
+        }, 100);
       });
 
       // Cleanup quando popup si chiude
@@ -415,7 +423,7 @@ export function GeographicalMap() {
                 layer.bindPopup(popup);
 
                 // Render React component on popup open
-                layer.on('popupopen', () => {
+                layer.on('popupopen', (e) => {
                   const root = createRoot(popupContainer);
                   root.render(
                     <MapBoundedPopup
@@ -425,6 +433,19 @@ export function GeographicalMap() {
                     />
                   );
                   popup.setContent(popupContainer);
+
+                  // Centra la mappa sul centroide del poligono con offset verso l'alto
+                  setTimeout(() => {
+                    const leafletLayer = layer as any;
+                    if (leafletLayer._map && typeof leafletLayer.getBounds === 'function') {
+                      const bounds = leafletLayer.getBounds();
+                      const center = bounds.getCenter();
+                      const mapInstance = leafletLayer._map;
+                      const px = mapInstance.project(center);
+                      px.y -= 100; // Offset di 100px verso l'alto per centrare meglio il popup
+                      mapInstance.panTo(mapInstance.unproject(px), { animate: true, duration: 0.5 });
+                    }
+                  }, 100);
                 });
 
                 // Cleanup on popup close
@@ -482,7 +503,7 @@ export function GeographicalMap() {
                 layer.bindPopup(popup);
 
                 // Render React component on popup open
-                layer.on('popupopen', () => {
+                layer.on('popupopen', (e) => {
                   const root = createRoot(popupContainer);
                   root.render(
                     <MapBoundedPopup
@@ -492,6 +513,19 @@ export function GeographicalMap() {
                     />
                   );
                   popup.setContent(popupContainer);
+
+                  // Centra la mappa sul centroide della regione con offset verso l'alto
+                  setTimeout(() => {
+                    const leafletLayer = layer as any;
+                    if (leafletLayer._map && typeof leafletLayer.getBounds === 'function') {
+                      const bounds = leafletLayer.getBounds();
+                      const center = bounds.getCenter();
+                      const mapInstance = leafletLayer._map;
+                      const px = mapInstance.project(center);
+                      px.y -= 100; // Offset di 100px verso l'alto per centrare meglio il popup
+                      mapInstance.panTo(mapInstance.unproject(px), { animate: true, duration: 0.5 });
+                    }
+                  }, 100);
                 });
 
                 // Cleanup on popup close
