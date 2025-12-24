@@ -50,13 +50,12 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
         >
           <div className="flex-1 min-w-0">
             <h4 className="font-semibold text-xs truncate">{lemmaName}</h4>
-            <p className="text-[10px] text-gray-500 truncate">{categoria}</p>
           </div>
           <div className="flex items-center gap-1 ml-2 shrink-0">
             <span className="text-[10px] text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
               {lemmi.length}
             </span>
-            <ChevronDownIcon 
+            <ChevronDownIcon
               className={`w-3 h-3 text-gray-400 transition-transform ${
                 isExpanded ? 'rotate-180' : ''
               }`}
@@ -72,11 +71,11 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
                   <span className="text-gray-400 text-[10px]">•</span>
                   <em className="truncate">{lemma.Forma}</em>
                   <span className="text-gray-600 shrink-0">
-                    ({lemma.Anno || lemma.Periodo || 'n.d.'})
+                    ({lemma.Datazione || 'n.d.'})
                   </span>
-                  {lemma.Frequenza && lemma.Frequenza !== '1' && (
+                  {lemma.Frequenza && (
                     <span className="text-blue-600 shrink-0 text-[10px]">
-                      f:{lemma.Frequenza}
+                      freq.:{lemma.Frequenza}
                     </span>
                   )}
                 </li>

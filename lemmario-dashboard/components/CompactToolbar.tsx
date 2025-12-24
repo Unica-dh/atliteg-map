@@ -23,7 +23,13 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
   const categorie = useMemo(() => getUniqueCategorie(lemmi), [lemmi]);
   const periodi = useMemo(() => getUniquePeriodi(lemmi), [lemmi]);
 
-  const hasActiveFilters = filters.categorie.length > 0 || filters.periodi.length > 0;
+  const hasActiveFilters = filters.categorie.length > 0 || filters.periodi.length > 0 || !!filters.selectedLemmaId;
+
+  // Trova il lemma selezionato per visualizzarlo come filtro attivo
+  const selectedLemma = useMemo(() => {
+    if (!filters.selectedLemmaId) return null;
+    return lemmi.find(l => l.IdLemma === filters.selectedLemmaId);
+  }, [filters.selectedLemmaId, lemmi]);
 
   // Search suggestions
   useEffect(() => {
@@ -56,6 +62,11 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
     setFilters({ searchQuery: '', selectedLemmaId: null });
     setSuggestions([]);
     setIsSearchOpen(false);
+  };
+
+  const handleRemoveSelectedLemma = () => {
+    setFilters({ selectedLemmaId: null, searchQuery: '' });
+    setSearchQuery('');
   };
 
   return (
@@ -169,6 +180,24 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
           {/* Active Filters Tags */}
           {hasActiveFilters && (
             <div className="flex flex-wrap gap-1 ml-auto">
+              {/* Lemma selezionato dall'indice alfabetico */}
+              {selectedLemma && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary-light text-primary rounded-sm text-xs font-medium border border-primary/20"
+                >
+                  {selectedLemma.Lemma}
+                  <button
+                    onClick={handleRemoveSelectedLemma}
+                    className="hover:bg-primary/10 rounded-sm"
+                    aria-label={`Rimuovi filtro lemma ${selectedLemma.Lemma}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </motion.span>
+              )}
               {filters.categorie.map(cat => (
                 <span
                   key={cat}
