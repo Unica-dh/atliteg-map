@@ -31,7 +31,7 @@ Il progetto include un sistema motion completo e accessibile:
 - **Hooks personalizzati** per accessibilità (`useReducedMotion`)
 - **Componenti wrapper** (`FadeIn`, `SlideIn`, `ScaleIn`, `StaggerContainer`)
 - **Supporto completo** per `prefers-reduced-motion`
-- **Documentazione** in `/docs/MOTION_SYSTEM.md`
+- **Documentazione** in `../architecture/motion-system.md`
 
 ### Test Animazioni
 
