@@ -18,8 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Gestione environment GitHub per protezione production
 - **Script installazione runner**: `install-github-runner.sh` per setup automatico del self-hosted runner
 - **Documentazione completa deploy**:
-  - `docs/DEPLOY_QUICKSTART.md` - Guida rapida per iniziare
-  - `docs/GITHUB_ACTIONS_SETUP.md` - Setup completo e troubleshooting
+  - `../guides/deploy-quickstart.md` - Guida rapida per iniziare
+  - `../guides/github-actions.md` - Setup completo e troubleshooting
   - `test-ssh-connection.example.sh` - Script di test connessione (deprecato con self-hosted)
 
 ### Planned
@@ -262,4 +262,4 @@ Questo progetto segue [Semantic Versioning](https://semver.org/):
 - [Repository](https://github.com/your-org/atliteg-map)
 - [Issues](https://github.com/your-org/atliteg-map/issues)
 - [Releases](https://github.com/your-org/atliteg-map/releases)
-- [Documentation](./docs/)
+- [Documentation](../README.md)

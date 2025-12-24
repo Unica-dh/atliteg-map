@@ -377,8 +377,8 @@ docker compose up -d --build
 
 ## 📚 Documentazione Correlata
 
-- [POPUP_IMPROVEMENT_PROPOSALS.md](../docs/POPUP_IMPROVEMENT_PROPOSALS.md) - Tutte le 6 proposte
-- [ARCHITECTURE.md](../docs/ARCHITECTURE.md) - Architettura sistema
+- [improvement-proposals.md](improvement-proposals.md) - Tutte le 6 proposte
+- [system-architecture.md](../../architecture/system-architecture.md) - Architettura sistema
 - Componente: [MapBoundedPopup.tsx](../components/MapBoundedPopup.tsx)
 - Componente: [GeographicalMap.tsx](../components/GeographicalMap.tsx)
 
