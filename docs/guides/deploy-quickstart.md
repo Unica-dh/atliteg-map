@@ -20,7 +20,7 @@ Il server è protetto da VPN. Un runner installato sul server:
 
 ### File creati/modificati:
 - ✅ `.github/workflows/deploy-production.yml` - Workflow GitHub Actions (già esistente, verificato)
-- ✅ `docs/GITHUB_ACTIONS_SETUP.md` - Documentazione completa per la configurazione
+- ✅ `github-actions.md` - Documentazione completa per la configurazione
 - ✅ `test-ssh-connection.example.sh` - Script per testare la connessione SSH
 - ✅ `README.md` - Aggiunto riferimento al deploy automatico
 - ✅ `CHANGELOG.md` - Documentata la nuova funzionalità
@@ -55,7 +55,7 @@ Lo script installerà automaticamente il runner come servizio systemd.
 
 **Opzione B - Installazione Manuale:**
 
-Consulta la sezione "Opzione 2: Installazione Manuale" in `docs/GITHUB_ACTIONS_SETUP.md`
+Consulta la sezione "Opzione 2: Installazione Manuale" in `github-actions.md`
 
 ### Passo 2: Verifica che il runner sia online
 
@@ -133,14 +133,14 @@ Con il self-hosted runner serve solo **1 secret** invece di 4! 🎉
 ### In caso di errore
 - Controlla i log del workflow su GitHub Actions
 - Ogni step mostra esattamente dove si è verificato l'errore
-- Consulta la sezione **Troubleshooting** in `docs/GITHUB_ACTIONS_SETUP.md`
+- Consulta la sezione **Troubleshooting** in `github-actions.md`
 
 ---
 
 ## 📚 Documentazione Completa
 
 Per maggiori dettagli, consulta:
-- **Setup completo:** [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)
+- **Setup completo:** [github-actions.md](github-actions.md)
 - **Workflow:** [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml)
 
 ---
