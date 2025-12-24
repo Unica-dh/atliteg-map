@@ -39,6 +39,7 @@ Papa.parse(csvText, {
       'Frequenza': 'Frequenza',
       'URL': 'URL',
       'IdAmbito': 'IdAmbito',
+      'reg_istat_code': 'RegionIstatCode',
     };
     return headerMap[header] || header;
   },

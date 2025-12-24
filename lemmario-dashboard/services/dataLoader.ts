@@ -85,6 +85,7 @@ async function loadCSVLegacy(): Promise<Lemma[]> {
           'Frequenza': 'Frequenza',
           'URL': 'URL',
           'IdAmbito': 'IdAmbito',
+          'reg_istat_code': 'RegionIstatCode',
         };
         return headerMap[header] || header;
       },
