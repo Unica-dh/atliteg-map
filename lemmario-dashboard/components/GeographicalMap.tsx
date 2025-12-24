@@ -112,22 +112,34 @@ function MarkerClusterGroup({
       animateAddingMarkers: false,
       spiderfyDistanceMultiplier: 1.5,
 
-      // Icone cluster personalizzate con animazioni
+      // Icone cluster personalizzate - mostra FREQUENZA (somma occorrenze)
       iconCreateFunction: function(cluster: any) {
-        const count = cluster.getChildCount();
+        const markers = cluster.getAllChildMarkers();
+
+        // Calcola somma frequenze dai marker figli
+        let totalFrequency = 0;
+        markers.forEach((marker: any) => {
+          if (marker.options.customData && marker.options.customData.lemmi) {
+            marker.options.customData.lemmi.forEach((lemma: any) => {
+              const freq = parseInt(lemma.Frequenza) || 0;
+              totalFrequency += freq;
+            });
+          }
+        });
+
         let size = 'small';
         let className = 'marker-cluster-small';
 
-        if (count > 100) {
+        if (totalFrequency > 100) {
           size = 'large';
           className = 'marker-cluster-large';
-        } else if (count > 20) {
+        } else if (totalFrequency > 20) {
           size = 'medium';
           className = 'marker-cluster-medium';
         }
 
         return L.divIcon({
-          html: `<div><span>${count}</span></div>`,
+          html: `<div><span>${totalFrequency}</span></div>`,
           className: `marker-cluster ${className}`,
           iconSize: L.point(40, 40)
         });
@@ -147,8 +159,9 @@ function MarkerClusterGroup({
       const isSelected = marker.lemmi.some((l: any) => highlightedLemmi.has(l.IdLemma));
 
       const leafletMarker = L.marker([marker.lat, marker.lng], {
-        icon: createMinimalIcon(isHighlighted, isSelected)
-      });
+        icon: createMinimalIcon(isHighlighted, isSelected),
+        customData: { lemmi: marker.lemmi } // Aggiungi dati personalizzati per il cluster
+      } as any);
 
       // Raggruppa per Lemma
       const lemmaGroups = new Map<string, any[]>();

@@ -33,11 +33,11 @@ export function MetricsSummary() {
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.5 }}
               >
-                <Icon className={`w-3.5 h-3.5 ${color}`} />
+                <Icon className={`w-4 h-4 ${color}`} />
               </motion.div>
-              <span className="text-xs text-text-secondary">{label}:</span>
-              <motion.span 
-                className="text-base font-semibold text-text-primary"
+              <span className="text-sm text-text-secondary">{label}:</span>
+              <motion.span
+                className="text-lg font-semibold text-text-primary"
                 key={value}
                 initial={{ scale: 1.2, color: '#0B5FA5' }}
                 animate={{ scale: 1, color: '#1F2937' }}

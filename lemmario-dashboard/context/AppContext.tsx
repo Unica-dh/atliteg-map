@@ -105,8 +105,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Calcolo metriche
   const metrics = useMemo((): Metrics => {
     const lemmiUnici = new Set(filteredLemmi.map(l => l.IdLemma)).size;
-    const formeUniche = filteredLemmi.length; // Totale attestazioni come richiesto
-    const occorrenze = filteredLemmi.length; // Alias per chiarezza
+
+    // FORME = varianti stringa uniche del campo Forma
+    const formeUniche = new Set(filteredLemmi.map(l => l.Forma)).size;
+
+    // OCCORRENZE = somma del campo Frequenza
+    const occorrenze = filteredLemmi.reduce((sum, l) => {
+      const freq = parseInt(l.Frequenza) || 0;
+      return sum + freq;
+    }, 0);
+
     const anni = new Set(filteredLemmi.map(l => l.Anno)).size;
     const localita = new Set(filteredLemmi.map(l => l.CollGeografica)).size;
 

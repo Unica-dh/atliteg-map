@@ -61,7 +61,9 @@ export const Timeline: React.FC = () => {
         data.years.add(year);
         data.lemmas.add(lemma.Lemma);
         data.locations.add(lemma.CollGeografica);
-        data.attestazioni++;
+        // Somma la frequenza invece di contare le righe
+        const freq = parseInt(lemma.Frequenza) || 0;
+        data.attestazioni += freq;
       }
     });
 
@@ -154,7 +156,7 @@ export const Timeline: React.FC = () => {
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-semibold text-gray-700">Linea del tempo</h2>
         <div className="text-xs text-gray-500">
           <span className="font-semibold text-blue-600">{totalLemmi}</span> lemmi •{' '}
@@ -227,14 +229,11 @@ export const Timeline: React.FC = () => {
                     
                     {/* Label con periodo */}
                     <div className="mt-1 text-center">
-                      <div className={`text-[10px] font-semibold ${isSelected || isHighlighted ? 'text-blue-600' : 'text-gray-600'}`}>
-                        {quartItem.quartCentury}
-                      </div>
-                      <div className="text-[9px] text-gray-400">
+                      <div className={`text-[10px] font-bold ${isSelected || isHighlighted ? 'text-blue-600' : 'text-gray-600'}`}>
                         {startYear}-{endYear}
                       </div>
                       {isSelected && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, y: -5 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="text-[10px] font-medium text-blue-600 mt-0.5"
