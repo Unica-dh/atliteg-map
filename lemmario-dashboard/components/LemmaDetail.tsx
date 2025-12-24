@@ -40,20 +40,34 @@ export const LemmaDetail: React.FC = () => {
     return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }, [displayedLemmas]);
 
-  // Empty state - render after all hooks
+  // IMPORTANTE: Tutti gli hooks DEVONO essere chiamati PRIMA di qualsiasi early return
+  const totalOccorrenze = useMemo(() => {
+    return displayedLemmas.reduce((sum, lemma) => {
+      const freq = parseInt(lemma.Frequenza) || 0;
+      return sum + freq;
+    }, 0);
+  }, [displayedLemmas]);
+
+  const totalForme = useMemo(() => {
+    return new Set(displayedLemmas.map(l => l.Forma)).size;
+  }, [displayedLemmas]);
+
+  // Empty state - render DOPO tutti gli hooks
   if (displayedLemmas.length === 0) {
     return (
       <FadeIn>
         <div className="card p-8 h-full flex flex-col items-center justify-center text-center">
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.1, 1],
               rotate: [0, 5, -5, 0]
             }}
-            transition={{ 
-              duration: 3, 
+            transition={{
+              duration: 3,
               repeat: Infinity,
-              repeatType: 'reverse'
+              repeatType: 'reverse',
+              ease: 'easeInOut',
+              type: 'tween' // Usa tween invece di spring per supportare array di keyframes
             }}
           >
             <FileText className="w-16 h-16 text-gray-300 mb-4" />
@@ -69,17 +83,6 @@ export const LemmaDetail: React.FC = () => {
       </FadeIn>
     );
   }
-
-  const totalOccorrenze = useMemo(() => {
-    return displayedLemmas.reduce((sum, lemma) => {
-      const freq = parseInt(lemma.Frequenza) || 0;
-      return sum + freq;
-    }, 0);
-  }, [displayedLemmas]);
-
-  const totalForme = useMemo(() => {
-    return new Set(displayedLemmas.map(l => l.Forma)).size;
-  }, [displayedLemmas]);
 
   return (
     <div className="card flex flex-col overflow-hidden" style={{ height: '580px' }}>
