@@ -194,7 +194,7 @@ function MarkerClusterGroup({
         // per assicurarsi che il popup sia completamente visibile
         setTimeout(() => {
           const px = map.project(e.target.getLatLng());
-          px.y -= 100; // Offset di 100px verso l'alto per centrare meglio il popup
+          px.y -= 180; // Offset di 180px verso l'alto per centrare meglio il popup
           map.panTo(map.unproject(px), { animate: true, duration: 0.5 });
         }, 100);
       });
@@ -442,7 +442,7 @@ export function GeographicalMap() {
                       const center = bounds.getCenter();
                       const mapInstance = leafletLayer._map;
                       const px = mapInstance.project(center);
-                      px.y -= 100; // Offset di 100px verso l'alto per centrare meglio il popup
+                      px.y -= 180; // Offset di 180px verso l'alto per centrare meglio il popup
                       mapInstance.panTo(mapInstance.unproject(px), { animate: true, duration: 0.5 });
                     }
                   }, 100);
@@ -522,7 +522,7 @@ export function GeographicalMap() {
                       const center = bounds.getCenter();
                       const mapInstance = leafletLayer._map;
                       const px = mapInstance.project(center);
-                      px.y -= 100; // Offset di 100px verso l'alto per centrare meglio il popup
+                      px.y -= 180; // Offset di 180px verso l'alto per centrare meglio il popup
                       mapInstance.panTo(mapInstance.unproject(px), { animate: true, duration: 0.5 });
                     }
                   }, 100);
