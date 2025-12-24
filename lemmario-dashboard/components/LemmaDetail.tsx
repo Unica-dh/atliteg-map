@@ -40,20 +40,34 @@ export const LemmaDetail: React.FC = () => {
     return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }, [displayedLemmas]);
 
-  // Empty state - render after all hooks
+  // IMPORTANTE: Tutti gli hooks DEVONO essere chiamati PRIMA di qualsiasi early return
+  const totalOccorrenze = useMemo(() => {
+    return displayedLemmas.reduce((sum, lemma) => {
+      const freq = parseInt(lemma.Frequenza) || 0;
+      return sum + freq;
+    }, 0);
+  }, [displayedLemmas]);
+
+  const totalForme = useMemo(() => {
+    return new Set(displayedLemmas.map(l => l.Forma)).size;
+  }, [displayedLemmas]);
+
+  // Empty state - render DOPO tutti gli hooks
   if (displayedLemmas.length === 0) {
     return (
       <FadeIn>
         <div className="card p-8 h-full flex flex-col items-center justify-center text-center">
           <motion.div
-            animate={{ 
+            animate={{
               scale: [1, 1.1, 1],
               rotate: [0, 5, -5, 0]
             }}
-            transition={{ 
-              duration: 3, 
+            transition={{
+              duration: 3,
               repeat: Infinity,
-              repeatType: 'reverse'
+              repeatType: 'reverse',
+              ease: 'easeInOut',
+              type: 'tween' // Usa tween invece di spring per supportare array di keyframes
             }}
           >
             <FileText className="w-16 h-16 text-gray-300 mb-4" />
@@ -72,32 +86,32 @@ export const LemmaDetail: React.FC = () => {
 
   return (
     <div className="card flex flex-col overflow-hidden" style={{ height: '580px' }}>
-      {/* Header Sticky */}
-      <div className="px-md pt-md pb-3 border-b border-border sticky top-0 bg-white z-10">
+      {/* Header Sticky con meno padding top */}
+      <div className="px-3 pt-2 pb-3 border-b border-border sticky top-0 bg-white z-10">
         <h2 className="text-lg font-semibold text-text-primary mb-1">Dettaglio Forme</h2>
-        <motion.div 
+        <motion.div
           key={`header-${groupedByLemma.length}`}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={motionConfig.transitions.fast}
           className="flex items-center gap-3 text-xs text-text-secondary"
         >
-          <span><strong>{groupedByLemma.length}</strong> forme</span>
+          <span><strong>{totalForme}</strong> forme</span>
           <span>•</span>
-          <span><strong>{displayedLemmas.length}</strong> occorrenze</span>
+          <span><strong>{totalOccorrenze}</strong> occorrenze</span>
         </motion.div>
       </div>
 
-      {/* Content con scroll interno e layout animations */}
+      {/* Content con scroll interno, layout animations e margini ridotti */}
       <LayoutGroup>
         <AnimatePresence mode="wait">
-          <motion.div 
+          <motion.div
             key={filters.selectedLemmaId || filters.searchQuery || filters.selectedLetter || 'all'}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={motionConfig.transitions.medium}
-            className="flex-1 overflow-y-auto space-y-3 px-md pb-md pt-3"
+            className="flex-1 overflow-y-auto space-y-3 px-3 pb-3 pt-3"
           >
         {groupedByLemma.map(([lemmaText, occurrences]) => {
           // Estrai proprietà comuni a livello Lemma
@@ -105,8 +119,14 @@ export const LemmaDetail: React.FC = () => {
           const categoria = firstOccurrence.Categoria || '';
           const url = firstOccurrence.URL || '';
 
+          // Calcola occorrenze totali per questo lemma (somma frequenze)
+          const totalFreq = occurrences.reduce((sum, lemma) => {
+            const freq = parseInt(lemma.Frequenza) || 0;
+            return sum + freq;
+          }, 0);
+
           return (
-            <motion.div 
+            <motion.div
               key={lemmaText}
               layout
               initial={{ opacity: 0, scale: 0.95 }}
@@ -115,13 +135,51 @@ export const LemmaDetail: React.FC = () => {
               transition={motionConfig.spring.soft}
               className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast"
             >
-              {/* Header Lemma con link esterno */}
-              <div className="mb-2 pb-2 border-b border-border">
+              {/* Lista Forme - ORA PRIMA */}
+              <div className="space-y-2 mb-2">
+                {occurrences.map((lemma, idx) => (
+                  <div
+                    key={`${lemma.IdLemma}-${idx}`}
+                    className="bg-background-muted rounded p-2 text-xs"
+                  >
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                      <div className="flex items-center gap-1">
+                        <span className="text-text-muted">Forma:</span>
+                        <span className="font-medium text-text-primary truncate">{lemma.Forma}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <span className="font-medium text-text-primary truncate">{lemma.CollGeografica}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-text-muted flex-shrink-0" />
+                        <span className="text-text-primary">{lemma.Datazione || 'N/D'}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {lemma.Frequenza ? (
+                          <>
+                            <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
+                            <span className="text-text-primary">freq.: {lemma.Frequenza}</span>
+                          </>
+                        ) : (
+                          <span className="text-text-muted text-xs">—</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer Lemma - ORA DOPO, con badge frequenza */}
+              <div className="pt-2 border-t border-border">
                 <div className="flex items-center gap-2 mb-1">
                   <FileText className="w-4 h-4 text-primary" />
                   <h3 className="text-base font-semibold text-text-primary">{lemmaText}</h3>
                   <span className="text-xs font-normal text-text-muted bg-background-muted px-1.5 py-0.5 rounded">
-                    {occurrences.length}
+                    {totalFreq} occ.
                   </span>
                   {url && url.trim() && (
                     <a
@@ -142,44 +200,6 @@ export const LemmaDetail: React.FC = () => {
                     <span className="font-medium">Categoria:</span> {categoria}
                   </div>
                 )}
-              </div>
-
-              {/* Lista Forme */}
-              <div className="space-y-2">
-                {occurrences.map((lemma, idx) => (
-                  <div
-                    key={`${lemma.IdLemma}-${idx}`}
-                    className="bg-background-muted rounded p-2 text-xs"
-                  >
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
-                      <div className="flex items-center gap-1">
-                        <span className="text-text-muted">Forma:</span>
-                        <span className="font-medium text-text-primary truncate">{lemma.Forma}</span>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-text-muted flex-shrink-0" />
-                        <span className="font-medium text-text-primary truncate">{lemma.CollGeografica}</span>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-text-muted flex-shrink-0" />
-                        <span className="text-text-primary">{lemma.Anno || lemma.Periodo || 'N/D'}</span>
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        {lemma.Frequenza && lemma.Frequenza !== '1' ? (
-                          <>
-                            <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
-                            <span className="text-text-primary">freq: {lemma.Frequenza}</span>
-                          </>
-                        ) : (
-                          <span className="text-text-muted text-xs">—</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
             </motion.div>
           );

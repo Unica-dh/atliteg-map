@@ -68,16 +68,25 @@ export const SearchBar: React.FC = () => {
   }, []);
 
   const handleSelect = (lemma: Lemma) => {
-    setFilters({ searchQuery: lemma.Lemma, selectedLemmaId: lemma.IdLemma });
+    // Reset completo di tutti i filtri quando si seleziona un nuovo lemma
+    setFilters({
+      searchQuery: lemma.Lemma,
+      selectedLemmaId: lemma.IdLemma,
+      selectedLetter: null,
+      selectedYear: null,
+      categorie: [],
+      periodi: []
+    });
     setQuery(lemma.Lemma);
     setIsOpen(false);
     setHighlightedIndex(-1);
-    
+
     // Evidenzia lemma selezionato e correlati
+    const year = parseInt(lemma.Anno);
     highlightMultiple({
       lemmaIds: [lemma.IdLemma],
       geoAreaIds: [lemma.CollGeografica],
-      years: [parseInt(lemma.Anno)],
+      years: !isNaN(year) ? [year] : [],
       source: 'search',
       type: 'select'
     });
@@ -85,7 +94,15 @@ export const SearchBar: React.FC = () => {
 
   const handleClear = () => {
     setQuery('');
-    setFilters({ searchQuery: '', selectedLemmaId: null });
+    // Reset completo di tutti i filtri
+    setFilters({
+      searchQuery: '',
+      selectedLemmaId: null,
+      selectedLetter: null,
+      selectedYear: null,
+      categorie: [],
+      periodi: []
+    });
     setSuggestions([]);
     setIsOpen(false);
     clearHighlight();
@@ -94,12 +111,13 @@ export const SearchBar: React.FC = () => {
 
   const handleSuggestionHover = (lemma: Lemma, index: number) => {
     setHighlightedIndex(index);
-    
+
     // Evidenzia temporaneamente al hover
+    const year = parseInt(lemma.Anno);
     highlightMultiple({
       lemmaIds: [lemma.IdLemma],
       geoAreaIds: [lemma.CollGeografica],
-      years: [parseInt(lemma.Anno)],
+      years: !isNaN(year) ? [year] : [],
       source: 'search',
       type: 'hover'
     });
