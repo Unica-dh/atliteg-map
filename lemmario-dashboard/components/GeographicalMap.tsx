@@ -6,6 +6,8 @@ import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import { useApp } from '@/context/AppContext';
 import { useHighlight } from '@/context/HighlightContext';
 import { MapBoundedPopup } from './MapBoundedPopup';
+import { useRegions } from '@/hooks/useRegions';
+import { getRegionCodesFromLemmas, countLemmasByRegion } from '@/utils/regionUtils';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -237,8 +239,11 @@ function MarkerClusterGroup({
 }
 
 export function GeographicalMap() {
-  const { filteredLemmi, geoAreas } = useApp();  const { highlightState } = useHighlight();
+  const { filteredLemmi, geoAreas } = useApp();
+  const { highlightState } = useHighlight();
+  const { regions, loading: regionsLoading } = useRegions();
   const [isLoading, setIsLoading] = useState(true);
+
   // Cache Map per IdAmbito -> GeoArea (ottimizzazione)
   const geoAreasMap = useMemo(() => {
     const map = new Map<number, any>();
@@ -295,7 +300,28 @@ export function GeographicalMap() {
     return Array.from(polygonMap.values());
   }, [filteredLemmi, geoAreasMap]);
 
-  const totalLocations = markers.length + polygons.length;
+  // Prepara confini regionali (NUOVO)
+  const regionBoundaries = useMemo(() => {
+    if (!regions) return [];
+
+    // Estrai codici ISTAT dai lemmi filtrati
+    const regionCodes = getRegionCodesFromLemmas(filteredLemmi);
+    if (regionCodes.length === 0) return [];
+
+    // Conta lemmi per regione per popup e styling
+    const regionCounts = countLemmasByRegion(filteredLemmi);
+
+    // Filtra solo le regioni presenti nei risultati
+    return regions.features
+      .filter(feature => regionCodes.includes(feature.properties.reg_istat_code))
+      .map(feature => ({
+        feature,
+        count: regionCounts.get(feature.properties.reg_istat_code) || 0,
+        lemmi: filteredLemmi.filter(l => l.RegionIstatCode === feature.properties.reg_istat_code)
+      }));
+  }, [filteredLemmi, regions]);
+
+  const totalLocations = markers.length + polygons.length + regionBoundaries.length;
   const totalLemmas = new Set(filteredLemmi.map(l => l.IdLemma)).size;
 
   // Loading effect
@@ -410,9 +436,76 @@ export function GeographicalMap() {
           );
         })}
 
+        {/* Confini regionali (NUOVO) */}
+        {regionBoundaries.map((region, idx) => {
+          // Check se regione è evidenziata
+          const isHighlighted = region.lemmi.some((l: any) =>
+            highlightState.highlightedLemmaIds.has(l.IdLemma) ||
+            highlightState.highlightedGeoAreas.has(l.CollGeografica)
+          );
+
+          // Raggruppa per Lemma
+          const lemmaGroups = new Map<string, any[]>();
+          region.lemmi.forEach((lemma: any) => {
+            const lemmaKey = lemma.Lemma;
+            if (!lemmaGroups.has(lemmaKey)) {
+              lemmaGroups.set(lemmaKey, []);
+            }
+            lemmaGroups.get(lemmaKey)!.push(lemma);
+          });
+
+          const regionName = region.feature.properties.reg_name;
+
+          return (
+            <GeoJSON
+              key={`region-${region.feature.properties.reg_istat_code}`}
+              data={region.feature as any}
+              style={{
+                fillColor: isHighlighted ? '#f59e0b' : '#fbbf24',
+                fillOpacity: isHighlighted ? 0.4 : 0.25,
+                color: isHighlighted ? '#d97706' : '#f59e0b',
+                weight: isHighlighted ? 3 : 2,
+                className: isHighlighted ? 'highlighted' : ''
+              }}
+              onEachFeature={(_, layer) => {
+                // Crea container per popup React
+                const popupContainer = document.createElement('div');
+                popupContainer.className = 'map-popup-container';
+
+                const popup = L.popup({
+                  maxWidth: 900,
+                  minWidth: 840,
+                  className: 'map-bounded-popup',
+                  closeButton: false,
+                });
+
+                layer.bindPopup(popup);
+
+                // Render React component on popup open
+                layer.on('popupopen', () => {
+                  const root = createRoot(popupContainer);
+                  root.render(
+                    <MapBoundedPopup
+                      lemmaGroups={lemmaGroups}
+                      locationName={`${regionName} (Regione)`}
+                      onClose={() => layer.closePopup()}
+                    />
+                  );
+                  popup.setContent(popupContainer);
+                });
+
+                // Cleanup on popup close
+                layer.on('popupclose', () => {
+                  popupContainer.innerHTML = '';
+                });
+              }}
+            />
+          );
+        })}
+
         {markers.length > 0 && (
-          <MapUpdater 
-            markers={markers} 
+          <MapUpdater
+            markers={markers}
             highlightedAreas={highlightState.highlightedGeoAreas}
           />
         )}

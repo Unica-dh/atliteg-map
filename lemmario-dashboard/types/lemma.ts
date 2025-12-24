@@ -14,6 +14,7 @@ export interface Lemma {
   Frequenza: string;
   URL: string;
   IdAmbito: string;
+  RegionIstatCode?: string; // Codice ISTAT regione (es. "03", "19")
 }
 
 export interface GeoArea {
@@ -26,6 +27,27 @@ export interface GeoArea {
     type: string;
     coordinates: number[][][][];
   };
+}
+
+export interface RegionProperties {
+  reg_name: string;
+  reg_istat_code_num: number;
+  reg_istat_code: string;
+}
+
+export interface RegionFeature {
+  type: 'Feature';
+  properties: RegionProperties;
+  geometry: {
+    type: 'Polygon' | 'MultiPolygon';
+    coordinates: number[][][] | number[][][][];
+  };
+}
+
+export interface RegionsGeoJSON {
+  type: 'FeatureCollection';
+  features: RegionFeature[];
+  bbox: number[];
 }
 
 export interface FilterState {
