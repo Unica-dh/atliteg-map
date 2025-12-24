@@ -211,6 +211,11 @@ __screenshots__/
 # Data
 /data/*
 
+# Data sync scripts
+sync-data.sh
+README_SYNC.md
+data_backup_*/
+
 # Deploy secrets (local testing only - use GitHub Secrets for production)
 .env.deploy
 deploy-config.local.sh
