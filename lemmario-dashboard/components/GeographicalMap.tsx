@@ -1,9 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import { useApp } from '@/context/AppContext';
 import { useHighlight } from '@/context/HighlightContext';
+import { MapBoundedPopup } from './MapBoundedPopup';
+import { useRegions } from '@/hooks/useRegions';
+import { getRegionCodesFromLemmas, countLemmasByRegion } from '@/utils/regionUtils';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -156,33 +160,50 @@ function MarkerClusterGroup({
         lemmaGroups.get(lemmaKey)!.push(lemma);
       });
 
-      // Costruisci HTML del popup con tutte le forme
-      let popupContent = '<div class="p-2" style="max-height: 300px; overflow-y: auto;">';
+      // Determina nome località per il popup
+      const locationName = marker.lemmi[0]?.CollGeografica || 'Località';
 
-      lemmaGroups.forEach((lemmi, lemmaName) => {
-        popupContent += `<div class="mb-3"><h3 class="font-bold text-base">${lemmaName}</h3>`;
+      // Crea un container per il popup React
+      const popupContainer = document.createElement('div');
+      popupContainer.className = 'map-popup-container';
 
-        // Estrai categoria (comune a tutti)
-        const categoria = lemmi[0].Categoria || '';
-        if (categoria) {
-          popupContent += `<p class="text-xs text-gray-600 mb-1"><strong>Categoria:</strong> ${categoria}</p>`;
-        }
-
-        // Lista forme
-        popupContent += '<ul class="text-sm space-y-0.5 ml-2">';
-        lemmi.forEach((lemma: any) => {
-          popupContent += `<li><em>${lemma.Forma}</em> (${lemma.Anno || lemma.Periodo || 'n.d.'})`;
-          if (lemma.Frequenza && lemma.Frequenza !== '1') {
-            popupContent += ` - freq: ${lemma.Frequenza}`;
-          }
-          popupContent += '</li>';
-        });
-        popupContent += '</ul></div>';
+      // Configura popup con dimensioni ottimizzate
+      const popup = L.popup({
+        maxWidth: 900,
+        minWidth: 840,
+        className: 'map-bounded-popup',
+        closeButton: false, // Usiamo il bottone custom del componente
       });
 
-      popupContent += '</div>';
+      // Bind popup al marker
+      leafletMarker.bindPopup(popup);
 
-      leafletMarker.bindPopup(popupContent, { maxWidth: 300 });
+      // Render componente React quando popup si apre
+      leafletMarker.on('popupopen', (e) => {
+        const root = createRoot(popupContainer);
+        root.render(
+          <MapBoundedPopup
+            lemmaGroups={lemmaGroups}
+            locationName={locationName}
+            onClose={() => leafletMarker.closePopup()}
+          />
+        );
+        popup.setContent(popupContainer);
+
+        // Centra la mappa sul popup con un leggero offset verso l'alto
+        // per assicurarsi che il popup sia completamente visibile
+        setTimeout(() => {
+          const px = map.project(e.target.getLatLng());
+          px.y -= 180; // Offset di 180px verso l'alto per centrare meglio il popup
+          map.panTo(map.unproject(px), { animate: true, duration: 0.5 });
+        }, 100);
+      });
+
+      // Cleanup quando popup si chiude
+      leafletMarker.on('popupclose', () => {
+        // Unmount React component
+        popupContainer.innerHTML = '';
+      });
       
       // Store marker reference con key unico
       const markerKey = `${marker.lat}-${marker.lng}`;
@@ -226,8 +247,11 @@ function MarkerClusterGroup({
 }
 
 export function GeographicalMap() {
-  const { filteredLemmi, geoAreas } = useApp();  const { highlightState } = useHighlight();
+  const { filteredLemmi, geoAreas } = useApp();
+  const { highlightState } = useHighlight();
+  const { regions, loading: regionsLoading } = useRegions();
   const [isLoading, setIsLoading] = useState(true);
+
   // Cache Map per IdAmbito -> GeoArea (ottimizzazione)
   const geoAreasMap = useMemo(() => {
     const map = new Map<number, any>();
@@ -284,7 +308,28 @@ export function GeographicalMap() {
     return Array.from(polygonMap.values());
   }, [filteredLemmi, geoAreasMap]);
 
-  const totalLocations = markers.length + polygons.length;
+  // Prepara confini regionali (NUOVO)
+  const regionBoundaries = useMemo(() => {
+    if (!regions) return [];
+
+    // Estrai codici ISTAT dai lemmi filtrati
+    const regionCodes = getRegionCodesFromLemmas(filteredLemmi);
+    if (regionCodes.length === 0) return [];
+
+    // Conta lemmi per regione per popup e styling
+    const regionCounts = countLemmasByRegion(filteredLemmi);
+
+    // Filtra solo le regioni presenti nei risultati
+    return regions.features
+      .filter(feature => regionCodes.includes(feature.properties.reg_istat_code))
+      .map(feature => ({
+        feature,
+        count: regionCounts.get(feature.properties.reg_istat_code) || 0,
+        lemmi: filteredLemmi.filter(l => l.RegionIstatCode === feature.properties.reg_istat_code)
+      }));
+  }, [filteredLemmi, regions]);
+
+  const totalLocations = markers.length + polygons.length + regionBoundaries.length;
   const totalLemmas = new Set(filteredLemmi.map(l => l.IdLemma)).size;
 
   // Loading effect
@@ -350,33 +395,7 @@ export function GeographicalMap() {
             lemmaGroups.get(lemmaKey)!.push(lemma);
           });
 
-          // Costruisci popup con tutte le forme raggruppate
-          let popupContent = '<div class="p-2" style="max-height: 300px; overflow-y: auto;">';
-          popupContent += `<h3 class="font-bold text-base mb-2">${poly.geoArea.properties.dialetto}</h3>`;
-          popupContent += `<p class="text-xs text-gray-600 mb-2"><strong>Attestazioni:</strong> ${poly.lemmi.length}</p>`;
-
-          lemmaGroups.forEach((lemmi, lemmaName) => {
-            popupContent += `<div class="mb-2"><h4 class="font-semibold text-sm">${lemmaName}</h4>`;
-
-            // Categoria (comune)
-            const categoria = lemmi[0].Categoria || '';
-            if (categoria) {
-              popupContent += `<p class="text-xs text-gray-600"><strong>Categoria:</strong> ${categoria}</p>`;
-            }
-
-            // Forme
-            popupContent += '<ul class="text-xs ml-2 mt-1">';
-            lemmi.forEach((lemma: any) => {
-              popupContent += `<li><em>${lemma.Forma}</em> (${lemma.Anno || lemma.Periodo || 'n.d.'})`;
-              if (lemma.Frequenza && lemma.Frequenza !== '1') {
-                popupContent += ` - freq: ${lemma.Frequenza}`;
-              }
-              popupContent += '</li>';
-            });
-            popupContent += '</ul></div>';
-          });
-
-          popupContent += '</div>';
+          const locationName = poly.geoArea.properties.dialetto || 'Area Geografica';
 
           return (
             <GeoJSON
@@ -390,15 +409,137 @@ export function GeographicalMap() {
                 className: isHighlighted ? 'highlighted' : ''
               }}
               onEachFeature={(_, layer) => {
-                layer.bindPopup(popupContent, { maxWidth: 350 });
+                // Crea container per popup React
+                const popupContainer = document.createElement('div');
+                popupContainer.className = 'map-popup-container';
+
+                const popup = L.popup({
+                  maxWidth: 900,
+                  minWidth: 840,
+                  className: 'map-bounded-popup',
+                  closeButton: false,
+                });
+
+                layer.bindPopup(popup);
+
+                // Render React component on popup open
+                layer.on('popupopen', (e) => {
+                  const root = createRoot(popupContainer);
+                  root.render(
+                    <MapBoundedPopup
+                      lemmaGroups={lemmaGroups}
+                      locationName={locationName}
+                      onClose={() => layer.closePopup()}
+                    />
+                  );
+                  popup.setContent(popupContainer);
+
+                  // Centra la mappa sul centroide del poligono con offset verso l'alto
+                  setTimeout(() => {
+                    const leafletLayer = layer as any;
+                    if (leafletLayer._map && typeof leafletLayer.getBounds === 'function') {
+                      const bounds = leafletLayer.getBounds();
+                      const center = bounds.getCenter();
+                      const mapInstance = leafletLayer._map;
+                      const px = mapInstance.project(center);
+                      px.y -= 180; // Offset di 180px verso l'alto per centrare meglio il popup
+                      mapInstance.panTo(mapInstance.unproject(px), { animate: true, duration: 0.5 });
+                    }
+                  }, 100);
+                });
+
+                // Cleanup on popup close
+                layer.on('popupclose', () => {
+                  popupContainer.innerHTML = '';
+                });
+              }}
+            />
+          );
+        })}
+
+        {/* Confini regionali (NUOVO) */}
+        {regionBoundaries.map((region, idx) => {
+          // Check se regione è evidenziata
+          const isHighlighted = region.lemmi.some((l: any) =>
+            highlightState.highlightedLemmaIds.has(l.IdLemma) ||
+            highlightState.highlightedGeoAreas.has(l.CollGeografica)
+          );
+
+          // Raggruppa per Lemma
+          const lemmaGroups = new Map<string, any[]>();
+          region.lemmi.forEach((lemma: any) => {
+            const lemmaKey = lemma.Lemma;
+            if (!lemmaGroups.has(lemmaKey)) {
+              lemmaGroups.set(lemmaKey, []);
+            }
+            lemmaGroups.get(lemmaKey)!.push(lemma);
+          });
+
+          const regionName = region.feature.properties.reg_name;
+
+          return (
+            <GeoJSON
+              key={`region-${region.feature.properties.reg_istat_code}`}
+              data={region.feature as any}
+              style={{
+                fillColor: isHighlighted ? '#f59e0b' : '#fbbf24',
+                fillOpacity: isHighlighted ? 0.4 : 0.25,
+                color: isHighlighted ? '#d97706' : '#f59e0b',
+                weight: isHighlighted ? 3 : 2,
+                className: isHighlighted ? 'highlighted' : ''
+              }}
+              onEachFeature={(_, layer) => {
+                // Crea container per popup React
+                const popupContainer = document.createElement('div');
+                popupContainer.className = 'map-popup-container';
+
+                const popup = L.popup({
+                  maxWidth: 900,
+                  minWidth: 840,
+                  className: 'map-bounded-popup',
+                  closeButton: false,
+                });
+
+                layer.bindPopup(popup);
+
+                // Render React component on popup open
+                layer.on('popupopen', (e) => {
+                  const root = createRoot(popupContainer);
+                  root.render(
+                    <MapBoundedPopup
+                      lemmaGroups={lemmaGroups}
+                      locationName={`${regionName} (Regione)`}
+                      onClose={() => layer.closePopup()}
+                    />
+                  );
+                  popup.setContent(popupContainer);
+
+                  // Centra la mappa sul centroide della regione con offset verso l'alto
+                  setTimeout(() => {
+                    const leafletLayer = layer as any;
+                    if (leafletLayer._map && typeof leafletLayer.getBounds === 'function') {
+                      const bounds = leafletLayer.getBounds();
+                      const center = bounds.getCenter();
+                      const mapInstance = leafletLayer._map;
+                      const px = mapInstance.project(center);
+                      px.y -= 180; // Offset di 180px verso l'alto per centrare meglio il popup
+                      mapInstance.panTo(mapInstance.unproject(px), { animate: true, duration: 0.5 });
+                    }
+                  }, 100);
+                });
+
+                // Cleanup on popup close
+                layer.on('popupclose', () => {
+                  popupContainer.innerHTML = '';
+                });
               }}
             />
           );
         })}
 
         {markers.length > 0 && (
-          <MapUpdater 
-            markers={markers} 
+          <MapUpdater
+            markers={markers}
             highlightedAreas={highlightState.highlightedGeoAreas}
           />
         )}

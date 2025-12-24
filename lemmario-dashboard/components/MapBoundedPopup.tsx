@@ -1,0 +1,124 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+
+interface MapBoundedPopupProps {
+  lemmaGroups: Map<string, any[]>;
+  locationName: string;
+  onClose: () => void;
+}
+
+export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBoundedPopupProps) {
+  // Stati
+  const [expandedLemmi, setExpandedLemmi] = useState<Set<string>>(new Set());
+
+  // Dividi lemmi in 3 colonne (responsive)
+  const columns = useMemo(() => {
+    const lemmiArray = Array.from(lemmaGroups.entries());
+    const numCols = 3;
+    const cols: Array<Array<[string, any[]]>> = [[], [], []];
+    
+    lemmiArray.forEach(([name, lemmi], idx) => {
+      cols[idx % numCols].push([name, lemmi]);
+    });
+    
+    return cols;
+  }, [lemmaGroups]);
+
+  const toggleLemma = (lemmaName: string) => {
+    setExpandedLemmi(prev => {
+      const next = new Set(prev);
+      next.has(lemmaName) ? next.delete(lemmaName) : next.add(lemmaName);
+      return next;
+    });
+  };
+
+  // Rendering accordion item
+  const renderAccordionItem = ([lemmaName, lemmi]: [string, any[]]) => {
+    const isExpanded = expandedLemmi.has(lemmaName);
+    const categoria = lemmi[0]?.Categoria || '';
+    
+    return (
+      <div key={lemmaName} className="border-b last:border-0">
+        <button
+          onClick={() => toggleLemma(lemmaName)}
+          className="w-full flex items-start justify-between p-2 hover:bg-gray-50 transition-colors text-left"
+          aria-expanded={isExpanded}
+          aria-label={`${isExpanded ? 'Chiudi' : 'Espandi'} dettagli per ${lemmaName}`}
+        >
+          <div className="flex-1 min-w-0">
+            <h4 className="font-semibold text-xs truncate">{lemmaName}</h4>
+            <p className="text-[10px] text-gray-500 truncate">{categoria}</p>
+          </div>
+          <div className="flex items-center gap-1 ml-2 shrink-0">
+            <span className="text-[10px] text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
+              {lemmi.length}
+            </span>
+            <ChevronDownIcon 
+              className={`w-3 h-3 text-gray-400 transition-transform ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </div>
+        </button>
+
+        {isExpanded && (
+          <div className="px-3 pb-2 bg-gray-50 border-t animate-fadeIn">
+            <ul className="space-y-0.5 text-[11px] mt-1">
+              {lemmi.map((lemma: any, idx: number) => (
+                <li key={idx} className="flex items-baseline gap-1.5 flex-wrap">
+                  <span className="text-gray-400 text-[10px]">•</span>
+                  <em className="truncate">{lemma.Forma}</em>
+                  <span className="text-gray-600 shrink-0">
+                    ({lemma.Anno || lemma.Periodo || 'n.d.'})
+                  </span>
+                  {lemma.Frequenza && lemma.Frequenza !== '1' && (
+                    <span className="text-blue-600 shrink-0 text-[10px]">
+                      f:{lemma.Frequenza}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-xl w-[840px] max-w-full">
+      {/* HEADER */}
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 rounded-t-lg border-b">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-base">{locationName}</h3>
+          <p className="text-xs text-gray-600">
+            {lemmaGroups.size} {lemmaGroups.size === 1 ? 'lemma' : 'lemmi'}
+          </p>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="p-1.5 hover:bg-gray-200 rounded transition-colors ml-3"
+          title="Chiudi"
+          aria-label="Chiudi popup"
+        >
+          <XMarkIcon className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
+
+      {/* CONTENT - 3 COLONNE RESPONSIVE */}
+      <div className="overflow-y-auto max-h-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
+          {columns.map((col, colIdx) => (
+            <div key={colIdx} className="space-y-2">
+              {col.map(renderAccordionItem)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
