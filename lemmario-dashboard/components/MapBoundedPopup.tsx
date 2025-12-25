@@ -14,18 +14,32 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
   // Stati
   const [expandedLemmi, setExpandedLemmi] = useState<Set<string>>(new Set());
 
-  // Dividi lemmi in 3 colonne (responsive)
+  // Calcola numero di colonne dinamicamente (max 3)
+  const numColumns = useMemo(() => {
+    const totalLemmi = lemmaGroups.size;
+    if (totalLemmi === 1) return 1;
+    if (totalLemmi === 2) return 2;
+    return 3;
+  }, [lemmaGroups]);
+
+  // Dividi lemmi in colonne (responsive)
   const columns = useMemo(() => {
     const lemmiArray = Array.from(lemmaGroups.entries());
-    const numCols = 3;
-    const cols: Array<Array<[string, any[]]>> = [[], [], []];
-    
+    const cols: Array<Array<[string, any[]]>> = Array.from({ length: numColumns }, () => []);
+
     lemmiArray.forEach(([name, lemmi], idx) => {
-      cols[idx % numCols].push([name, lemmi]);
+      cols[idx % numColumns].push([name, lemmi]);
     });
-    
+
     return cols;
-  }, [lemmaGroups]);
+  }, [lemmaGroups, numColumns]);
+
+  // Calcola larghezza dinamica del popup
+  const popupWidth = useMemo(() => {
+    if (numColumns === 1) return 280;
+    if (numColumns === 2) return 560;
+    return 840;
+  }, [numColumns]);
 
   const toggleLemma = (lemmaName: string) => {
     setExpandedLemmi(prev => {
@@ -88,7 +102,10 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xl w-[840px] max-w-full">
+    <div
+      className="bg-white rounded-lg shadow-xl max-w-full"
+      style={{ width: `${popupWidth}px` }}
+    >
       {/* HEADER */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-50 rounded-t-lg border-b">
         <div className="flex-1 min-w-0">
@@ -108,9 +125,15 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
         </button>
       </div>
 
-      {/* CONTENT - 3 COLONNE RESPONSIVE */}
+      {/* CONTENT - COLONNE DINAMICHE */}
       <div className="overflow-y-auto max-h-[300px]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
+        <div
+          className="gap-3 p-4"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${numColumns}, 1fr)`
+          }}
+        >
           {columns.map((col, colIdx) => (
             <div key={colIdx} className="space-y-2">
               {col.map(renderAccordionItem)}
