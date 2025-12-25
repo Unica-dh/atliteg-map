@@ -67,7 +67,7 @@ export default function Home() {
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-2 w-full">
             {/* Mappa - 4 colonne (80%) */}
             <motion.div layout className="xl:col-span-4">
-              <div className="card p-0 overflow-hidden">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transition-all duration-250 hover:shadow-md">
                 <GeographicalMap />
               </div>
             </motion.div>
