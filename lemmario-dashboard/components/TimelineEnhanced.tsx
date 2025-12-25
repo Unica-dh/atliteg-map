@@ -226,7 +226,9 @@ export const TimelineEnhanced: React.FC = () => {
         data.years.add(year);
         data.lemmas.add(lemma.Lemma);
         data.locations.add(lemma.CollGeografica);
-        data.attestazioni++;
+        // Somma la frequenza invece di contare le righe
+        const freq = parseInt(lemma.Frequenza) || 0;
+        data.attestazioni += freq;
       }
     });
 
@@ -251,8 +253,13 @@ export const TimelineEnhanced: React.FC = () => {
   const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
 
   // Calcola statistiche
-  const totalOccorrenze = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
-  const totalLemmi = new Set(quartCenturies.flatMap(q => q.lemmas)).size;
+  const totalOccorrenze = useMemo(() => {
+    return filteredLemmi.reduce((sum, lemma) => {
+      const freq = parseInt(lemma.Frequenza) || 0;
+      return sum + freq;
+    }, 0);
+  }, [filteredLemmi]);
+  const totalForme = new Set(filteredLemmi.map(l => l.Forma)).size;
   const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
 
   const [selectedQuart, setSelectedQuart] = useState<string | null>(null);
@@ -351,7 +358,7 @@ export const TimelineEnhanced: React.FC = () => {
         </div>
 
         <div className="text-xs text-gray-500">
-          <span className="font-semibold text-blue-600">{totalLemmi}</span> lemmi •{' '}
+          <span className="font-semibold text-blue-600">{totalForme}</span> forme •{' '}
           <span className="font-semibold text-blue-600">{totalOccorrenze}</span> occorrenze
         </div>
       </div>
@@ -468,17 +475,14 @@ export const TimelineEnhanced: React.FC = () => {
                         
                         {/* Label con periodo */}
                         <div className="mt-1.5 text-center">
-                          <motion.div 
+                          <motion.div
                             className={`text-[10px] font-semibold transition-colors ${
                               isSelected || isHighlighted || isHovered ? 'text-blue-600' : 'text-gray-600'
                             }`}
                             animate={{ scale: isSelected ? 1.1 : 1 }}
                           >
-                            {quartItem.quartCentury}
-                          </motion.div>
-                          <div className="text-[9px] text-gray-400">
                             {startYear}-{endYear}
-                          </div>
+                          </motion.div>
                         </div>
                       </motion.div>
                     );
