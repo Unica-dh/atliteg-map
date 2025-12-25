@@ -210,6 +210,9 @@ __screenshots__/
 
 # Data
 /data/*
+# Eccezioni: file JSON/GeoJSON necessari per l'applicazione
+!/data/*.json
+!/data/*.geojson
 
 # Data sync scripts
 sync-data.sh
