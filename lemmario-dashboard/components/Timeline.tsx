@@ -203,7 +203,7 @@ export const Timeline: React.FC = () => {
                     transition={motionConfig.spring.soft}
                     className="flex flex-col items-center flex-1 min-w-0"
                   >
-                    {/* Barra verticale */}
+                    {/* Barra verticale con numero al centro */}
                     <motion.button
                       layout
                       onClick={() => handleQuartClick(quartItem.quartCentury)}
@@ -211,8 +211,8 @@ export const Timeline: React.FC = () => {
                       onMouseLeave={() => !selectedQuart && clearHighlight()}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: `${heightPx}px`, opacity: 1 }}
-                      whileHover={{ 
-                        scale: 1.1, 
+                      whileHover={{
+                        scale: 1.1,
                         y: -4,
                         boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
                       }}
@@ -222,7 +222,7 @@ export const Timeline: React.FC = () => {
                         scale: motionConfig.spring.fast,
                         y: motionConfig.spring.fast
                       }}
-                      className={`w-full rounded-t transition-colors ${
+                      className={`w-full rounded-t transition-colors relative flex items-center justify-center ${
                         isSelected
                           ? 'bg-blue-600 shadow-md'
                           : isHighlighted
@@ -230,22 +230,18 @@ export const Timeline: React.FC = () => {
                             : 'bg-blue-400 hover:bg-blue-500'
                       }`}
                       title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
-                    />
-                    
+                    >
+                      {/* Numero al centro dell'istogramma */}
+                      <span className="text-[10px] font-bold text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                        {quartItem.attestazioni}
+                      </span>
+                    </motion.button>
+
                     {/* Label con periodo */}
                     <div className="mt-1 text-center">
                       <div className={`text-[10px] font-bold ${isSelected || isHighlighted ? 'text-blue-600' : 'text-gray-600'}`}>
                         {startYear}-{endYear}
                       </div>
-                      {isSelected && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="text-[9px] font-medium text-blue-600 mt-0.5"
-                        >
-                          {quartItem.attestazioni} occ.
-                        </motion.div>
-                      )}
                     </div>
                   </motion.div>
                 );
