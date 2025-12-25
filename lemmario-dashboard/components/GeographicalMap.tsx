@@ -341,9 +341,6 @@ export function GeographicalMap() {
       }));
   }, [filteredLemmi, regions]);
 
-  const totalLocations = markers.length + polygons.length + regionBoundaries.length;
-  const totalLemmas = new Set(filteredLemmi.map(l => l.IdLemma)).size;
-
   // Loading effect
   useEffect(() => {
     setIsLoading(true);
@@ -359,13 +356,6 @@ export function GeographicalMap() {
           <div className="map-loading-spinner"></div>
         </div>
       )}
-
-      {/* Contatore in alto a destra */}
-      <div className="absolute top-4 right-4 z-[800] bg-white px-4 py-2 rounded-md shadow-lg">
-        <p className="text-sm font-medium text-gray-700">
-          {totalLocations} locations • {totalLemmas} lemmas
-        </p>
-      </div>
 
       <MapContainer
         center={[42.5, 12.5]}
