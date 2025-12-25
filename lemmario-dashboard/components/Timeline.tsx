@@ -222,7 +222,7 @@ export const Timeline: React.FC = () => {
                         scale: motionConfig.spring.fast,
                         y: motionConfig.spring.fast
                       }}
-                      className={`w-full rounded-t transition-colors relative flex items-center justify-center ${
+                      className={`w-full rounded-t transition-colors relative ${
                         isSelected
                           ? 'bg-blue-600 shadow-md'
                           : isHighlighted
@@ -232,7 +232,7 @@ export const Timeline: React.FC = () => {
                       title={`${startYear}-${endYear}: ${quartItem.attestazioni} occorrenze`}
                     >
                       {/* Numero al centro dell'istogramma */}
-                      <span className="text-[10px] font-bold text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white pointer-events-none">
                         {quartItem.attestazioni}
                       </span>
                     </motion.button>
