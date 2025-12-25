@@ -34,11 +34,14 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
     return cols;
   }, [lemmaGroups, numColumns]);
 
-  // Calcola larghezza dinamica del popup
+  // Calcola larghezza dinamica del popup basata sul contenuto
   const popupWidth = useMemo(() => {
-    if (numColumns === 1) return 280;
-    if (numColumns === 2) return 560;
-    return 840;
+    // Per 1 lemma: larghezza minima compatta
+    if (numColumns === 1) return 'auto';
+    // Per 2 lemmi: larghezza media
+    if (numColumns === 2) return '520px';
+    // Per 3+ lemmi: larghezza completa
+    return '840px';
   }, [numColumns]);
 
   const toggleLemma = (lemmaName: string) => {
@@ -103,8 +106,12 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
 
   return (
     <div
-      className="bg-white rounded-lg shadow-xl max-w-full"
-      style={{ width: `${popupWidth}px` }}
+      className="bg-white rounded-lg shadow-xl"
+      style={{
+        width: popupWidth,
+        minWidth: numColumns === 1 ? '240px' : undefined,
+        maxWidth: '90vw'
+      }}
     >
       {/* HEADER */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-50 rounded-t-lg border-b">
