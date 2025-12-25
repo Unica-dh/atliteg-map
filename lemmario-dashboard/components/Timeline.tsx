@@ -88,8 +88,13 @@ export const Timeline: React.FC = () => {
   const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
 
   // Calcola statistiche corrette
-  const totalOccorrenze = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
-  const totalLemmi = new Set(quartCenturies.flatMap(q => q.lemmas)).size;
+  const totalOccorrenze = useMemo(() => {
+    return filteredLemmi.reduce((sum, lemma) => {
+      const freq = parseInt(lemma.Frequenza) || 0;
+      return sum + freq;
+    }, 0);
+  }, [filteredLemmi]);
+  const totalForme = new Set(filteredLemmi.map(l => l.Forma)).size;
   const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
 
   const [selectedQuart, setSelectedQuart] = useState<string | null>(null);
@@ -159,7 +164,7 @@ export const Timeline: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-sm font-semibold text-gray-700">Linea del tempo</h2>
         <div className="text-xs text-gray-500">
-          <span className="font-semibold text-blue-600">{totalLemmi}</span> lemmi •{' '}
+          <span className="font-semibold text-blue-600">{totalForme}</span> forme •{' '}
           <span className="font-semibold text-blue-600">{totalOccorrenze}</span> occorrenze
         </div>
       </div>
@@ -236,7 +241,7 @@ export const Timeline: React.FC = () => {
                         <motion.div
                           initial={{ opacity: 0, y: -5 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="text-[10px] font-medium text-blue-600 mt-0.5"
+                          className="text-[9px] font-medium text-blue-600 mt-0.5"
                         >
                           {quartItem.attestazioni} occ.
                         </motion.div>
