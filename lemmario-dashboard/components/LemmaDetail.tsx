@@ -86,15 +86,15 @@ export const LemmaDetail: React.FC = () => {
 
   return (
     <div className="card flex flex-col overflow-hidden" style={{ height: '580px' }}>
-      {/* Header Sticky con meno padding top */}
-      <div className="px-3 pt-2 pb-3 border-b border-border sticky top-0 bg-white z-10">
-        <h2 className="text-lg font-semibold text-text-primary mb-1">Dettaglio Forme</h2>
+      {/* Header Sticky - Padding ridotto */}
+      <div className="px-2 pt-1.5 pb-2 border-b border-border sticky top-0 bg-white z-10">
+        <h2 className="text-base font-semibold text-text-primary mb-0.5">Dettaglio Forme</h2>
         <motion.div
           key={`header-${groupedByLemma.length}`}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={motionConfig.transitions.fast}
-          className="flex items-center gap-3 text-xs text-text-secondary"
+          className="flex items-center gap-2 text-[10px] text-text-secondary"
         >
           <span><strong>{totalForme}</strong> forme</span>
           <span>•</span>
@@ -102,7 +102,7 @@ export const LemmaDetail: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Content con scroll interno, layout animations e margini ridotti */}
+      {/* Content - Padding laterale ridotto */}
       <LayoutGroup>
         <AnimatePresence mode="wait">
           <motion.div
@@ -111,7 +111,7 @@ export const LemmaDetail: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={motionConfig.transitions.medium}
-            className="flex-1 overflow-y-auto space-y-3 px-3 pb-3 pt-3"
+            className="flex-1 overflow-y-auto space-y-2 px-2 pb-2 pt-2"
           >
         {groupedByLemma.map(([lemmaText, occurrences]) => {
           // Estrai proprietà comuni a livello Lemma
@@ -133,36 +133,65 @@ export const LemmaDetail: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={motionConfig.spring.soft}
-              className="border border-border rounded-md p-3 bg-white hover:shadow-card transition-fast"
+              className="border border-border rounded-md bg-white hover:shadow-card transition-fast overflow-hidden"
             >
-              {/* Lista Forme - ORA PRIMA */}
-              <div className="space-y-2 mb-2">
+              {/* Header Lemma - ORA IN CIMA con link */}
+              <div className="px-2 py-1.5 bg-primary/5 border-b border-border">
+                <div className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                  <h3 className="text-sm font-semibold text-text-primary truncate">{lemmaText}</h3>
+                  <span className="text-[10px] font-normal text-text-muted bg-white px-1.5 py-0.5 rounded flex-shrink-0">
+                    {totalFreq} occ.
+                  </span>
+                  {url && url.trim() && (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto text-primary hover:text-primary-dark transition-colors flex-shrink-0"
+                      title="Vedi su vocabolario.atliteg.org"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+
+                {/* Metadati a livello Lemma */}
+                {categoria && (
+                  <div className="text-[10px] text-text-secondary mt-0.5">
+                    <span className="font-medium">Categoria:</span> {categoria}
+                  </div>
+                )}
+              </div>
+
+              {/* Lista Forme */}
+              <div className="space-y-1.5 p-2">
                 {occurrences.map((lemma, idx) => (
                   <div
                     key={`${lemma.IdLemma}-${idx}`}
-                    className="bg-background-muted rounded p-2 text-xs"
+                    className="bg-background-muted rounded p-1.5 text-xs"
                   >
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-1">
                       <div className="flex items-center gap-1">
-                        <span className="text-text-muted">Forma:</span>
+                        <span className="text-text-muted text-[10px]">Forma:</span>
                         <span className="font-medium text-text-primary truncate">{lemma.Forma}</span>
                       </div>
 
                       <div className="flex items-center gap-1">
                         <MapPin className="w-3 h-3 text-text-muted flex-shrink-0" />
-                        <span className="font-medium text-text-primary truncate">{lemma.CollGeografica}</span>
+                        <span className="font-medium text-text-primary truncate text-[11px]">{lemma.CollGeografica}</span>
                       </div>
 
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3 text-text-muted flex-shrink-0" />
-                        <span className="text-text-primary">{lemma.Datazione || 'N/D'}</span>
+                        <span className="text-text-primary text-[11px]">{lemma.Datazione || 'N/D'}</span>
                       </div>
 
                       <div className="flex items-center gap-1">
                         {lemma.Frequenza ? (
                           <>
                             <Hash className="w-3 h-3 text-text-muted flex-shrink-0" />
-                            <span className="text-text-primary">freq.: {lemma.Frequenza}</span>
+                            <span className="text-text-primary text-[11px]">freq.: {lemma.Frequenza}</span>
                           </>
                         ) : (
                           <span className="text-text-muted text-xs">—</span>
@@ -171,35 +200,6 @@ export const LemmaDetail: React.FC = () => {
                     </div>
                   </div>
                 ))}
-              </div>
-
-              {/* Footer Lemma - ORA DOPO, con badge frequenza */}
-              <div className="pt-2 border-t border-border">
-                <div className="flex items-center gap-2 mb-1">
-                  <FileText className="w-4 h-4 text-primary" />
-                  <h3 className="text-base font-semibold text-text-primary">{lemmaText}</h3>
-                  <span className="text-xs font-normal text-text-muted bg-background-muted px-1.5 py-0.5 rounded">
-                    {totalFreq} occ.
-                  </span>
-                  {url && url.trim() && (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-auto text-primary hover:text-primary-dark transition-colors"
-                      title="Vedi su vocabolario.atliteg.org"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  )}
-                </div>
-
-                {/* Metadati a livello Lemma */}
-                {categoria && (
-                  <div className="text-xs text-text-secondary mt-1">
-                    <span className="font-medium">Categoria:</span> {categoria}
-                  </div>
-                )}
               </div>
             </motion.div>
           );
