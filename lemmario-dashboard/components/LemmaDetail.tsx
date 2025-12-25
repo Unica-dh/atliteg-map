@@ -85,7 +85,7 @@ export const LemmaDetail: React.FC = () => {
   }
 
   return (
-    <div className="card !p-0 flex flex-col overflow-hidden" style={{ height: '578px' }}>
+    <div className="card !p-0 flex flex-col overflow-hidden" style={{ height: '627px' }}>
       {/* Header Sticky - Padding minimale */}
       <div className="px-1.5 pt-1.5 pb-1.5 border-b border-border sticky top-0 bg-white z-10">
         <h2 className="text-base font-semibold text-text-primary mb-0.5">Dettaglio Forme</h2>
