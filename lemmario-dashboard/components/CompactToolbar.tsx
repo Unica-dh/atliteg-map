@@ -1,16 +1,158 @@
 'use client';
 
 import { useApp } from '@/context/AppContext';
-import { Search, X, ListOrdered } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { Search, X, ListOrdered, ChevronDown, Check } from 'lucide-react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Lemma } from '@/types/lemma';
 import { getUniqueCategorie, getUniquePeriodi } from '@/services/dataLoader';
-import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { motionConfig } from '@/lib/motion-config';
 
 interface CompactToolbarProps {
   onToggleIndice?: () => void;
+}
+
+// Lightweight dropdown component with viewport-aware positioning
+interface DropdownSelectProps {
+  label: string;
+  options: string[];
+  selectedValues: string[];
+  onChange: (value: string) => void;
+  placeholder: string;
+}
+
+function DropdownSelect({ label, options, selectedValues, onChange, placeholder }: DropdownSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [mounted, setMounted] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // Update dropdown position with viewport awareness
+  useEffect(() => {
+    const updatePosition = () => {
+      if (isOpen && buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        
+        // Minimum dropdown width for usability
+        const minDropdownWidth = 280;
+        const dropdownWidth = Math.max(rect.width, minDropdownWidth);
+        
+        // Calculate initial left position
+        let leftPosition = rect.left + window.scrollX;
+        
+        // Check if dropdown would overflow right edge of viewport
+        const wouldOverflowRight = (rect.left + dropdownWidth) > viewportWidth;
+        
+        // On mobile or when would overflow, align to right edge of button
+        if (wouldOverflowRight || viewportWidth < 768) {
+          // Align dropdown's right edge with button's right edge
+          leftPosition = rect.right + window.scrollX - dropdownWidth;
+          
+          // Ensure dropdown doesn't go off left edge
+          leftPosition = Math.max(8, leftPosition);
+        }
+        
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY + 8,
+          left: leftPosition,
+          width: dropdownWidth
+        });
+      }
+    };
+
+    updatePosition();
+
+    if (isOpen) {
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+      return () => {
+        window.removeEventListener('scroll', updatePosition, true);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [isOpen]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredOptions = options.filter(opt => !selectedValues.includes(opt));
+
+  return (
+    <div className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white hover:bg-gray-50 transition-fast flex items-center gap-1.5 max-w-[120px]"
+      >
+        <span className="text-text-secondary truncate">{placeholder}</span>
+        <ChevronDown className={`w-3 h-3 text-text-muted transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={motionConfig.transitions.fast}
+              style={{
+                position: 'fixed',
+                top: `${dropdownPosition.top}px`,
+                left: `${dropdownPosition.left}px`,
+                width: `${dropdownPosition.width}px`,
+                zIndex: 9999
+              }}
+              className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden"
+            >
+              <div className="max-h-[300px] overflow-y-auto">
+                {filteredOptions.length === 0 ? (
+                  <div className="px-4 py-6 text-center text-sm text-gray-500">
+                    Nessuna opzione disponibile
+                  </div>
+                ) : (
+                  filteredOptions.map(option => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => {
+                        onChange(option);
+                        setIsOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 text-sm text-gray-700"
+                    >
+                      {option}
+                    </button>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </div>
+  );
 }
 
 export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
@@ -134,37 +276,21 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
           <div className="flex items-center gap-2">
             <span className="text-xs text-text-secondary">Filtri:</span>
 
-            <select
-              value=""
-              onChange={(e) => {
-                if (e.target.value) {
-                  setFilters({ categorie: [...filters.categorie, e.target.value] });
-                }
-              }}
-              className="relative z-50 px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white"
-              style={{ position: 'relative', zIndex: 9999 }}
-            >
-              <option value="">Categoria</option>
-              {categorie.filter(c => !filters.categorie.includes(c)).map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+            <DropdownSelect
+              label="Categoria"
+              options={categorie}
+              selectedValues={filters.categorie}
+              onChange={(value) => setFilters({ categorie: [...filters.categorie, value] })}
+              placeholder="Categoria"
+            />
 
-            <select
-              value=""
-              onChange={(e) => {
-                if (e.target.value) {
-                  setFilters({ periodi: [...filters.periodi, e.target.value] });
-                }
-              }}
-              className="relative z-50 px-2 py-1.5 text-xs border border-border rounded-md focus:outline-none focus:border-accent bg-white"
-              style={{ position: 'relative', zIndex: 9999 }}
-            >
-              <option value="">Periodo</option>
-              {periodi.filter(p => !filters.periodi.includes(p)).map(per => (
-                <option key={per} value={per}>{per}</option>
-              ))}
-            </select>
+            <DropdownSelect
+              label="Periodo"
+              options={periodi}
+              selectedValues={filters.periodi}
+              onChange={(value) => setFilters({ periodi: [...filters.periodi, value] })}
+              placeholder="Periodo"
+            />
 
             {hasActiveFilters && (
               <button
