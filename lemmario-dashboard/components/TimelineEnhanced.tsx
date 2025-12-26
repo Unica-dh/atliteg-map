@@ -273,13 +273,16 @@ export const TimelineEnhanced: React.FC = () => {
   const [hoveredQuart, setHoveredQuart] = useState<string | null>(null);
 
   const handleQuartClick = (quart: string) => {
+    console.log('[Timeline] Click su quarto:', quart, 'Attualmente selezionato:', selectedQuart);
+
     if (selectedQuart === quart) {
       // Deseleziona lo stesso periodo
+      console.log('[Timeline] Deseleziono lo stesso periodo');
       setSelectedQuart(null);
       clearHighlight();
     } else {
-      // Cancella l'highlight precedente prima di applicare quello nuovo
-      clearHighlight();
+      // Seleziona nuovo periodo
+      console.log('[Timeline] Seleziono nuovo periodo:', quart);
       setSelectedQuart(quart);
 
       const quartData = quartCenturies.find(q => q.quartCentury === quart);
@@ -290,6 +293,8 @@ export const TimelineEnhanced: React.FC = () => {
             return quartData.years.includes(year);
           })
           .map(l => l.IdLemma);
+
+        console.log('[Timeline] Evidenzio', lemmiIds.length, 'lemmi per il periodo', quartData.years);
 
         highlightMultiple({
           lemmaIds: lemmiIds,

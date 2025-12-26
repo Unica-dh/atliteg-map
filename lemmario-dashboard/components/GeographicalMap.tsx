@@ -237,22 +237,34 @@ function MarkerClusterGroup({
 
   // Update marker icons quando highlighting cambia
   useEffect(() => {
-    if (!clusterGroupRef.current || markersMapRef.current.size === 0) return;
+    console.log('[Map] Highlight changed. Lemmi:', highlightedLemmi.size, 'Areas:', highlightedAreas.size);
 
+    if (!clusterGroupRef.current || markersMapRef.current.size === 0) {
+      console.log('[Map] Cluster group not ready');
+      return;
+    }
+
+    let updatedCount = 0;
     markers.forEach(marker => {
       const markerKey = `${marker.lat}-${marker.lng}`;
       const leafletMarker = markersMapRef.current.get(markerKey);
-      
+
       if (leafletMarker) {
-        const isHighlighted = marker.lemmi.some((l: any) => 
+        const isHighlighted = marker.lemmi.some((l: any) =>
           highlightedLemmi.has(l.IdLemma) || highlightedAreas.has(l.CollGeografica)
         );
         const isSelected = marker.lemmi.some((l: any) => highlightedLemmi.has(l.IdLemma));
-        
+
+        if (isHighlighted || isSelected) {
+          updatedCount++;
+        }
+
         // Update icon
         leafletMarker.setIcon(createMinimalIcon(isHighlighted, isSelected));
       }
     });
+
+    console.log('[Map] Updated', updatedCount, 'highlighted markers out of', markers.length);
   }, [highlightedLemmi, highlightedAreas, markers]);
 
   return null;
