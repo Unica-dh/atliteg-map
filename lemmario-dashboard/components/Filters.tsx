@@ -23,6 +23,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -32,8 +33,21 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
     return () => setMounted(false);
   }, []);
 
-  // Update dropdown position when opened or on scroll/resize
+  // Detect mobile viewport
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Update dropdown position when opened or on scroll/resize (desktop only)
+  useEffect(() => {
+    if (isMobile) return; // Skip positioning logic on mobile
+    
     const updatePosition = () => {
       if (isOpen && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect();
@@ -49,8 +63,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
         // Check if dropdown would overflow right edge of viewport
         const wouldOverflowRight = (rect.left + dropdownWidth) > viewportWidth;
         
-        // On mobile or when would overflow, align to right edge of button
-        if (wouldOverflowRight || viewportWidth < 768) {
+        if (wouldOverflowRight) {
           // Align dropdown's right edge with button's right edge
           leftPosition = rect.right + window.scrollX - dropdownWidth;
           
@@ -76,7 +89,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
         window.removeEventListener('resize', updatePosition);
       };
     }
-  }, [isOpen]);
+  }, [isOpen, isMobile]);
 
   // Chiudi dropdown quando si clicca fuori
   useEffect(() => {
@@ -132,6 +145,90 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
 
   const colors = colorClasses[color];
 
+  // Render dropdown content (shared between desktop dropdown and mobile modal)
+  const renderContent = () => (
+    <>
+      {/* Barra di ricerca */}
+      <div className="p-3 border-b border-gray-200 bg-gray-50">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Cerca..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      </div>
+
+      {/* Azioni rapide */}
+      <div className="px-3 py-2 border-b border-gray-200 bg-gray-50 flex gap-2 text-xs">
+        <button
+          type="button"
+          onClick={selectAll}
+          className={`${colors.selectBtn} font-medium hover:underline`}
+        >
+          Seleziona tutti
+        </button>
+        <span className="text-gray-300">|</span>
+        <button
+          type="button"
+          onClick={clearAll}
+          className="text-gray-600 hover:text-gray-700 font-medium hover:underline"
+        >
+          Deseleziona tutti
+        </button>
+      </div>
+
+      {/* Lista opzioni */}
+      <StaggerContainer staggerDelay={0.02}>
+        <div className="max-h-[32rem] overflow-y-auto">
+          {filteredOptions.length === 0 ? (
+            <div className="px-4 py-8 text-center text-sm text-gray-500">
+              Nessun risultato trovato
+            </div>
+          ) : (
+            filteredOptions.map(option => {
+              const isSelected = selectedValues.includes(option);
+              return (
+                <StaggerItem key={option}>
+                  <motion.label
+                    whileHover={{ x: 4, backgroundColor: 'rgba(59, 130, 246, 0.05)' }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0`}
+                  >
+                    <div className="relative flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleOption(option)}
+                        className={`w-4 h-4 rounded border-gray-300 ${colors.checkbox} focus:ring-offset-0`}
+                      />
+                      <AnimatePresence>
+                        {isSelected && (
+                          <motion.div
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            exit={{ scale: 0, rotate: 180 }}
+                            transition={motionConfig.spring.fast}
+                          >
+                            <Check className="absolute w-3 h-3 text-white pointer-events-none left-0.5" />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    <span className="text-sm text-gray-700 flex-1">{option}</span>
+                  </motion.label>
+                </StaggerItem>
+              );
+            })
+          )}
+        </div>
+      </StaggerContainer>
+    </>
+  );
 
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 w-full md:w-auto">
@@ -160,101 +257,78 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
         {mounted && createPortal(
           <AnimatePresence>
             {isOpen && (
-              <motion.div
-                ref={dropdownRef}
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={motionConfig.transitions.fast}
-                style={{
-                  position: 'fixed',
-                  top: `${dropdownPosition.top}px`,
-                  left: `${dropdownPosition.left}px`,
-                  width: `${dropdownPosition.width}px`,
-                  zIndex: 9999
-                }}
-                className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
-              >
-            {/* Barra di ricerca */}
-            <div className="p-3 border-b border-gray-200 bg-gray-50">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Cerca..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
-            </div>
-
-            {/* Azioni rapide */}
-            <div className="px-3 py-2 border-b border-gray-200 bg-gray-50 flex gap-2 text-xs">
-              <button
-                type="button"
-                onClick={selectAll}
-                className={`${colors.selectBtn} font-medium hover:underline`}
-              >
-                Seleziona tutti
-              </button>
-              <span className="text-gray-300">|</span>
-              <button
-                type="button"
-                onClick={clearAll}
-                className="text-gray-600 hover:text-gray-700 font-medium hover:underline"
-              >
-                Deseleziona tutti
-              </button>
-            </div>
-
-            {/* Lista opzioni */}
-            <StaggerContainer staggerDelay={0.02}>
-              <div className="max-h-[32rem] overflow-y-auto">
-                {filteredOptions.length === 0 ? (
-                  <div className="px-4 py-8 text-center text-sm text-gray-500">
-                    Nessun risultato trovato
-                  </div>
-                ) : (
-                  filteredOptions.map(option => {
-                    const isSelected = selectedValues.includes(option);
-                    return (
-                      <StaggerItem key={option}>
-                        <motion.label
-                          whileHover={{ x: 4, backgroundColor: 'rgba(59, 130, 246, 0.05)' }}
-                          whileTap={{ scale: 0.98 }}
-                          className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0`}
-                        >
-                          <div className="relative flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleOption(option)}
-                              className={`w-4 h-4 rounded border-gray-300 ${colors.checkbox} focus:ring-offset-0`}
-                            />
-                            <AnimatePresence>
-                              {isSelected && (
-                                <motion.div
-                                  initial={{ scale: 0, rotate: -180 }}
-                                  animate={{ scale: 1, rotate: 0 }}
-                                  exit={{ scale: 0, rotate: 180 }}
-                                  transition={motionConfig.spring.fast}
-                                >
-                                  <Check className="absolute w-3 h-3 text-white pointer-events-none left-0.5" />
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                          <span className="text-sm text-gray-700 flex-1">{option}</span>
-                        </motion.label>
-                      </StaggerItem>
-                    );
-                  })
-                )}
-              </div>
-            </StaggerContainer>
-              </motion.div>
+              isMobile ? (
+                // Mobile: Full-screen modal
+                <>
+                  {/* Backdrop */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={motionConfig.transitions.fast}
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998]"
+                    onClick={() => setIsOpen(false)}
+                  />
+                  
+                  {/* Modal */}
+                  <motion.div
+                    ref={dropdownRef}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={motionConfig.transitions.fast}
+                    className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[9999] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden max-h-[80vh] flex flex-col"
+                  >
+                    {/* Modal Header */}
+                    <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+                      <h3 className="text-base font-semibold text-gray-900">{label}</h3>
+                      <button
+                        type="button"
+                        onClick={() => setIsOpen(false)}
+                        className="p-1 rounded-md hover:bg-gray-200 transition-colors"
+                        aria-label="Chiudi"
+                      >
+                        <X className="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                    
+                    {/* Modal Content */}
+                    <div className="flex-1 overflow-hidden">
+                      {renderContent()}
+                    </div>
+                    
+                    {/* Modal Footer */}
+                    <div className="p-3 border-t border-gray-200 bg-gray-50">
+                      <button
+                        type="button"
+                        onClick={() => setIsOpen(false)}
+                        className={`w-full px-4 py-2 ${colors.badge} rounded-md font-medium text-sm`}
+                      >
+                        Applica ({selectedValues.length})
+                      </button>
+                    </div>
+                  </motion.div>
+                </>
+              ) : (
+                // Desktop: Positioned dropdown
+                <motion.div
+                  ref={dropdownRef}
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={motionConfig.transitions.fast}
+                  style={{
+                    position: 'fixed',
+                    top: `${dropdownPosition.top}px`,
+                    left: `${dropdownPosition.left}px`,
+                    width: `${dropdownPosition.width}px`,
+                    zIndex: 9999
+                  }}
+                  className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
+                >
+                  {renderContent()}
+                </motion.div>
+              )
             )}
           </AnimatePresence>,
           document.body
