@@ -20,7 +20,7 @@ export function Header() {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-3">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-1">
         <div className="flex items-start gap-6">
           {/* Logo AtLiTeG */}
           <Image
@@ -34,16 +34,16 @@ export function Header() {
 
           {/* Title and full information */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-white text-xl md:text-2xl font-bold mb-1 leading-tight">
+            <h1 className="text-white text-xl md:text-2xl font-bold leading-tight">
               Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità
             </h1>
-            <p className="text-white/95 text-sm leading-relaxed mb-1">
+            <p className="text-white/95 text-sm leading-relaxed">
               <strong>PRIN 2017XRCZTM</strong> - P.I. prof.ssa Giovanna Frosini, Università per Stranieri di Siena
             </p>
-            <p className="text-white/95 text-xs leading-relaxed mb-1">
+            <p className="text-white/95 text-xs leading-relaxed">
               Unità di ricerca: Università di Cagliari, Università di Napoli "Federico II", Università di Salerno. L'Atlante è elaborato sui dati del VoSLIG (Vocabolario storico della lingua italiana della gastronomia)
             </p>
-            <p className="text-white/95 text-xs leading-relaxed mb-1">
+            <p className="text-white/95 text-xs leading-relaxed">
               Responsabili Atlante e VoSLIG: Giovanni Urraci e Monica Alba - Partner informatici: DH Unica, diretto da: prof. Giampaolo Salice, Università di Cagliari
             </p>
           </div>
