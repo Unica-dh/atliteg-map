@@ -378,7 +378,7 @@ export function GeographicalMap() {
       )}
 
       <MapContainer
-        center={[42.5, 12.5]}
+        center={[40.5, 12.5]}
         zoom={6}
         style={{ height: '100%', width: '100%' }}
         className="rounded-lg"
