@@ -153,6 +153,11 @@ const TimelineHeatmap: React.FC<{
               const intensity = quartData ? quartData.attestazioni / maxAttestazioni : 0;
               const isSelected = selectedQuart === quartData?.quartCentury;
               
+              // Calcola arco temporale per questo quarto
+              const [startYear, endYear] = quartData
+                ? getYearRangeFromQuartCentury(quartData.quartCentury)
+                : [0, 0];
+
               return (
                 <motion.button
                   key={`${century}${quarter}`}
@@ -160,24 +165,26 @@ const TimelineHeatmap: React.FC<{
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`
-                    h-8 rounded transition-all relative
+                    h-12 rounded transition-all relative flex flex-col items-center justify-center gap-0.5
                     ${quartData ? 'cursor-pointer' : 'cursor-not-allowed opacity-20'}
                     ${isSelected ? 'ring-2 ring-blue-600 ring-offset-1' : ''}
                   `}
                   style={{
-                    backgroundColor: quartData 
-                      ? `rgba(37, 99, 235, ${Math.max(intensity, 0.15)})`
+                    backgroundColor: quartData
+                      ? `rgba(37, 99, 235, ${Math.max(intensity, 0.2)})`
                       : '#f3f4f6'
                   }}
-                  title={quartData ? `${quartData.quartCentury}: ${quartData.attestazioni} occ.` : 'Nessun dato'}
+                  title={quartData ? `${startYear}-${endYear}: ${quartData.attestazioni} occ.` : 'Nessun dato'}
                 >
-                  <span className="text-[10px] font-medium text-white drop-shadow">
-                    {quarter}
-                  </span>
                   {quartData && (
-                    <span className="absolute bottom-0.5 right-0.5 text-[8px] text-white/80">
-                      {quartData.attestazioni}
-                    </span>
+                    <>
+                      <span className="text-[9px] font-semibold text-white drop-shadow-md">
+                        {startYear}-{endYear}
+                      </span>
+                      <span className="text-[11px] font-bold text-white drop-shadow-md">
+                        {quartData.attestazioni}
+                      </span>
+                    </>
                   )}
                 </motion.button>
               );
@@ -267,11 +274,14 @@ export const TimelineEnhanced: React.FC = () => {
 
   const handleQuartClick = (quart: string) => {
     if (selectedQuart === quart) {
+      // Deseleziona lo stesso periodo
       setSelectedQuart(null);
       clearHighlight();
     } else {
+      // Cancella l'highlight precedente prima di applicare quello nuovo
+      clearHighlight();
       setSelectedQuart(quart);
-      
+
       const quartData = quartCenturies.find(q => q.quartCentury === quart);
       if (quartData) {
         const lemmiIds = filteredLemmi
@@ -280,7 +290,7 @@ export const TimelineEnhanced: React.FC = () => {
             return quartData.years.includes(year);
           })
           .map(l => l.IdLemma);
-        
+
         highlightMultiple({
           lemmaIds: lemmiIds,
           years: quartData.years,
@@ -460,17 +470,13 @@ export const TimelineEnhanced: React.FC = () => {
                             animate={isHovered || isSelected ? { x: '100%' } : { x: '-100%' }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
                           />
-                          
-                          {/* Count badge */}
-                          {(isHovered || isSelected) && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.5 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              className="absolute top-1 right-1 bg-white/90 text-blue-600 text-[8px] font-bold px-1 rounded"
-                            >
+
+                          {/* Numero al centro dell'istogramma - sempre visibile */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-[10px] font-bold text-white pointer-events-none drop-shadow-md">
                               {quartItem.attestazioni}
-                            </motion.div>
-                          )}
+                            </span>
+                          </div>
                         </motion.button>
                         
                         {/* Label con periodo */}

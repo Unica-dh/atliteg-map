@@ -101,11 +101,14 @@ export const Timeline: React.FC = () => {
 
   const handleQuartClick = (quart: string) => {
     if (selectedQuart === quart) {
+      // Deseleziona lo stesso periodo
       setSelectedQuart(null);
       clearHighlight();
     } else {
+      // Cancella l'highlight precedente prima di applicare quello nuovo
+      clearHighlight();
       setSelectedQuart(quart);
-      
+
       // Evidenzia lemmi di questo periodo
       const quartData = quartCenturies.find(q => q.quartCentury === quart);
       if (quartData) {
@@ -115,7 +118,7 @@ export const Timeline: React.FC = () => {
             return quartData.years.includes(year);
           })
           .map(l => l.IdLemma);
-        
+
         highlightMultiple({
           lemmaIds: lemmiIds,
           years: quartData.years,
