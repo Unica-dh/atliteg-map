@@ -113,17 +113,17 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
 
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 w-full md:w-auto">
       <label className="text-xs font-medium text-text-secondary whitespace-nowrap">
         {label}:
       </label>
 
-      <div className="relative">
+      <div className="relative w-full md:w-auto">
         <button
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`px-3 py-1.5 flex items-center gap-2 border ${colors.button} rounded-md transition-fast focus:outline-none bg-white text-xs`}
+          className={`w-full md:w-auto px-3 py-1.5 flex items-center gap-2 border ${colors.button} rounded-md transition-fast focus:outline-none bg-white text-xs`}
         >
           <span className="text-text-secondary">
             {selectedValues.length === 0 ? (
@@ -267,8 +267,8 @@ export function Filters() {
 
   return (
     <div className="bg-white/70 backdrop-blur-md border-b border-border">
-      <div className="max-w-container mx-auto px-lg py-3">
-        <div className="flex items-center gap-4 flex-wrap">
+      <div className="max-w-container mx-auto px-3 md:px-lg py-3">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
           <MultiSelect
             label="Categoria"
             options={categorie}
