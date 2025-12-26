@@ -153,6 +153,11 @@ const TimelineHeatmap: React.FC<{
               const intensity = quartData ? quartData.attestazioni / maxAttestazioni : 0;
               const isSelected = selectedQuart === quartData?.quartCentury;
               
+              // Calcola arco temporale per questo quarto
+              const [startYear, endYear] = quartData
+                ? getYearRangeFromQuartCentury(quartData.quartCentury)
+                : [0, 0];
+
               return (
                 <motion.button
                   key={`${century}${quarter}`}
@@ -160,24 +165,26 @@ const TimelineHeatmap: React.FC<{
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`
-                    h-8 rounded transition-all relative
+                    h-12 rounded transition-all relative flex flex-col items-center justify-center gap-0.5
                     ${quartData ? 'cursor-pointer' : 'cursor-not-allowed opacity-20'}
                     ${isSelected ? 'ring-2 ring-blue-600 ring-offset-1' : ''}
                   `}
                   style={{
-                    backgroundColor: quartData 
-                      ? `rgba(37, 99, 235, ${Math.max(intensity, 0.15)})`
+                    backgroundColor: quartData
+                      ? `rgba(37, 99, 235, ${Math.max(intensity, 0.2)})`
                       : '#f3f4f6'
                   }}
-                  title={quartData ? `${quartData.quartCentury}: ${quartData.attestazioni} occ.` : 'Nessun dato'}
+                  title={quartData ? `${startYear}-${endYear}: ${quartData.attestazioni} occ.` : 'Nessun dato'}
                 >
-                  <span className="text-[10px] font-medium text-white drop-shadow">
-                    {quarter}
-                  </span>
                   {quartData && (
-                    <span className="absolute bottom-0.5 right-0.5 text-[8px] text-white/80">
-                      {quartData.attestazioni}
-                    </span>
+                    <>
+                      <span className="text-[9px] font-semibold text-white drop-shadow-md">
+                        {startYear}-{endYear}
+                      </span>
+                      <span className="text-[11px] font-bold text-white drop-shadow-md">
+                        {quartData.attestazioni}
+                      </span>
+                    </>
                   )}
                 </motion.button>
               );
@@ -226,7 +233,9 @@ export const TimelineEnhanced: React.FC = () => {
         data.years.add(year);
         data.lemmas.add(lemma.Lemma);
         data.locations.add(lemma.CollGeografica);
-        data.attestazioni++;
+        // Somma la frequenza invece di contare le righe
+        const freq = parseInt(lemma.Frequenza) || 0;
+        data.attestazioni += freq;
       }
     });
 
@@ -251,29 +260,44 @@ export const TimelineEnhanced: React.FC = () => {
   const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
 
   // Calcola statistiche
-  const totalOccorrenze = quartCenturies.reduce((sum, q) => sum + q.attestazioni, 0);
-  const totalLemmi = new Set(quartCenturies.flatMap(q => q.lemmas)).size;
+  const totalOccorrenze = useMemo(() => {
+    return filteredLemmi.reduce((sum, lemma) => {
+      const freq = parseInt(lemma.Frequenza) || 0;
+      return sum + freq;
+    }, 0);
+  }, [filteredLemmi]);
+  const totalForme = new Set(filteredLemmi.map(l => l.Forma)).size;
   const maxAttestazioni = Math.max(...quartCenturies.map(q => q.attestazioni), 1);
 
   const [selectedQuart, setSelectedQuart] = useState<string | null>(null);
   const [hoveredQuart, setHoveredQuart] = useState<string | null>(null);
 
   const handleQuartClick = (quart: string) => {
+    console.log('[Timeline] Click su quarto:', quart, 'Attualmente selezionato:', selectedQuart);
+
     if (selectedQuart === quart) {
+      // Deseleziona lo stesso periodo
+      console.log('[Timeline] Deseleziono lo stesso periodo');
       setSelectedQuart(null);
       clearHighlight();
     } else {
+      // Seleziona nuovo periodo
+      console.log('[Timeline] Seleziono nuovo periodo:', quart);
       setSelectedQuart(quart);
-      
+
       const quartData = quartCenturies.find(q => q.quartCentury === quart);
       if (quartData) {
+        // Crea ID univoci per ogni occorrenza (riga)
         const lemmiIds = filteredLemmi
           .filter(l => {
             const year = parseInt(l.Anno);
             return quartData.years.includes(year);
           })
-          .map(l => l.IdLemma);
-        
+          .map(l => `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`);
+
+        console.log('[Timeline] Evidenzio', lemmiIds.length, 'lemmi per il periodo', quartData.years);
+        console.log('[Timeline] LemmiIds unique:', new Set(lemmiIds).size);
+
         highlightMultiple({
           lemmaIds: lemmiIds,
           years: quartData.years,
@@ -351,7 +375,7 @@ export const TimelineEnhanced: React.FC = () => {
         </div>
 
         <div className="text-xs text-gray-500">
-          <span className="font-semibold text-blue-600">{totalLemmi}</span> lemmi •{' '}
+          <span className="font-semibold text-blue-600">{totalForme}</span> forme •{' '}
           <span className="font-semibold text-blue-600">{totalOccorrenze}</span> occorrenze
         </div>
       </div>
@@ -453,32 +477,25 @@ export const TimelineEnhanced: React.FC = () => {
                             animate={isHovered || isSelected ? { x: '100%' } : { x: '-100%' }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
                           />
-                          
-                          {/* Count badge */}
-                          {(isHovered || isSelected) && (
-                            <motion.div
-                              initial={{ opacity: 0, scale: 0.5 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              className="absolute top-1 right-1 bg-white/90 text-blue-600 text-[8px] font-bold px-1 rounded"
-                            >
+
+                          {/* Numero al centro dell'istogramma - sempre visibile */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-[10px] font-bold text-white pointer-events-none drop-shadow-md">
                               {quartItem.attestazioni}
-                            </motion.div>
-                          )}
+                            </span>
+                          </div>
                         </motion.button>
                         
                         {/* Label con periodo */}
                         <div className="mt-1.5 text-center">
-                          <motion.div 
+                          <motion.div
                             className={`text-[10px] font-semibold transition-colors ${
                               isSelected || isHighlighted || isHovered ? 'text-blue-600' : 'text-gray-600'
                             }`}
                             animate={{ scale: isSelected ? 1.1 : 1 }}
                           >
-                            {quartItem.quartCentury}
-                          </motion.div>
-                          <div className="text-[9px] text-gray-400">
                             {startYear}-{endYear}
-                          </div>
+                          </motion.div>
                         </div>
                       </motion.div>
                     );
