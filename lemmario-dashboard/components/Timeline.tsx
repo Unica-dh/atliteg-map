@@ -112,12 +112,13 @@ export const Timeline: React.FC = () => {
       // Evidenzia lemmi di questo periodo
       const quartData = quartCenturies.find(q => q.quartCentury === quart);
       if (quartData) {
+        // Crea ID univoci per ogni occorrenza (riga)
         const lemmiIds = filteredLemmi
           .filter(l => {
             const year = parseInt(l.Anno);
             return quartData.years.includes(year);
           })
-          .map(l => l.IdLemma);
+          .map(l => `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`);
 
         highlightMultiple({
           lemmaIds: lemmiIds,

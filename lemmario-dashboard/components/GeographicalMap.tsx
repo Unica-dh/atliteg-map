@@ -150,13 +150,17 @@ function MarkerClusterGroup({
     const newMarkersMap = new Map<string, L.Marker>();
 
     // Aggiungi marker al cluster
-    markers.forEach((marker, index) => {
+    markers.forEach((marker) => {
       // Check se marker è evidenziato
-      const isHighlighted = marker.lemmi.some((l: any) => 
-        highlightedLemmi.has(l.IdLemma) || highlightedAreas.has(l.CollGeografica)
-      );
-      
-      const isSelected = marker.lemmi.some((l: any) => highlightedLemmi.has(l.IdLemma));
+      const isHighlighted = marker.lemmi.some((l: any) => {
+        const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
+        return highlightedLemmi.has(uniqueId) || highlightedAreas.has(l.CollGeografica);
+      });
+
+      const isSelected = marker.lemmi.some((l: any) => {
+        const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
+        return highlightedLemmi.has(uniqueId);
+      });
 
       const leafletMarker = L.marker([marker.lat, marker.lng], {
         icon: createMinimalIcon(isHighlighted, isSelected),
@@ -250,10 +254,14 @@ function MarkerClusterGroup({
       const leafletMarker = markersMapRef.current.get(markerKey);
 
       if (leafletMarker) {
-        const isHighlighted = marker.lemmi.some((l: any) =>
-          highlightedLemmi.has(l.IdLemma) || highlightedAreas.has(l.CollGeografica)
-        );
-        const isSelected = marker.lemmi.some((l: any) => highlightedLemmi.has(l.IdLemma));
+        const isHighlighted = marker.lemmi.some((l: any) => {
+          const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
+          return highlightedLemmi.has(uniqueId) || highlightedAreas.has(l.CollGeografica);
+        });
+        const isSelected = marker.lemmi.some((l: any) => {
+          const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
+          return highlightedLemmi.has(uniqueId);
+        });
 
         if (isHighlighted || isSelected) {
           updatedCount++;
@@ -392,12 +400,13 @@ export function GeographicalMap() {
         )}
 
         {/* Poligoni aree geografiche con highlighting */}
-        {polygons.map((poly, idx) => {
+        {polygons.map((poly) => {
           // Check se polygon è evidenziato
-          const isHighlighted = poly.lemmi.some((l: any) => 
-            highlightState.highlightedLemmaIds.has(l.IdLemma) ||
-            highlightState.highlightedGeoAreas.has(l.CollGeografica)
-          );
+          const isHighlighted = poly.lemmi.some((l: any) => {
+            const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
+            return highlightState.highlightedLemmaIds.has(uniqueId) ||
+              highlightState.highlightedGeoAreas.has(l.CollGeografica);
+          });
 
           // Raggruppa per Lemma per visualizzazione organizzata
           const lemmaGroups = new Map<string, any[]>();
@@ -413,7 +422,7 @@ export function GeographicalMap() {
 
           return (
             <GeoJSON
-              key={`polygon-${idx}`}
+              key={`polygon-${poly.geoArea.properties.id}`}
               data={poly.geoArea as any}
               style={{
                 fillColor: isHighlighted ? '#2563eb' : '#3b82f6',
@@ -471,12 +480,13 @@ export function GeographicalMap() {
         })}
 
         {/* Confini regionali (NUOVO) */}
-        {regionBoundaries.map((region, idx) => {
+        {regionBoundaries.map((region) => {
           // Check se regione è evidenziata
-          const isHighlighted = region.lemmi.some((l: any) =>
-            highlightState.highlightedLemmaIds.has(l.IdLemma) ||
-            highlightState.highlightedGeoAreas.has(l.CollGeografica)
-          );
+          const isHighlighted = region.lemmi.some((l: any) => {
+            const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
+            return highlightState.highlightedLemmaIds.has(uniqueId) ||
+              highlightState.highlightedGeoAreas.has(l.CollGeografica);
+          });
 
           // Raggruppa per Lemma
           const lemmaGroups = new Map<string, any[]>();

@@ -287,14 +287,16 @@ export const TimelineEnhanced: React.FC = () => {
 
       const quartData = quartCenturies.find(q => q.quartCentury === quart);
       if (quartData) {
+        // Crea ID univoci per ogni occorrenza (riga)
         const lemmiIds = filteredLemmi
           .filter(l => {
             const year = parseInt(l.Anno);
             return quartData.years.includes(year);
           })
-          .map(l => l.IdLemma);
+          .map(l => `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`);
 
         console.log('[Timeline] Evidenzio', lemmiIds.length, 'lemmi per il periodo', quartData.years);
+        console.log('[Timeline] LemmiIds unique:', new Set(lemmiIds).size);
 
         highlightMultiple({
           lemmaIds: lemmiIds,
