@@ -37,10 +37,31 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
     const updatePosition = () => {
       if (isOpen && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        
+        // Minimum dropdown width for usability
+        const minDropdownWidth = 280;
+        const dropdownWidth = Math.max(rect.width, minDropdownWidth);
+        
+        // Calculate initial left position
+        let leftPosition = rect.left + window.scrollX;
+        
+        // Check if dropdown would overflow right edge of viewport
+        const wouldOverflowRight = (rect.left + dropdownWidth) > viewportWidth;
+        
+        // On mobile or when would overflow, align to right edge of button
+        if (wouldOverflowRight || viewportWidth < 768) {
+          // Align dropdown's right edge with button's right edge
+          leftPosition = rect.right + window.scrollX - dropdownWidth;
+          
+          // Ensure dropdown doesn't go off left edge
+          leftPosition = Math.max(8, leftPosition);
+        }
+        
         setDropdownPosition({
           top: rect.bottom + window.scrollY + 8,
-          left: rect.left + window.scrollX,
-          width: rect.width
+          left: leftPosition,
+          width: dropdownWidth
         });
       }
     };
