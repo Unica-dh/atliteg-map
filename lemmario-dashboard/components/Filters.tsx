@@ -33,15 +33,27 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
     return () => setMounted(false);
   }, []);
 
-  // Detect mobile viewport
+  // Detect mobile viewport with debounced resize handler
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     
+    const debouncedCheck = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkMobile, 150);
+    };
+    
+    // Initial check
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    
+    window.addEventListener('resize', debouncedCheck);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', debouncedCheck);
+    };
   }, []);
 
   // Update dropdown position when opened or on scroll/resize (desktop only)
@@ -260,7 +272,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
               isMobile ? (
                 // Mobile: Full-screen modal
                 <>
-                  {/* Backdrop */}
+                  {/* Backdrop - z-[9998] (below modal, above dropdowns) */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -270,7 +282,7 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
                     onClick={() => setIsOpen(false)}
                   />
                   
-                  {/* Modal */}
+                  {/* Modal - z-[9999] (above backdrop, below alphabetical index z-[10000]) */}
                   <motion.div
                     ref={dropdownRef}
                     initial={{ opacity: 0, y: 20 }}
