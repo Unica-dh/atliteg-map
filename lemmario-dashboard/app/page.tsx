@@ -79,7 +79,7 @@ export default function Home() {
           </div>
 
           {/* Linea del tempo unificata - Full Width */}
-          <motion.div layout className="mt-2 w-full">
+          <motion.div layout className="mt-1 w-full">
             <TimelineEnhanced />
           </motion.div>
         </LayoutGroup>
