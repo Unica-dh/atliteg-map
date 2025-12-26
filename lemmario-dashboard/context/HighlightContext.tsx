@@ -103,10 +103,24 @@ export function HighlightProvider({ children }: { children: ReactNode }) {
     source: HighlightState['highlightSource'];
     type: HighlightState['highlightType'];
   }) => {
+    const lemmaSet = new Set(params.lemmaIds || []);
+    const areaSet = new Set(params.geoAreaIds || []);
+    const yearSet = new Set(params.years || []);
+
+    console.log('[Context] highlightMultiple called with:', {
+      lemmaIds: params.lemmaIds?.length || 0,
+      lemmaIdsArray: params.lemmaIds,
+      lemmaSetSize: lemmaSet.size,
+      geoAreaIds: params.geoAreaIds?.length || 0,
+      years: params.years?.length || 0,
+      source: params.source,
+      type: params.type
+    });
+
     setHighlightState({
-      highlightedLemmaIds: new Set(params.lemmaIds || []),
-      highlightedGeoAreas: new Set(params.geoAreaIds || []),
-      highlightedYears: new Set(params.years || []),
+      highlightedLemmaIds: lemmaSet,
+      highlightedGeoAreas: areaSet,
+      highlightedYears: yearSet,
       highlightedLetters: new Set(params.letters || []),
       highlightSource: params.source,
       highlightType: params.type,
