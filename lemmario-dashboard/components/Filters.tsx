@@ -59,34 +59,16 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
   // Update dropdown position when opened or on scroll/resize (desktop only)
   useEffect(() => {
     if (isMobile) return; // Skip positioning logic on mobile
-    
+
     const updatePosition = () => {
       if (isOpen && buttonRef.current) {
         const rect = buttonRef.current.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        
-        // Minimum dropdown width for usability
-        const minDropdownWidth = 280;
-        const dropdownWidth = Math.max(rect.width, minDropdownWidth);
-        
-        // Calculate initial left position
-        let leftPosition = rect.left + window.scrollX;
-        
-        // Check if dropdown would overflow right edge of viewport
-        const wouldOverflowRight = (rect.left + dropdownWidth) > viewportWidth;
-        
-        if (wouldOverflowRight) {
-          // Align dropdown's right edge with button's right edge
-          leftPosition = rect.right + window.scrollX - dropdownWidth;
-          
-          // Ensure dropdown doesn't go off left edge
-          leftPosition = Math.max(8, leftPosition);
-        }
-        
+
+        // Simple positioning: always align with button, let CSS handle width
         setDropdownPosition({
           top: rect.bottom + window.scrollY + 8,
-          left: leftPosition,
-          width: dropdownWidth
+          left: rect.left + window.scrollX,
+          width: Math.max(rect.width, 320) // Min width for readability
         });
       }
     };
@@ -285,11 +267,11 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
                   {/* Modal - z-[9999] (above backdrop, below alphabetical index z-[10000]) */}
                   <motion.div
                     ref={dropdownRef}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
-                    transition={motionConfig.transitions.fast}
-                    className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[9999] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden max-h-[80vh] flex flex-col"
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                    transition={motionConfig.transitions.medium}
+                    className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-[9999] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden max-h-[85vh] flex flex-col"
                   >
                     {/* Modal Header */}
                     <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
@@ -310,13 +292,13 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
                     </div>
                     
                     {/* Modal Footer */}
-                    <div className="p-3 border-t border-gray-200 bg-gray-50">
+                    <div className="p-4 border-t border-gray-200 bg-white">
                       <button
                         type="button"
                         onClick={() => setIsOpen(false)}
-                        className={`w-full px-4 py-2 ${colors.badge} rounded-md font-medium text-sm`}
+                        className={`w-full px-4 py-3 ${colors.badge} rounded-lg font-semibold text-sm shadow-sm active:scale-95 transition-transform`}
                       >
-                        Applica ({selectedValues.length})
+                        {selectedValues.length > 0 ? `Applica (${selectedValues.length} selezionati)` : 'Chiudi'}
                       </button>
                     </div>
                   </motion.div>
@@ -333,7 +315,8 @@ function MultiSelect({ label, options, selectedValues, onChange, placeholder, co
                     position: 'fixed',
                     top: `${dropdownPosition.top}px`,
                     left: `${dropdownPosition.left}px`,
-                    width: `${dropdownPosition.width}px`,
+                    minWidth: `${dropdownPosition.width}px`,
+                    maxWidth: '500px',
                     zIndex: 9999
                   }}
                   className="bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
