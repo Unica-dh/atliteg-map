@@ -103,10 +103,10 @@ export function Header() {
               className="w-10 h-auto md:w-[50px]"
             />
             <div className="hidden md:block">
-              <h1 className="text-white text-[11px] lg:text-xs font-bold leading-tight">
+              <h1 className="text-white text-[18px] font-bold leading-tight">
                 AtLiTeG - Atlante gastronomico italiano
               </h1>
-              <p className="text-white/90 text-[8px] leading-tight mt-0.5">
+              <p className="text-white/90 text-xs leading-tight mt-0.5">
                 PRIN 2017XRCZTM - Università per Stranieri di Siena
               </p>
             </div>
@@ -123,12 +123,12 @@ export function Header() {
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
                   <button
-                    className="text-white text-[10px] lg:text-[11px] font-medium uppercase px-2 lg:px-2.5 py-1 hover:bg-white/10 rounded-md transition-all flex items-center gap-0.5 whitespace-nowrap"
+                    className="text-white text-xs lg:text-[13px] font-medium uppercase px-2 lg:px-2.5 py-1 hover:bg-white/10 rounded-md transition-all flex items-center gap-0.5 whitespace-nowrap"
                     aria-expanded={openDropdown === index}
                     aria-haspopup="true"
                   >
                     {item.label}
-                    <ChevronDown size={11} className={`transition-transform ${openDropdown === index ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={13} className={`transition-transform ${openDropdown === index ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Dropdown Menu */}
