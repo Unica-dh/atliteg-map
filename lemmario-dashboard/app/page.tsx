@@ -127,8 +127,9 @@ export default function Home() {
         document.body
       )}
 
-      <footer className="bg-white border-t border-border px-lg py-1.5">
-        <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary">
+      <footer className="bg-white border-t border-border px-lg py-2">
+        <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary space-y-1">
+          <p className="font-medium">Responsabili Atlante e VoSLIG: Giovanni Urraci e Monica Alba - Partner informatici: DH Unica, diretto da: prof. Giampaolo Salice, Università di Cagliari</p>
           <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
         </div>
       </footer>
