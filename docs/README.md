@@ -32,6 +32,7 @@ Manuali utente, guide per sviluppatori, setup e procedure operative.
 Documentazione specifica dei componenti del sistema.
 
 - [Lemmario Dashboard](components/lemmario-dashboard.md) - Documentazione specifica del frontend Next.js.
+- [Map Clustering Behavior](components/map-clustering-behavior.md) - Comportamento e configurazione del clustering sulla mappa geografica.
 
 ## 📊 Reports
 Report di implementazione, stati di avanzamento e risultati dei test.
