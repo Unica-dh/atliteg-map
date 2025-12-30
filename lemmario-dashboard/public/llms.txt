@@ -1,0 +1,23 @@
+# AtLiTeG - Atlante della lingua e dei testi della cultura gastronomica italiana
+
+## Descrizione
+AtLiTeG è un progetto di ricerca che mappa l'evoluzione storica e la distribuzione geografica della lingua gastronomica italiana dal Medioevo all'Unità d'Italia. Questa dashboard fornisce accesso interattivo ai dati del Vocabolario storico della lingua italiana della gastronomia (VoSLIG).
+
+## Contenuti Principali
+- **Lemmario**: Raccolta di termini gastronomici storici con varianti grafiche e fonetiche.
+- **Mappa Geolinguistica**: Visualizzazione della distribuzione geografica delle attestazioni dei termini.
+- **Timeline**: Evoluzione temporale dell'uso dei termini.
+- **Schede Lessicografiche**: Dettagli su etimologia, prime attestazioni e fonti.
+
+## Accesso ai Dati
+I dati sono visualizzabili attraverso la dashboard interattiva all'indirizzo: https://atlante.atliteg.org
+
+## Struttura dei Dati
+Il dataset comprende:
+- **Lemmi**: Termini principali (es. "maccheroni", "lasagne").
+- **GeoAree**: Aree geografiche storiche e moderne di attestazione.
+- **Periodi**: Fasce temporali dal Medioevo al XIX secolo.
+- **Categorie**: Classificazione grammaticale e semantica.
+
+## Crediti
+Progetto PRIN 2017XRCZTM - Università per Stranieri di Siena, in collaborazione con Labgeo "Giuseppe Caraci" (Università Roma Tre).
