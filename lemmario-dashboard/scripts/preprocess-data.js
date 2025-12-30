@@ -46,6 +46,10 @@ Papa.parse(csvText, {
   complete: (results) => {
     const lemmi = results.data;
 
+    // Debug: conta lemmi Friuli
+    const friuliCount = lemmi.filter(l => l.RegionIstatCode === '06').length;
+    console.log(`   DEBUG: Friuli entries found: ${friuliCount}`);
+
     // Salva JSON
     fs.writeFileSync(JSON_OUTPUT, JSON.stringify(lemmi, null, 0));
 

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "prebuild": "node scripts/preprocess-data.js",
     "build": "next build",
+    "postbuild": "ls -lh public/data/lemmi.json && ls -lh out/data/lemmi.json && cp -v public/data/lemmi.json out/data/lemmi.json && cp -v public/data/geojson.json out/data/geojson.json && ls -lh out/data/lemmi.json",
     "start": "npx serve@latest out -l 3000",
     "preprocess": "node scripts/preprocess-data.js"
   },
