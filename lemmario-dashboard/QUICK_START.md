@@ -82,7 +82,16 @@ All'apertura dell'app vedrai:
 
 - **Zoom**: Usa i controlli + e - o rotella del mouse
 - **Pan**: Trascina la mappa con il mouse
-- **Marker**: Click su un marker blu per vedere dettagli (Lemma, Forma, Anno)
+- **Cluster circolari**: Tutti i marker sono visualizzati come cerchi con numeri (somma delle occorrenze)
+  - I cerchi **blu** indicano bassa frequenza (< 20 occorrenze)
+  - I cerchi **arancioni** indicano media frequenza (20-100 occorrenze)
+  - I cerchi **rossi** indicano alta frequenza (> 100 occorrenze)
+  - Il numero all'interno mostra la somma totale delle occorrenze dei lemmi
+  - Anche i marker singoli sono visualizzati come cerchi (non come pin)
+- **Clustering dinamico**: I cerchi si aggregano automaticamente in base allo zoom
+  - Quando fai zoom out, i cerchi vicini si uniscono mostrando la somma delle occorrenze
+  - Quando fai zoom in, i cluster si espandono mostrando cerchi più piccoli
+  - Click su un cluster per fare zoom sulla zona
 - **Poligoni**: Aree geografiche sono evidenziate con poligoni colorati
 - **Conteggio**: In alto a destra vedi "X locations • Y lemmas"
 
