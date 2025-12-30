@@ -21,9 +21,8 @@ FROM nginx:alpine
 # Copia configurazione Nginx personalizzata
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copia i file build da Next.js
+# Copia i file build da Next.js (public è già incluso in out con output:export)
 COPY --from=builder /app/out /usr/share/nginx/html
-COPY --from=builder /app/public /usr/share/nginx/html
 
 # Esponi porta 9000
 EXPOSE 9000
