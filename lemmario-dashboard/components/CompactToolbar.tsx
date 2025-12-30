@@ -177,13 +177,28 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchQuery.length > 0) {
-        const filtered = lemmi.filter(
-          (lemma: Lemma) =>
-            lemma.Lemma.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            lemma.Forma.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setSuggestions(filtered.slice(0, 5));
-        setIsSearchOpen(filtered.length > 0);
+        // Deduplicazione per coppia Lemma+Forma
+        const uniqueResults = new Map<string, Lemma>();
+        const lowerQuery = searchQuery.toLowerCase();
+
+        for (const lemma of lemmi) {
+          if (uniqueResults.size >= 5) break;
+
+          const matches =
+            lemma.Lemma.toLowerCase().includes(lowerQuery) ||
+            lemma.Forma.toLowerCase().includes(lowerQuery);
+
+          if (matches) {
+            // Normalizza la chiave per evitare duplicati da case/spazi
+            const key = `${lemma.Lemma.toLowerCase().trim()}|${lemma.Forma.toLowerCase().trim()}`;
+            if (!uniqueResults.has(key)) {
+              uniqueResults.set(key, lemma);
+            }
+          }
+        }
+
+        setSuggestions(Array.from(uniqueResults.values()));
+        setIsSearchOpen(uniqueResults.size > 0);
       } else {
         setSuggestions([]);
         setIsSearchOpen(false);
@@ -253,7 +268,7 @@ export function CompactToolbar({ onToggleIndice }: CompactToolbarProps) {
                     className="px-3 py-2 cursor-pointer border-b border-border last:border-b-0 hover:bg-background-muted transition-fast"
                   >
                     <div className="font-medium text-text-primary text-sm">{lemma.Lemma}</div>
-                    <div className="text-xs text-text-muted">{lemma.Forma} • {lemma.CollGeografica}</div>
+                    <div className="text-xs text-text-muted">Forma: {lemma.Forma}</div>
                   </div>
                 ))}
               </div>
