@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Clustering Mappa: Solo Cerchi, Mai Pin** (2024-12-30): Modificato il comportamento della mappa per mostrare SEMPRE cerchi di clustering, anche per marker singoli
+  - Rimosso comportamento predefinito che mostrava pin individuali a zoom elevati
+  - Tutti i marker ora visualizzati come cerchi circolari con numero di occorrenze
+  - Configurazione `disableClusteringAtZoom: 25` per mantenere clustering sempre attivo
+  - Funzione `createClusterLikeIcon()` sostituisce `createMinimalIcon()` per aspetto uniforme
+  - Codifica colori: blu (≤20), arancione (21-100), rosso (>100) occorrenze
+  - Documentazione: `../components/map-clustering-behavior.md`
+
 ### Added
 - **Ottimizzazione SEO/AEO/GEO Completa** (PR #32): Implementazione strategia SEO moderna per motori di ricerca tradizionali, Answer Engines e Generative AI
   - **Metadata avanzati**: Title templates, description, keywords, Open Graph, Twitter Cards

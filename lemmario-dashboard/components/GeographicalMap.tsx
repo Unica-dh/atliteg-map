@@ -18,7 +18,27 @@ if (typeof window !== 'undefined') {
   require('leaflet.markercluster');
 }
 
-// Icona marker come cluster circolare (sostituisce i pin)
+/**
+ * Icona marker come cluster circolare (sostituisce completamente i pin tradizionali)
+ *
+ * COMPORTAMENTO:
+ * - Tutti i marker sulla mappa vengono visualizzati SEMPRE come cerchi circolari
+ * - Non esistono più pin individuali a forma di goccia
+ * - Anche un singolo lemma in una località viene mostrato come cerchio
+ * - Il numero all'interno del cerchio rappresenta la somma delle occorrenze (Frequenza) dei lemmi
+ *
+ * DIMENSIONI E COLORI:
+ * - Small (blu): totalFrequency <= 20
+ * - Medium (arancione): 20 < totalFrequency <= 100
+ * - Large (rosso): totalFrequency > 100
+ *
+ * HIGHLIGHTING:
+ * - I cerchi highlighted/selected hanno colori più intensi
+ *
+ * @param totalFrequency Somma delle frequenze di tutti i lemmi nel marker
+ * @param highlighted Se il marker è evidenziato (hover o filtro)
+ * @param selected Se il marker è selezionato (click)
+ */
 const createClusterLikeIcon = (totalFrequency: number, highlighted = false, selected = false) => {
   // Determina dimensione e classe basata sulla frequenza totale
   let size = 'small';
@@ -109,7 +129,24 @@ function MarkerClusterGroup({
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Crea il cluster group con opzioni ottimizzate e animazioni
+    /**
+     * CONFIGURAZIONE CLUSTERING MAPPA
+     *
+     * OBIETTIVO: Mostrare SEMPRE cerchi di clustering, mai pin individuali
+     *
+     * STRATEGIA:
+     * 1. disableClusteringAtZoom: 25 -> Il clustering non viene mai disabilitato
+     *    (il max zoom di Leaflet è 18, quindi 25 è oltre il limite)
+     * 2. maxClusterRadius: 120 -> Raggio ampio per aggregare marker anche a zoom elevati
+     * 3. spiderfyOnMaxZoom: false -> Non esplodere i cluster in pin individuali
+     * 4. singleMarkerMode: false -> Non mostrare mai pin singoli
+     * 5. Ogni marker usa createClusterLikeIcon() -> Anche i singoli appaiono come cerchi
+     *
+     * RISULTATO:
+     * - A qualsiasi livello di zoom, si vedono solo cerchi circolari
+     * - Il numero nel cerchio rappresenta la somma delle occorrenze (Frequenza)
+     * - I cerchi possono contenere valore 1 (per un singolo lemma con freq. 1)
+     */
     const markerClusterGroup = (L as any).markerClusterGroup({
       // Opzioni di performance
       chunkedLoading: true,
