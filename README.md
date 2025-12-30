@@ -56,7 +56,12 @@
 ## 🗺️ Principali funzionalità utente
 
 - Filtri globali per categoria e periodo, con badge visivi e reset rapido
-- Mappa geografica con marker e poligoni, popup dettagliati, auto-zoom e contatori
+- Mappa geografica con clustering intelligente:
+  - **Cerchi circolari sempre visibili**: Tutti i marker sono visualizzati come cerchi (mai pin individuali)
+  - **Aggregazione dinamica**: I cerchi si uniscono automaticamente in base allo zoom
+  - **Indicatori di frequenza**: Colori differenziati (blu/arancione/rosso) in base alle occorrenze
+  - **Popup dettagliati**: Click sui cerchi per vedere lemmi, forme e metadati
+  - **Auto-zoom e contatori**: Navigazione fluida con metriche in tempo reale
 - Indice alfabetico interattivo e ordinamento automatico
 - Metriche dashboard: località, lemmi, anni, attestazioni
 
