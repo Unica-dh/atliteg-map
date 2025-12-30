@@ -91,30 +91,30 @@ export function Header() {
 
       {/* Content - Single Row Layout */}
       <div className="relative z-10 max-w-[1600px] mx-auto px-2 md:px-4 py-1">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-1 md:gap-2">
           {/* Left: Logo + Title */}
-          <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+          <div className="flex items-center gap-1.5 md:gap-2 flex-shrink-0 max-w-[280px] lg:max-w-[320px]">
             <Image
               src="/AtLiTeG_logo.webp"
               alt="AtLiTeG Logo"
               width={50}
               height={55}
               priority
-              className="w-10 h-auto md:w-[50px]"
+              className="w-10 h-auto md:w-[45px] flex-shrink-0"
             />
             <div className="hidden md:block">
-              <h1 className="text-white text-[18px] font-bold leading-tight">
+              <h1 className="text-white text-[13px] lg:text-[14px] font-bold leading-[1.2]">
                 Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità
               </h1>
-              <p className="text-white/90 text-xs leading-tight mt-0.5">
+              <p className="text-white/90 text-[10px] leading-[1.3] mt-0.5">
                 PRIN 2017X8CZTM - PI prof.essoressa Giovanna Frosini, Università per Stranieri di Siena. In collaborazione con il Labego "Giuseppe Cerasa", Università Roma Tre.
               </p>
             </div>
           </div>
 
           {/* Center: Desktop Navigation */}
-          <nav className="hidden md:flex flex-1 justify-center">
-            <ul className="flex flex-wrap gap-0.5 items-center justify-center">
+          <nav className="hidden md:flex flex-1 justify-center min-w-0">
+            <ul className="flex flex-nowrap gap-0.5 items-center justify-center">
               {menuItems.map((item, index) => (
                 <li
                   key={index}
@@ -123,12 +123,12 @@ export function Header() {
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
                   <button
-                    className="text-white text-xs lg:text-[13px] font-medium uppercase px-2 lg:px-2.5 py-1 hover:bg-white/10 rounded-md transition-all flex items-center gap-0.5 whitespace-nowrap"
+                    className="text-white text-[11px] lg:text-[12px] font-medium uppercase px-1.5 lg:px-2 py-1 hover:bg-white/10 rounded-md transition-all flex items-center gap-0.5 whitespace-nowrap"
                     aria-expanded={openDropdown === index}
                     aria-haspopup="true"
                   >
                     {item.label}
-                    <ChevronDown size={13} className={`transition-transform ${openDropdown === index ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={12} className={`transition-transform ${openDropdown === index ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* Dropdown Menu */}
