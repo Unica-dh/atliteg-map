@@ -24,22 +24,23 @@ export const SearchBar: React.FC = () => {
       if (query.length > 0) {
         const uniqueResults = new Map<string, Lemma>();
         const lowerQuery = query.toLowerCase();
-        
+
         for (const lemma of lemmi) {
           if (uniqueResults.size >= 10) break;
-          
-          const matches = 
+
+          const matches =
             lemma.Lemma.toLowerCase().includes(lowerQuery) ||
             lemma.Forma.toLowerCase().includes(lowerQuery);
-            
+
           if (matches) {
-            const key = `${lemma.Lemma}|${lemma.Forma}`;
+            // Normalizza la chiave per evitare duplicati da case/spazi
+            const key = `${lemma.Lemma.toLowerCase().trim()}|${lemma.Forma.toLowerCase().trim()}`;
             if (!uniqueResults.has(key)) {
               uniqueResults.set(key, lemma);
             }
           }
         }
-        
+
         setSuggestions(Array.from(uniqueResults.values()));
         setIsOpen(uniqueResults.size > 0);
       } else {
