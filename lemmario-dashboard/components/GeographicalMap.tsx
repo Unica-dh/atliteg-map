@@ -18,21 +18,37 @@ if (typeof window !== 'undefined') {
   require('leaflet.markercluster');
 }
 
-// Icona marker minimale con supporto highlighting
-const createMinimalIcon = (highlighted = false, selected = false) => {
-  const fillColor = selected ? '#1d4ed8' : highlighted ? '#2563eb' : '#3b82f6';
-  const className = selected ? 'minimal-marker-icon selected' : highlighted ? 'minimal-marker-icon highlighted' : 'minimal-marker-icon';
-  
+// Icona marker come cluster circolare (sostituisce i pin)
+const createClusterLikeIcon = (totalFrequency: number, highlighted = false, selected = false) => {
+  // Determina dimensione e classe basata sulla frequenza totale
+  let size = 'small';
+  let backgroundColor = 'rgba(59, 130, 246, 0.6)';
+  let innerColor = 'rgba(59, 130, 246, 0.8)';
+
+  if (totalFrequency > 100) {
+    size = 'large';
+    backgroundColor = 'rgba(239, 68, 68, 0.6)';
+    innerColor = 'rgba(239, 68, 68, 0.8)';
+  } else if (totalFrequency > 20) {
+    size = 'medium';
+    backgroundColor = 'rgba(251, 146, 60, 0.6)';
+    innerColor = 'rgba(251, 146, 60, 0.8)';
+  }
+
+  // Applica evidenziazione se necessario
+  if (highlighted || selected) {
+    backgroundColor = 'rgba(37, 99, 235, 0.7)';
+    innerColor = 'rgba(37, 99, 235, 0.9)';
+  }
+
+  const className = selected ? 'marker-cluster selected' : highlighted ? 'marker-cluster highlighted' : 'marker-cluster';
+
   return L.divIcon({
-    html: `<svg width="20" height="28" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 0C4.48 0 0 4.48 0 10c0 7 10 18 10 18s10-11 10-18c0-5.52-4.48-10-10-10z"
-            fill="${fillColor}" stroke="#1e40af" stroke-width="1.5"/>
-      <circle cx="10" cy="10" r="4" fill="white"/>
-    </svg>`,
-    className,
-    iconSize: [20, 28],
-    iconAnchor: [10, 28],
-    popupAnchor: [0, -28]
+    html: `<div><span>${totalFrequency}</span></div>`,
+    className: `marker-cluster marker-cluster-${size}`,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20]
   });
 };
 
@@ -100,13 +116,14 @@ function MarkerClusterGroup({
       chunkInterval: 200,
       chunkDelay: 50,
 
-      // Opzioni di clustering
-      maxClusterRadius: 80,
-      spiderfyOnMaxZoom: true,
+      // Opzioni di clustering - SEMPRE CLUSTER, MAI PIN INDIVIDUALI
+      maxClusterRadius: 120, // Aumentato per forzare clustering anche a zoom elevati
+      spiderfyOnMaxZoom: false, // Disabilita spiderfy - mantiene sempre cluster
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
-      disableClusteringAtZoom: 16,
-      
+      singleMarkerMode: false, // Non mostrare mai pin singoli, sempre cluster
+      disableClusteringAtZoom: 25, // Valore oltre il max zoom (18) per non disabilitare mai il clustering
+
       // Animazioni - disabilitate per evitare movimento pin
       animate: false,
       animateAddingMarkers: false,
@@ -151,6 +168,13 @@ function MarkerClusterGroup({
 
     // Aggiungi marker al cluster
     markers.forEach((marker) => {
+      // Calcola frequenza totale per questo marker
+      let totalFrequency = 0;
+      marker.lemmi.forEach((lemma: any) => {
+        const freq = parseInt(lemma.Frequenza) || 0;
+        totalFrequency += freq;
+      });
+
       // Check se marker è evidenziato
       const isHighlighted = marker.lemmi.some((l: any) => {
         const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
@@ -163,7 +187,7 @@ function MarkerClusterGroup({
       });
 
       const leafletMarker = L.marker([marker.lat, marker.lng], {
-        icon: createMinimalIcon(isHighlighted, isSelected),
+        icon: createClusterLikeIcon(totalFrequency, isHighlighted, isSelected),
         customData: { lemmi: marker.lemmi } // Aggiungi dati personalizzati per il cluster
       } as any);
 
@@ -254,6 +278,13 @@ function MarkerClusterGroup({
       const leafletMarker = markersMapRef.current.get(markerKey);
 
       if (leafletMarker) {
+        // Calcola frequenza totale per questo marker
+        let totalFrequency = 0;
+        marker.lemmi.forEach((lemma: any) => {
+          const freq = parseInt(lemma.Frequenza) || 0;
+          totalFrequency += freq;
+        });
+
         const isHighlighted = marker.lemmi.some((l: any) => {
           const uniqueId = `${l.IdLemma}-${l.Forma}-${l.CollGeografica}-${l.Anno}`;
           return highlightedLemmi.has(uniqueId) || highlightedAreas.has(l.CollGeografica);
@@ -268,7 +299,7 @@ function MarkerClusterGroup({
         }
 
         // Update icon
-        leafletMarker.setIcon(createMinimalIcon(isHighlighted, isSelected));
+        leafletMarker.setIcon(createClusterLikeIcon(totalFrequency, isHighlighted, isSelected));
       }
     });
 
