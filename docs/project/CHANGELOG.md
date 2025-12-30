@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Ottimizzazione SEO/AEO/GEO Completa** (PR #32): Implementazione strategia SEO moderna per motori di ricerca tradizionali, Answer Engines e Generative AI
+  - **Metadata avanzati**: Title templates, description, keywords, Open Graph, Twitter Cards
+  - **Dati strutturati JSON-LD**: Schema.org per Organization, Dataset, WebApplication
+  - **Sitemap automatica**: Generatore sitemap.xml per indicizzazione efficiente
+  - **Robots.txt**: Direttive crawler per controllo indicizzazione
+  - **llms.txt**: File descrittivo per AI crawlers (ChatGPT, Perplexity, Claude)
+  - **Viewport e Theme Color**: Ottimizzazione per mobile e PWA
+  - Documentazione: `../guides/seo-implementation.md`
 - **GitHub Actions CI/CD con Self-Hosted Runner**: Sistema di deploy automatico ottimizzato per server protetti da VPN
   - Self-hosted runner installato direttamente sul server (niente problemi SSH/firewall/VPN)
   - Workflow automatico per deploy in produzione (`deploy-production.yml`)

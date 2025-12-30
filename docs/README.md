@@ -20,6 +20,7 @@ Manuali utente, guide per sviluppatori, setup e procedure operative.
 - [Deployment Guide](guides/deployment-guide.md) - Guida al deployment in produzione.
 - [Deploy Quickstart](guides/deploy-quickstart.md) - Guida rapida al deployment.
 - [GitHub Actions](guides/github-actions.md) - Configurazione CI/CD.
+- [SEO Implementation](guides/seo-implementation.md) - Strategia SEO/AEO/GEO completa.
 - [API Reference](guides/api-reference.md) - Riferimento API (se applicabile).
 - [Data Sync](guides/data-sync.md) - Procedure di sincronizzazione dati.
 - [Quick Commands](guides/quick-commands.md) - Lista comandi frequenti.
