@@ -66,10 +66,10 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
           aria-label={`${isExpanded ? 'Chiudi' : 'Espandi'} dettagli per ${lemmaName}`}
         >
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-xs truncate">{lemmaName}</h4>
+            <h4 className="font-semibold text-sm truncate">{lemmaName}</h4>
           </div>
           <div className="flex items-center gap-1 ml-2 shrink-0">
-            <span className="text-[10px] text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
+            <span className="text-xs text-gray-400 px-1.5 py-0.5 bg-gray-100 rounded">
               {lemmi.length}
             </span>
             <ChevronDownIcon
@@ -82,16 +82,16 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
 
         {isExpanded && (
           <div className="px-3 pb-2 bg-gray-50 border-t animate-fadeIn">
-            <ul className="space-y-0.5 text-[11px] mt-1">
+            <ul className="space-y-0.5 text-[13px] mt-1">
               {lemmi.map((lemma: any, idx: number) => (
                 <li key={idx} className="flex items-baseline gap-1.5 flex-wrap">
-                  <span className="text-gray-400 text-[10px]">•</span>
+                  <span className="text-gray-400 text-xs">•</span>
                   <em className="truncate">{lemma.Forma}</em>
                   <span className="text-gray-600 shrink-0">
                     ({lemma.Datazione || 'n.d.'})
                   </span>
                   {lemma.Frequenza && (
-                    <span className="text-blue-600 shrink-0 text-[10px]">
+                    <span className="text-blue-600 shrink-0 text-xs">
                       freq.:{lemma.Frequenza}
                     </span>
                   )}
@@ -116,8 +116,8 @@ export function MapBoundedPopup({ lemmaGroups, locationName, onClose }: MapBound
       {/* HEADER */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-50 rounded-t-lg border-b">
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-base">{locationName}</h3>
-          <p className="text-xs text-gray-600">
+          <h3 className="font-bold text-lg">{locationName}</h3>
+          <p className="text-sm text-gray-600">
             {lemmaGroups.size} {lemmaGroups.size === 1 ? 'lemma' : 'lemmi'}
           </p>
         </div>
