@@ -136,6 +136,20 @@ L'applicazione utilizza due fonti dati principali:
 - Auto-zoom sui risultati filtrati
 - Contatore località e lemmi visualizzati
 
+### Timeline Storica
+- **Aggregazione per quarti di secolo**: Periodi di 25 anni (es. 1300-1324, 1325-1349)
+- **Istogrammi verticali**: Altezza proporzionale alle occorrenze totali del periodo
+- **Somma indipendente da località**: Ogni barra rappresenta il totale delle occorrenze nel periodo, indipendentemente dalla posizione geografica
+- **Navigazione paginata**: Frecce per scorrere tra i diversi periodi (12 per pagina)
+- **Doppia modalità visualizzazione**:
+  - Barre verticali (default)
+  - Heatmap organizzata per secolo
+- **Interattività**: Click su periodo per filtrare tutti i dati correlati
+- **Implementazione**:
+  - Componente: `TimelineEnhanced.tsx`
+  - Funzione aggregazione: `getQuartCentury(year)` - Converte anno in quarto di secolo (13I, 13II, 13III, 13IV)
+  - Funzione conversione: `getYearRangeFromQuartCentury(quartCentury)` - Converte quarto in range anni usando regex per parsing corretto dei numeri romani
+
 ### Indice Alfabetico
 - 26 lettere dell'alfabeto
 - Lettere attive/inattive in base ai dati disponibili
