@@ -65,24 +65,32 @@ jobs:
           echo "✅ Git pull completato con successo"
           echo "📊 Ultimo commit: $(git log -1 --pretty=format:'%h - %s (%an, %ar)')"
 
-      # Step 3: Copia risorse statiche
-      - name: 📋 Copia loghi e risorse statiche
+      # Step 3: Sincronizza risorse statiche
+      - name: 📋 Sincronizza risorse statiche
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📋 STEP 2: Copying static assets (logos)"
+          echo "📋 STEP 2: Syncing static assets"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
           cd ${{ secrets.DEPLOY_PATH }}
 
-          echo "📂 Creazione directory logo se non esistente..."
-          mkdir -p data/logo
+          echo "📂 Sincronizzazione directory data..."
 
-          echo "📋 Copia loghi dalla directory public a data..."
-          cp -v lemmario-dashboard/public/data/logo/* data/logo/ || echo "⚠️  Nessun logo da copiare o errore nella copia"
+          # Copia ricorsiva mantenendo la struttura, sovrascrivendo file esistenti
+          # -r: ricorsivo
+          # -v: verbose
+          # -u: copia solo file più recenti
+          cp -rvu lemmario-dashboard/public/data/* data/ 2>&1 | grep -v "omitted directory" || true
 
-          echo "✅ Risorse statiche copiate"
-          echo "📁 Contenuto directory data/logo:"
-          ls -lh data/logo/ || echo "Directory vuota o non accessibile"
+          echo "✅ Risorse statiche sincronizzate"
+          echo "📁 Contenuto directory data:"
+          ls -lh data/
+
+          if [ -d "data/logo" ]; then
+            echo ""
+            echo "📁 Contenuto directory data/logo:"
+            ls -lh data/logo/
+          fi
 
       # Step 4: Build dell'applicazione
       - name: 🏗️ Build dell'applicazione
