@@ -64,12 +64,31 @@ jobs:
           
           echo "✅ Git pull completato con successo"
           echo "📊 Ultimo commit: $(git log -1 --pretty=format:'%h - %s (%an, %ar)')"
-      
-      # Step 3: Build dell'applicazione
+
+      # Step 3: Copia risorse statiche
+      - name: 📋 Copia loghi e risorse statiche
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📋 STEP 2: Copying static assets (logos)"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          cd ${{ secrets.DEPLOY_PATH }}
+
+          echo "📂 Creazione directory logo se non esistente..."
+          mkdir -p data/logo
+
+          echo "📋 Copia loghi dalla directory public a data..."
+          cp -v lemmario-dashboard/public/data/logo/* data/logo/ || echo "⚠️  Nessun logo da copiare o errore nella copia"
+
+          echo "✅ Risorse statiche copiate"
+          echo "📁 Contenuto directory data/logo:"
+          ls -lh data/logo/ || echo "Directory vuota o non accessibile"
+
+      # Step 4: Build dell'applicazione
       - name: 🏗️ Build dell'applicazione
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🏗️  STEP 2: Building application containers"
+          echo "🏗️  STEP 3: Building application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           cd ${{ secrets.DEPLOY_PATH }}
@@ -81,11 +100,11 @@ jobs:
           echo "📋 Immagini Docker disponibili:"
           docker images | grep atliteg || echo "Nessuna immagine atliteg trovata"
       
-      # Step 4: Restart dei container
+      # Step 5: Restart dei container
       - name: 🔄 Restart dei container
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🔄 STEP 3: Restarting application containers"
+          echo "🔄 STEP 4: Restarting application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           cd ${{ secrets.DEPLOY_PATH }}
