@@ -130,7 +130,7 @@ export default function Home() {
       <footer className="bg-white border-t border-border px-lg py-4">
         <div className="max-w-container mx-auto space-y-4">
           {/* Loghi */}
-          <div className="flex items-center justify-center gap-8 flex-wrap">
+          <div className="flex items-center justify-center gap-8">
             <img
               src="/data/logo/Logo_Roma_Tre.jpg"
               alt="Logo Roma Tre"
