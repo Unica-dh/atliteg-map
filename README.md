@@ -279,6 +279,12 @@ La documentazione completa è disponibile nella cartella [`docs/`](docs/README.m
 
 ## 🔍 Ottimizzazione SEO
 
+<p align="center">
+	<img src="docs/seo_point.jpg" alt="Punteggio SEO" width="100%"/>
+	<br/>
+	<em>Punteggio SEO 100/100</em>
+</p>
+
 Il progetto implementa le seguenti ottimizzazioni SEO per migliorare la visibilità sui motori di ricerca:
 
 ### Metadata e Tag Essenziali
@@ -310,7 +316,7 @@ Il footer include i loghi dei partner con markup semantico appropriato:
 - DH Unica (Digital Humanities, Università di Cagliari)
 - AtLiTeG Project
 
-**Punteggio SEO**: 100/100 (vedi `seo_points.json`)
+**Punteggio SEO**: 100/100
 
 ---
 
