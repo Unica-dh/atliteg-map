@@ -19,7 +19,7 @@
 
 - **Esplorazione lessicografica**: Interfaccia visuale e interattiva per esplorare i dati del "Vocabolario storico della lingua italiana della gastronomia (VoSLIG)".
 - **Mappe interattive**: Visualizzazione della diffusione geografica di termini gastronomici (piatti, ingredienti, tecniche di cottura) in diverse epoche.
-- **Timeline e cronologia**: Tracciamento della comparsa e dell'evoluzione di parole e concetti nel tempo.
+- **Timeline storica avanzata**: Visualizzazione cronologica con istogrammi aggregati per quarti di secolo (periodi di 25 anni), mostrando la distribuzione temporale delle occorrenze con somma totale indipendente dalla località geografica.
 - **Analisi testuale**: Esplorazione di testi storici (ricettari, trattati di cucina) che costituiscono le fonti della cultura gastronomica italiana.
 - **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche.
 - **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati.

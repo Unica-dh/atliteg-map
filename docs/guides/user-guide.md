@@ -145,30 +145,45 @@ All'apertura, l'applicazione:
 
 #### Visualizzazione
 
-- **Asse orizzontale**: Anni dal dataset (es. 1300-1900)
-- **Marker**: Pallini per ogni anno con attestazioni
-  - Verde: Anno con attestazioni
-  - Grigio chiaro: Anno senza attestazioni
-- **Scroll**: Frecce sinistra/destra o drag per scorrere
+La timeline visualizza i dati aggregati per **quarti di secolo** (periodi di 25 anni):
+
+- **Asse orizzontale**: Periodi temporali raggruppati (es. 1300-1324, 1325-1349, 1350-1374, etc.)
+- **Istogrammi**: Barre verticali blu che rappresentano le occorrenze totali per periodo
+- **Aggregazione**: Ogni istogramma somma **tutte le occorrenze** del periodo indipendentemente dalla località geografica
+- **Altezza**: Proporzionale al numero totale di occorrenze nel periodo (mostrato al centro della barra)
+- **Navigazione**: Frecce ←/→ per scorrere tra i diversi periodi storici (12 periodi per pagina)
+- **Modalità visualizzazione**:
+  - **Barre**: Vista predefinita con istogrammi verticali
+  - **Heatmap**: Vista alternativa a griglia organizzata per secolo
 
 #### Interazioni
 
-**Click su Anno**:
-1. L'anno viene evidenziato (pallino più grande, bordo dorato)
-2. La dashboard filtra tutti i lemmi per quell'anno
-3. La mappa aggiorna i marker
-4. L'indice alfabetico mostra solo lemmi di quell'anno
-5. Le metriche si aggiornano
+**Click su Periodo**:
+1. Il periodo viene evidenziato (barra blu scuro con bordo)
+2. La dashboard filtra tutti i lemmi di quel quarto di secolo
+3. La mappa evidenzia tutti i marker del periodo
+4. L'indice alfabetico mostra solo lemmi del periodo
+5. Le metriche si aggiornano per riflettere il periodo selezionato
 
-**Hover su Anno**:
-- Tooltip mostra:
-  - Anno
-  - Numero attestazioni
-  - Primi 3 lemmi
+**Hover su Periodo**:
+- La barra si ingrandisce leggermente
+- Viene mostrato un effetto luminoso
+- Il tooltip mostra:
+  - Range anni (es. "1300-1324")
+  - Numero totale occorrenze
 
-**Deseleziona Anno**:
-- Click nuovamente sull'anno selezionato
-- Click su pulsante "Reset" nella timeline
+**Deseleziona Periodo**:
+- Click nuovamente sul periodo selezionato
+- I filtri vengono rimossi automaticamente
+
+#### Logica di Aggregazione
+
+- I dati vengono raggruppati usando la funzione `getQuartCentury(anno)`
+- **Quarto I**: anni XX00-XX24 (es. 1300-1324)
+- **Quarto II**: anni XX25-XX49 (es. 1325-1349)
+- **Quarto III**: anni XX50-XX74 (es. 1350-1374)
+- **Quarto IV**: anni XX75-XX99 (es. 1375-1399)
+- Per ogni periodo viene calcolata la **somma delle frequenze** di tutte le attestazioni
 
 ### 6. Indice Alfabetico
 
