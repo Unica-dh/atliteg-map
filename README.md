@@ -8,7 +8,7 @@
 
 
 <p align="center">
-	<img src="docs/screenshot-dashboard.jpg" alt="Screenshot della dashboard ATLITEG" width="80%"/>
+	<img src="docs/homepage.png" alt="Screenshot della dashboard ATLITEG" width="80%"/>
 	<br/>
 	<em>Screenshot della dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
 </p>
@@ -117,15 +117,15 @@ Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
 ## ✨ Anteprima Visiva
 
 <p align="center">
-	<img src="docs/screenshot-mappa.jpg" alt="Mappa interattiva ATLITEG" width="48%"/>
-	<img src="docs/screenshot-timeline.jpg" alt="Timeline e cronologia ATLITEG" width="48%"/>
+	<img src="docs/screenshot-mappa.jpg" alt="Mappa interattiva ATLITEG" width="100%"/>
+	<img src="docs/screenshot-timeline.jpg" alt="Timeline e cronologia ATLITEG" width="100%"/>
 	<br/>
 	<em>A sinistra: mappa interattiva con poligoni e marker. A destra: timeline per l'evoluzione dei termini nel tempo.</em>
 </p>
 
 <p align="center">
-	<img src="docs/screenshot-filtri.jpg" alt="Filtri avanzati ATLITEG" width="48%"/>
-	<img src="docs/screenshot-treemap.jpg" alt="Treemap categorie ATLITEG" width="48%"/>
+	<img src="docs/screenshot-filtri.jpg" alt="Filtri avanzati ATLITEG" width="100%"/>
+	<img src="docs/screenshot-treemap.jpg" alt="Treemap categorie ATLITEG" width="100%"/>
 	<br/>
 	<em>A sinistra: filtri globali per categoria e periodo. A destra: treemap delle categorie linguistiche.</em>
 </p>
