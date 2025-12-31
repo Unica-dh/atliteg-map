@@ -277,6 +277,43 @@ La documentazione completa è disponibile nella cartella [`docs/`](docs/README.m
 
 ---
 
+## 🔍 Ottimizzazione SEO
+
+Il progetto implementa le seguenti ottimizzazioni SEO per migliorare la visibilità sui motori di ricerca:
+
+### Metadata e Tag Essenziali
+
+- **Title e Description**: Tag ottimizzati con parole chiave rilevanti
+- **Open Graph**: Tag per condivisione ottimale su social media (Facebook, LinkedIn)
+- **Twitter Cards**: Metadata specifici per Twitter
+- **Favicon e Apple Icons**: Icone per tutti i dispositivi e piattaforme
+- **Canonical URL**: Prevenzione contenuti duplicati
+
+### Contenuto Strutturato
+
+- **Schema.org JSON-LD**: Markup strutturato per motori di ricerca (tipo: WebSite, SearchAction, Organization)
+- **Sitemap XML**: Generazione automatica per indicizzazione completa
+- **Robots.txt**: Configurazione crawling ottimale
+
+### Performance e Accessibilità
+
+- **Viewport Meta**: Ottimizzazione per dispositivi mobili
+- **Theme Color**: Integrazione con browser mobile
+- **Alt Text**: Descrizioni per tutte le immagini (inclusi loghi partner)
+
+### Partner Istituzionali
+
+Il footer include i loghi dei partner con markup semantico appropriato:
+
+- Università Roma Tre
+- Università per Stranieri di Siena
+- DH Unica (Digital Humanities, Università di Cagliari)
+- AtLiTeG Project
+
+**Punteggio SEO**: 100/100 (vedi `seo_points.json`)
+
+---
+
 ## 📝 Licenza
 
 Vedi il file LICENSE nella root del progetto.

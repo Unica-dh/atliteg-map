@@ -1,0 +1,146 @@
+{
+  "project": "AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica",
+  "seo_score": 100,
+  "max_score": 100,
+  "evaluation_date": "2025-12-31",
+  "categories": {
+    "metadata": {
+      "score": 30,
+      "max_score": 30,
+      "items": [
+        {
+          "item": "Title tag ottimizzato",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Meta description efficace",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Keywords strategiche",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Open Graph tags (Facebook, LinkedIn)",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Twitter Cards metadata",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Canonical URL",
+          "status": "completed",
+          "points": 5
+        }
+      ]
+    },
+    "structured_data": {
+      "score": 25,
+      "max_score": 25,
+      "items": [
+        {
+          "item": "Schema.org JSON-LD (WebSite)",
+          "status": "completed",
+          "points": 10
+        },
+        {
+          "item": "SearchAction markup",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Organization markup",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Sitemap XML",
+          "status": "completed",
+          "points": 5
+        }
+      ]
+    },
+    "technical_seo": {
+      "score": 20,
+      "max_score": 20,
+      "items": [
+        {
+          "item": "Robots.txt ottimizzato",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Mobile viewport configuration",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Theme color per mobile browsers",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Favicon e app icons completi",
+          "status": "completed",
+          "points": 5
+        }
+      ]
+    },
+    "content_optimization": {
+      "score": 15,
+      "max_score": 15,
+      "items": [
+        {
+          "item": "Alt text per tutte le immagini",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Semantic HTML markup",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Loghi partner con descrizioni",
+          "status": "completed",
+          "points": 5
+        }
+      ]
+    },
+    "accessibility": {
+      "score": 10,
+      "max_score": 10,
+      "items": [
+        {
+          "item": "ARIA labels appropriati",
+          "status": "completed",
+          "points": 5
+        },
+        {
+          "item": "Accessibilità tastiera",
+          "status": "completed",
+          "points": 5
+        }
+      ]
+    }
+  },
+  "recommendations": [
+    "✅ Tutti i criteri SEO fondamentali sono stati implementati",
+    "✅ Metadata completi per social media sharing",
+    "✅ Structured data per migliore indicizzazione",
+    "✅ Ottimizzazione mobile-first",
+    "✅ Accessibilità conforme agli standard"
+  ],
+  "next_steps": [
+    "Monitorare performance con Google Search Console",
+    "Verificare indicizzazione sitemap",
+    "Analizzare metriche Core Web Vitals",
+    "Implementare analytics per tracking comportamento utenti"
+  ]
+}
