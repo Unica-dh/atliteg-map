@@ -4,8 +4,8 @@ import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useHighlight } from '@/context/HighlightContext';
 import { Lemma } from '@/types/lemma';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Calendar } from 'lucide-react';
-import { motion, AnimatePresence, LayoutGroup, useMotionValue, useTransform } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { motionConfig } from '@/lib/motion-config';
 
 // Funzione per convertire anno in quarto di secolo
@@ -18,9 +18,22 @@ const getQuartCentury = (year: number): string => {
 
 // Funzione per ottenere range anni da quarto di secolo
 const getYearRangeFromQuartCentury = (quartCentury: string): [number, number] => {
-  const century = parseInt(quartCentury.slice(0, -1));
-  const quarter = quartCentury.slice(-1);
-  const quarterIndex = ['I', 'II', 'III', 'IV'].indexOf(quarter);
+  // Trova dove inizia il numero romano (I, II, III, IV)
+  const romanMatch = quartCentury.match(/^(\d+)(I{1,3}|IV|V)$/);
+  if (!romanMatch) {
+    console.error('[getYearRangeFromQuartCentury] Formato non valido:', quartCentury);
+    return [0, 0];
+  }
+
+  const century = parseInt(romanMatch[1]);
+  const romanQuarter = romanMatch[2];
+  const quarterIndex = ['I', 'II', 'III', 'IV'].indexOf(romanQuarter);
+
+  if (quarterIndex === -1) {
+    console.error('[getYearRangeFromQuartCentury] Quarto romano non valido:', romanQuarter);
+    return [0, 0];
+  }
+
   const start = century * 100 + quarterIndex * 25;
   const end = start + 24;
   return [start, end];
@@ -119,7 +132,6 @@ const TimelineHeatmap: React.FC<{
     quartCentury: string;
     years: number[];
     lemmas: string[];
-    locations: string[];
     attestazioni: number;
   }>;
   onCellClick: (quart: string) => void;
@@ -204,14 +216,13 @@ export const TimelineEnhanced: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState<'quarter' | 'decade' | 'century'>('quarter');
   const itemsPerPage = zoomLevel === 'quarter' ? 12 : zoomLevel === 'decade' ? 20 : 8;
 
-  // Raggruppa per quarti di secolo
+  // Raggruppa per quarti di secolo - AGGREGAZIONE TOTALE (indipendente da location)
   const quartCenturies = useMemo(() => {
     if (lemmi.length === 0) return [];
 
     const quartData = new Map<string, {
       years: Set<number>;
       lemmas: Set<string>;
-      locations: Set<string>;
       attestazioni: number;
     }>();
 
@@ -224,7 +235,6 @@ export const TimelineEnhanced: React.FC = () => {
           quartData.set(quart, {
             years: new Set(),
             lemmas: new Set(),
-            locations: new Set(),
             attestazioni: 0
           });
         }
@@ -232,20 +242,18 @@ export const TimelineEnhanced: React.FC = () => {
         const data = quartData.get(quart)!;
         data.years.add(year);
         data.lemmas.add(lemma.Lemma);
-        data.locations.add(lemma.CollGeografica);
-        // Somma la frequenza invece di contare le righe
+        // Somma la frequenza invece di contare le righe - TOTALE per periodo
         const freq = parseInt(lemma.Frequenza) || 0;
         data.attestazioni += freq;
       }
     });
 
-    return Array.from(quartData.entries())
+    const result = Array.from(quartData.entries())
       .map(([quart, data]) => ({
         quartCentury: quart,
         hasData: data.years.size > 0,
         years: Array.from(data.years).sort((a, b) => a - b),
         lemmas: Array.from(data.lemmas),
-        locations: Array.from(data.locations),
         attestazioni: data.attestazioni
       }))
       .sort((a, b) => {
@@ -253,11 +261,50 @@ export const TimelineEnhanced: React.FC = () => {
         const [startB] = getYearRangeFromQuartCentury(b.quartCentury);
         return startA - startB;
       });
+
+    // Debug: verifica che non ci siano duplicati
+    const uniqueQuarts = new Set(result.map(q => q.quartCentury));
+    console.log('[TimelineEnhanced] Quarti generati:', result.length);
+    console.log('[TimelineEnhanced] Primi 5 quarti:', result.slice(0, 5).map(q => `${q.quartCentury} (${q.attestazioni} occ)`));
+
+    if (uniqueQuarts.size !== result.length) {
+      console.error('[TimelineEnhanced] ❌ ERRORE: Trovati quarti duplicati!', {
+        total: result.length,
+        unique: uniqueQuarts.size,
+        duplicates: result.filter((q, i, arr) =>
+          arr.findIndex(x => x.quartCentury === q.quartCentury) !== i
+        )
+      });
+    } else {
+      console.log('[TimelineEnhanced] ✅ Nessun duplicato trovato');
+    }
+
+    return result;
   }, [lemmi, filteredLemmi]);
 
   const totalPages = Math.ceil(quartCenturies.length / itemsPerPage);
   const startIndex = currentPage * itemsPerPage;
   const visibleQuarts = quartCenturies.slice(startIndex, startIndex + itemsPerPage);
+
+  // Debug: log delle barre visibili
+  React.useEffect(() => {
+    console.log('[TimelineEnhanced] Rendering pagina:', currentPage);
+    console.log('[TimelineEnhanced] visibleQuarts.length:', visibleQuarts.length);
+    console.log('[TimelineEnhanced] Barre visibili:');
+    visibleQuarts.forEach((q, i) => {
+      const [start, end] = getYearRangeFromQuartCentury(q.quartCentury);
+      console.log(`  [${i}] ${start}-${end} (quart=${q.quartCentury}, attestazioni=${q.attestazioni})`);
+    });
+
+    // Verifica duplicati nell'array visibile
+    const visibleQuartCenturiesSet = new Set(visibleQuarts.map(q => q.quartCentury));
+    if (visibleQuartCenturiesSet.size !== visibleQuarts.length) {
+      console.error('[TimelineEnhanced] ❌ DUPLICATI in visibleQuarts!', {
+        total: visibleQuarts.length,
+        unique: visibleQuartCenturiesSet.size
+      });
+    }
+  }, [currentPage, visibleQuarts]);
 
   // Calcola statistiche
   const totalOccorrenze = useMemo(() => {
@@ -412,10 +459,9 @@ export const TimelineEnhanced: React.FC = () => {
             </motion.button>
 
             {/* Barre verticali */}
-            <LayoutGroup>
-              <div className="flex-1 flex items-end justify-around gap-1 h-28">
-                <AnimatePresence mode="popLayout">
-                  {visibleQuarts.map((quartItem) => {
+            <div className="flex-1 flex items-end justify-around gap-1 h-28">
+              <AnimatePresence mode="sync">
+                {visibleQuarts.map((quartItem) => {
                     const [startYear, endYear] = getYearRangeFromQuartCentury(quartItem.quartCentury);
                     const isSelected = selectedQuart === quartItem.quartCentury;
                     const isHovered = hoveredQuart === quartItem.quartCentury;
@@ -499,10 +545,9 @@ export const TimelineEnhanced: React.FC = () => {
                         </div>
                       </motion.div>
                     );
-                  })}
-                </AnimatePresence>
-              </div>
-            </LayoutGroup>
+                })}
+              </AnimatePresence>
+            </div>
 
             {/* Freccia destra */}
             <motion.button
