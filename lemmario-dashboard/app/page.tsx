@@ -127,10 +127,37 @@ export default function Home() {
         document.body
       )}
 
-      <footer className="bg-white border-t border-border px-lg py-2">
-        <div className="max-w-container mx-auto text-center text-[10px] text-text-secondary space-y-1">
-          <p className="font-medium">Elaborato sui dati estrapolati dal "Vocabolario storico della lingua italiana della gastronomia (VoSLIG). Responsabili Atlante e VoSLIG: Giovanni Urraci e Monica Alba - Partner informatici: DH Unica, diretto da: prof. Giampaolo Salice, Università di Cagliari</p>
-          <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
+      <footer className="bg-white border-t border-border px-lg py-4">
+        <div className="max-w-container mx-auto space-y-4">
+          {/* Loghi */}
+          <div className="flex items-center justify-center gap-8 flex-wrap">
+            <img
+              src="/data/logo/DH_logo+type1@256px_[RGB_black].png"
+              alt="DH Unica"
+              className="h-16 w-auto object-contain"
+            />
+            <img
+              src="/data/logo/Logo_lungo_RGB_d0.png"
+              alt="Logo AtLiTeG"
+              className="h-16 w-auto object-contain"
+            />
+            <img
+              src="/data/logo/Logo_Roma_Tre.jpg"
+              alt="Logo Roma Tre"
+              className="h-16 w-auto object-contain"
+            />
+            <img
+              src="/data/logo/unistrasi.jpg"
+              alt="Università per Stranieri di Siena"
+              className="h-16 w-auto object-contain"
+            />
+          </div>
+
+          {/* Testo */}
+          <div className="text-center text-[10px] text-text-secondary space-y-1">
+            <p className="font-medium">Elaborato sui dati estrapolati dal "Vocabolario storico della lingua italiana della gastronomia (VoSLIG). Responsabili Atlante e VoSLIG: Giovanni Urraci e Monica Alba - Partner informatici: DH Unica, diretto da: prof. Giampaolo Salice, Università di Cagliari</p>
+            <p>© 2025 AtLiTeG - Atlante della Lingua e dei Testi della Cultura Gastronomica</p>
+          </div>
         </div>
       </footer>
     </div>
