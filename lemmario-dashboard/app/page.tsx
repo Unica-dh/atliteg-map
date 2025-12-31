@@ -134,22 +134,22 @@ export default function Home() {
             <img
               src="/data/logo/Logo_Roma_Tre.jpg"
               alt="Logo Roma Tre"
-              className="h-20 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
             <img
               src="/data/logo/unistrasi.jpg"
               alt="Università per Stranieri di Siena"
-              className="h-20 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
             <img
               src="/data/logo/DH_logo+type1@256px_[RGB_black].png"
               alt="DH Unica"
-              className="h-20 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
             <img
               src="/data/logo/Logo_lungo_RGB_d0.png"
               alt="Logo AtLiTeG"
-              className="h-20 w-auto object-contain"
+              className="h-16 w-auto object-contain"
             />
           </div>
 
