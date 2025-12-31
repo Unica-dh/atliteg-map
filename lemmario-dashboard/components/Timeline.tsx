@@ -18,9 +18,22 @@ const getQuartCentury = (year: number): string => {
 
 // Funzione per ottenere range anni da quarto di secolo
 const getYearRangeFromQuartCentury = (quartCentury: string): [number, number] => {
-  const century = parseInt(quartCentury.slice(0, -1));
-  const quarter = quartCentury.slice(-1);
-  const quarterIndex = ['I', 'II', 'III', 'IV'].indexOf(quarter);
+  // Trova dove inizia il numero romano (I, II, III, IV)
+  const romanMatch = quartCentury.match(/^(\d+)(I{1,3}|IV|V)$/);
+  if (!romanMatch) {
+    console.error('[getYearRangeFromQuartCentury] Formato non valido:', quartCentury);
+    return [0, 0];
+  }
+
+  const century = parseInt(romanMatch[1]);
+  const romanQuarter = romanMatch[2];
+  const quarterIndex = ['I', 'II', 'III', 'IV'].indexOf(romanQuarter);
+
+  if (quarterIndex === -1) {
+    console.error('[getYearRangeFromQuartCentury] Quarto romano non valido:', romanQuarter);
+    return [0, 0];
+  }
+
   const start = century * 100 + quarterIndex * 25;
   const end = start + 24;
   return [start, end];
@@ -32,14 +45,13 @@ export const Timeline: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 12; // Mostra 12 quarti di secolo per volta
 
-  // Raggruppa per quarti di secolo
+  // Raggruppa per quarti di secolo - AGGREGAZIONE TOTALE (indipendente da location)
   const quartCenturies = useMemo(() => {
     if (lemmi.length === 0) return [];
 
     const quartData = new Map<string, {
       years: Set<number>;
       lemmas: Set<string>;
-      locations: Set<string>;
       attestazioni: number;
     }>();
 
@@ -52,7 +64,6 @@ export const Timeline: React.FC = () => {
           quartData.set(quart, {
             years: new Set(),
             lemmas: new Set(),
-            locations: new Set(),
             attestazioni: 0
           });
         }
@@ -60,20 +71,18 @@ export const Timeline: React.FC = () => {
         const data = quartData.get(quart)!;
         data.years.add(year);
         data.lemmas.add(lemma.Lemma);
-        data.locations.add(lemma.CollGeografica);
-        // Somma la frequenza invece di contare le righe
+        // Somma la frequenza invece di contare le righe - TOTALE per periodo
         const freq = parseInt(lemma.Frequenza) || 0;
         data.attestazioni += freq;
       }
     });
 
-    return Array.from(quartData.entries())
+    const result = Array.from(quartData.entries())
       .map(([quart, data]) => ({
         quartCentury: quart,
         hasData: data.years.size > 0,
         years: Array.from(data.years).sort((a, b) => a - b),
         lemmas: Array.from(data.lemmas),
-        locations: Array.from(data.locations),
         attestazioni: data.attestazioni
       }))
       .sort((a, b) => {
@@ -81,6 +90,20 @@ export const Timeline: React.FC = () => {
         const [startB] = getYearRangeFromQuartCentury(b.quartCentury);
         return startA - startB;
       });
+
+    // Debug: verifica che non ci siano duplicati
+    const uniqueQuarts = new Set(result.map(q => q.quartCentury));
+    if (uniqueQuarts.size !== result.length) {
+      console.warn('[Timeline] ATTENZIONE: Trovati quarti duplicati!', {
+        total: result.length,
+        unique: uniqueQuarts.size,
+        duplicates: result.filter((q, i, arr) =>
+          arr.findIndex(x => x.quartCentury === q.quartCentury) !== i
+        )
+      });
+    }
+
+    return result;
   }, [lemmi, filteredLemmi]);
 
   const totalPages = Math.ceil(quartCenturies.length / itemsPerPage);

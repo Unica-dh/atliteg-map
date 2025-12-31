@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "quint-code": {
+      "command": "/home/ale/.local/bin/quint-code",
+      "args": [
+        "serve"
+      ],
+      "cwd": "/home/ale/docker/atliteg-map",
+      "env": {
+        "QUINT_PROJECT_ROOT": "/home/ale/docker/atliteg-map"
+      }
+    }
+  }
+}
