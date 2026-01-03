@@ -93,14 +93,14 @@ export function Header() {
       <div className="relative z-10 max-w-[1600px] mx-auto px-2 md:px-4 py-1">
         <div className="flex items-center justify-between gap-2">
           {/* Left: Logo + Title */}
-          <div className="flex items-center gap-2 flex-shrink-0 max-w-[480px] lg:max-w-[560px]">
+          <div className="flex items-center gap-2 flex-shrink-0 max-w-[580px] lg:max-w-[660px]">
             <Image
               src="/AtLiTeG_logo.webp"
               alt="AtLiTeG Logo"
-              width={50}
-              height={55}
+              width={70}
+              height={77}
               priority
-              className="w-10 h-auto md:w-[50px] flex-shrink-0"
+              className="w-10 h-auto md:w-[70px] flex-shrink-0"
             />
             <div className="hidden md:block">
               <h1 className="text-white text-[16px] lg:text-[17px] font-bold leading-[1.25]">
