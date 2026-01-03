@@ -107,7 +107,7 @@ export function Header() {
                 Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità
               </h1>
               <p className="text-white/90 text-[11px] leading-[1.3] mt-0.5">
-                PRIN 2017X8CZTM - PI prof.essoressa Giovanna Frosini, Università per Stranieri di Siena. In collaborazione con il Labego "Giuseppe Cerasa", Università Roma Tre.
+                PRIN 2017X8CZTM - PI prof.ssa Giovanna Frosini, Università per Stranieri di Siena. Elaborato sui dati estrapolati dal "Vocabolario storico della lingua italiana della gastronomia (VoSLIG)".
               </p>
             </div>
           </div>
