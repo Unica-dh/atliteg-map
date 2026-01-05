@@ -137,8 +137,8 @@ export default function Home() {
               className="h-16 w-auto object-contain"
             />
             <img
-              src="/data/logo/Federico_II_University_Logo.png"
-              alt="Università di Napoli Federico II"
+              src="/data/logo/Logo_Roma_Tre.jpg"
+              alt="Università Roma Tre"
               className="h-16 w-auto object-contain"
             />
             <img
