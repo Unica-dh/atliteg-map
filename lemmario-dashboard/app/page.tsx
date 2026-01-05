@@ -132,23 +132,23 @@ export default function Home() {
           {/* Loghi */}
           <div className="flex items-center justify-center gap-8">
             <img
-              src="/data/logo/Logo_Roma_Tre.jpg"
-              alt="Logo Roma Tre"
-              className="h-16 w-auto object-contain"
-            />
-            <img
               src="/data/logo/unistrasi.jpg"
               alt="Università per Stranieri di Siena"
               className="h-16 w-auto object-contain"
             />
             <img
+              src="/data/logo/Federico_II_University_Logo.png"
+              alt="Università di Napoli Federico II"
+              className="h-16 w-auto object-contain"
+            />
+            <img
               src="/data/logo/DH_logo+type1@256px_[RGB_black].png"
-              alt="DH Unica"
+              alt="Digital Humanities Cagliari"
               className="h-16 w-auto object-contain"
             />
             <img
               src="/data/logo/Logo_lungo_RGB_d0.png"
-              alt="Logo AtLiTeG"
+              alt="Università degli studi di Cagliari"
               className="h-16 w-auto object-contain"
             />
           </div>
