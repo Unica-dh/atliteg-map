@@ -132,6 +132,11 @@ export default function Home() {
           {/* Loghi */}
           <div className="flex items-center justify-center gap-8">
             <img
+              src="/data/logo/LogoUniversitàDiSalerno.jpg"
+              alt="Università degli Studi di Salerno"
+              className="h-16 w-auto object-contain"
+            />
+            <img
               src="/data/logo/unistrasi.jpg"
               alt="Università per Stranieri di Siena"
               className="h-16 w-auto object-contain"
