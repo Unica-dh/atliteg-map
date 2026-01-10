@@ -1,0 +1,40 @@
+/**
+ * Configuration centrale per backend API
+ */
+
+module.exports = {
+  port: process.env.PORT || 3001,
+  nodeEnv: process.env.NODE_ENV || 'development',
+  
+  // API Keys (separati da virgola)
+  frontendApiKeys: (process.env.FRONTEND_API_KEYS || 'default_dev_key').split(','),
+  
+  // Admin credentials
+  adminUsername: process.env.ADMIN_USERNAME || 'admin',
+  adminPasswordHash: process.env.ADMIN_PASSWORD_HASH || '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', // default: "admin"
+  
+  // JWT
+  jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret_change_in_production',
+  jwtExpiresIn: '24h',
+  
+  // CORS
+  allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:9000').split(','),
+  
+  // Rate limiting
+  rateLimit: {
+    dataApi: {
+      windowMs: 15 * 60 * 1000, // 15 minuti
+      max: 100 // 100 richieste per finestra
+    },
+    uploadApi: {
+      windowMs: 60 * 60 * 1000, // 1 ora
+      max: 5 // 5 upload per ora
+    }
+  },
+  
+  // Upload
+  upload: {
+    maxFileSize: 10 * 1024 * 1024, // 10 MB
+    allowedMimeTypes: ['text/csv', 'application/csv', 'application/vnd.ms-excel']
+  }
+};

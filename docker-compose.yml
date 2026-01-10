@@ -1,14 +1,44 @@
 services:
+  backend:
+    build:
+      context: ./lemmario-dashboard/server
+      dockerfile: Dockerfile
+    container_name: atliteg-backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - FRONTEND_API_KEYS=${FRONTEND_API_KEYS:-default_dev_key}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:-$$2b$$10$$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy}
+      - JWT_SECRET=${JWT_SECRET:-your_jwt_secret_change_in_production}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:9000}
+    volumes:
+      - ./lemmario-dashboard/server/data:/app/data
+      - ./lemmario-dashboard/server/uploads:/app/uploads
+      - ./lemmario-dashboard/server/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - atliteg-network
+
   lemmario-dashboard:
     build:
       context: ./lemmario-dashboard
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+        - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY:-default_dev_key}
     container_name: atliteg-lemmario-dashboard
     ports:
       - "9000:9000"
-    volumes:
-      # Mount data directory per aggiornamenti senza rebuild
-      - ./data:/usr/share/nginx/html/data:ro
+    depends_on:
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9000/"]

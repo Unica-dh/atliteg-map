@@ -224,3 +224,16 @@ data_backup_*/
 deploy-config.local.sh
 **/ssh_keys/
 test-ssh-connection.local.sh
+
+# Backend server
+lemmario-dashboard/server/logs/*.log
+lemmario-dashboard/server/uploads/*
+!lemmario-dashboard/server/uploads/.gitkeep
+lemmario-dashboard/server/uploads/backup/*
+lemmario-dashboard/server/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+!.env.example
