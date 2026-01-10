@@ -1,14 +1,11 @@
-FROM node:20-alpine
+FROM node:18-slim
+
+# Install wget for health check
+RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copia package files
-COPY package*.json ./
-
-# Installa dipendenze (production only)
-RUN npm ci --production
-
-# Copia il resto dei file
+# Copia tutto inclusi i node_modules (pre-installati localmente)
 COPY . .
 
 # Crea directory necessarie
