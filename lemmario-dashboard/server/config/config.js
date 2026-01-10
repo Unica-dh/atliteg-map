@@ -11,7 +11,7 @@ module.exports = {
   
   // Admin credentials
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
-  adminPasswordHash: process.env.ADMIN_PASSWORD_HASH || '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', // default: "admin"
+  adminPasswordHash: process.env.ADMIN_PASSWORD_HASH || '$2b$10$wqM4/4h7tknyFoihM8wLCuLTv9Ndbs3V1rQ70hsSQtOwa2k47wnQW', // default: "admin"
   
   // JWT
   jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret_change_in_production',
