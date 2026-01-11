@@ -35,10 +35,11 @@ Se preferisci eseguire i passaggi manualmente:
 ```bash
 cd lemmario-dashboard
 npm install
-NEXT_PUBLIC_API_URL=http://backend:3001 NEXT_PUBLIC_API_KEY=default_dev_key npm run build
+NEXT_PUBLIC_API_URL= NEXT_PUBLIC_API_KEY=default_dev_key npm run build
 ```
 
 Questo crea la directory `out/` con i file statici ottimizzati.
+Il frontend usa URL relativi per le chiamate API, che vengono proxate da nginx al backend.
 
 #### 2. Build Backend
 
