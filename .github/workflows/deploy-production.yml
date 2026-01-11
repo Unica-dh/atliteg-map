@@ -92,11 +92,47 @@ jobs:
             ls -lh data/logo/
           fi
 
-      # Step 4: Build dell'applicazione
-      - name: 🏗️ Build dell'applicazione
+      # Step 4: Build frontend Next.js
+      - name: 🏗️ Build frontend Next.js
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🏗️  STEP 3: Building application containers"
+          echo "🏗️  STEP 3: Building Next.js frontend"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          cd ${{ secrets.DEPLOY_PATH }}/lemmario-dashboard
+          
+          echo "📦 Installing frontend dependencies..."
+          npm install
+          
+          echo "🔨 Building Next.js application..."
+          # NEXT_PUBLIC_API_URL= (empty) makes API calls relative (e.g., /api/lemmi)
+          # Nginx then proxies these to backend:3001 (see nginx.conf)
+          # NEXT_PUBLIC_API_KEY is a build-time placeholder - real validation happens at backend
+          NEXT_PUBLIC_API_URL= NEXT_PUBLIC_API_KEY=default_dev_key npm run build
+          
+          echo "✅ Frontend build completato con successo"
+          echo "📁 Verifica directory out:"
+          ls -lh out/ | head -20
+
+      # Step 5: Installazione dipendenze backend
+      - name: 📦 Installazione dipendenze backend
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📦 STEP 4: Installing backend dependencies"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          cd ${{ secrets.DEPLOY_PATH }}/lemmario-dashboard/server
+          
+          echo "📦 Installing backend dependencies..."
+          npm install
+          
+          echo "✅ Backend dependencies installate con successo"
+
+      # Step 6: Build dell'applicazione Docker
+      - name: 🐳 Build Docker containers
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🐳 STEP 5: Building Docker containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           cd ${{ secrets.DEPLOY_PATH }}
@@ -108,11 +144,11 @@ jobs:
           echo "📋 Immagini Docker disponibili:"
           docker images | grep atliteg || echo "Nessuna immagine atliteg trovata"
       
-      # Step 5: Restart dei container
+      # Step 7: Restart dei container
       - name: 🔄 Restart dei container
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🔄 STEP 4: Restarting application containers"
+          echo "🔄 STEP 6: Restarting application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           cd ${{ secrets.DEPLOY_PATH }}
@@ -131,7 +167,7 @@ jobs:
           
           echo "✅ Container riavviati con successo"
       
-      # Step 5: Pulizia risorse Docker
+      # Step 8: Pulizia risorse Docker
       - name: 🧹 Pulizia risorse Docker
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -148,7 +184,7 @@ jobs:
           
           echo "✅ Pulizia completata"
       
-      # Step 6: Verifica deployment
+      # Step 9: Verifica deployment
       - name: 🔍 Verifica deployment
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -180,7 +216,7 @@ jobs:
           
           echo "✅ Verifica completata"
       
-      # Step 7: Notifica risultato
+      # Step 10: Notifica risultato
       - name: 🎉 Deploy completato
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -195,7 +231,7 @@ jobs:
           echo "🌐 L'applicazione è ora accessibile"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
       
-      # Step 8: Deployment Summary (per GitHub)
+      # Step 11: Deployment Summary (per GitHub)
       - name: 📢 Deployment Summary
         if: success()
         run: |
@@ -212,7 +248,7 @@ jobs:
           echo "🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           echo ""
       
-      # Step 9: Gestione errori
+      # Step 12: Gestione errori
       - name: 🚨 Notifica errore
         if: failure()
         run: |
