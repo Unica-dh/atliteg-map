@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { RegionsGeoJSON, RegionFeature } from '@/types/lemma';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
+
 /**
- * Hook per caricare e gestire i confini regionali
- * Carica il file limits_IT_regions.geojson contenente i confini delle 20 regioni italiane
+ * Hook per caricare e gestire i confini regionali dal backend API
+ * Carica il file limits_IT_regions.geojson tramite API protetta
  */
 export function useRegions() {
   const [regions, setRegions] = useState<RegionsGeoJSON | null>(null);
@@ -14,7 +17,11 @@ export function useRegions() {
     async function loadRegions() {
       try {
         setLoading(true);
-        const response = await fetch('/data/limits_IT_regions.geojson');
+        const response = await fetch(`${API_BASE_URL}/api/regions`, {
+          headers: {
+            'X-API-Key': API_KEY
+          }
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to load regions: ${response.statusText}`);
@@ -24,7 +31,7 @@ export function useRegions() {
         setRegions(data);
         setError(null);
 
-        console.log(`✅ Regioni caricate: ${data.features.length} regioni`);
+        console.log(`✅ Regioni caricate da API: ${data.features.length} regioni`);
       } catch (err) {
         const error = err instanceof Error ? err : new Error('Unknown error');
         setError(error);
