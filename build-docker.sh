@@ -14,7 +14,7 @@ cd lemmario-dashboard
 npm install
 
 echo "🏗️  Step 2/3: Building frontend application..."
-NEXT_PUBLIC_API_URL=http://backend:3001 NEXT_PUBLIC_API_KEY=default_dev_key npm run build
+NEXT_PUBLIC_API_URL= NEXT_PUBLIC_API_KEY=default_dev_key npm run build
 
 # Step 2: Build backend dependencies
 echo "📦 Step 3/3: Installing backend dependencies..."
