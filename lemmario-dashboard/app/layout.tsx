@@ -1,13 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
 import { HighlightProvider } from "@/context/HighlightContext";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { JsonLd } from "@/components/JsonLd";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -78,7 +75,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="it">
-      <body className={inter.className}>
+      <body className="font-sans">
         <JsonLd />
         <GoogleAnalytics />
         <AccessibilityProvider />
