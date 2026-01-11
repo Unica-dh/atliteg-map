@@ -105,6 +105,9 @@ jobs:
           npm install
           
           echo "🔨 Building Next.js application..."
+          # NEXT_PUBLIC_API_URL= (empty) makes API calls relative (e.g., /api/lemmi)
+          # Nginx then proxies these to backend:3001 (see nginx.conf)
+          # NEXT_PUBLIC_API_KEY is a build-time placeholder - real validation happens at backend
           NEXT_PUBLIC_API_URL= NEXT_PUBLIC_API_KEY=default_dev_key npm run build
           
           echo "✅ Frontend build completato con successo"
