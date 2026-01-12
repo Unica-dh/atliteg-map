@@ -5,7 +5,13 @@ RUN apt-get update && apt-get install -y wget && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copia tutto inclusi i node_modules (pre-installati localmente)
+# Copia package files per dependency caching
+COPY package*.json ./
+
+# Installa dipendenze
+RUN npm ci --only=production
+
+# Copia il resto del codice
 COPY . .
 
 # Crea directory necessarie
