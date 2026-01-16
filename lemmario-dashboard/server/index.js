@@ -56,9 +56,12 @@ app.get('/health', (req, res) => {
   const dataPath = path.join(__dirname, 'data/lemmi.json');
   fs.access(dataPath, fs.constants.R_OK, (err) => {
     if (err) {
-      healthcheck.checks.dataFiles = 'error';
+      // File non esiste o non leggibile - non è un errore fatale
+      // L'admin può caricarlo via upload
+      healthcheck.checks.dataFiles = 'not_found';
       healthcheck.status = 'degraded';
-      res.status(503).json(healthcheck);
+      healthcheck.message = 'Data file not found. Please upload via admin interface.';
+      res.status(200).json(healthcheck); // 200 invece di 503 per permettere startup
     } else {
       healthcheck.checks.dataFiles = 'ok';
       res.status(200).json(healthcheck);
