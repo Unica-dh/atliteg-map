@@ -1,6 +1,9 @@
 # Logs
 logs
 
+# Git backups (security cleanup backups)
+.git.backup/
+
 
 
 
