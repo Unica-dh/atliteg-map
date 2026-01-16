@@ -92,11 +92,43 @@ jobs:
             ls -lh data/logo/
           fi
 
-      # Step 4: Build dell'applicazione
+      # Step 4: Configurazione variabili d'ambiente
+      - name: 🔐 Setup environment variables
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔐 STEP 3: Setting up environment variables"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          cd ${{ secrets.DEPLOY_PATH }}
+          
+          echo "📝 Creating .env file from secrets..."
+          cat > .env << EOF
+          # Backend API Configuration
+          FRONTEND_API_KEYS=${{ secrets.FRONTEND_API_KEYS }}
+          NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY }}
+          
+          # Admin Credentials
+          ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          
+          # JWT Secret
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          
+          # CORS
+          ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}
+          
+          # API URL for frontend
+          NEXT_PUBLIC_API_URL=http://backend:3001
+          EOF
+          
+          echo "✅ Environment file created"
+          echo "📋 Environment variables configured (values hidden for security)"
+
+      # Step 5: Build dell'applicazione
       - name: 🏗️ Build dell'applicazione
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🏗️  STEP 3: Building application containers"
+          echo "🏗️  STEP 4: Building application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           cd ${{ secrets.DEPLOY_PATH }}
@@ -108,11 +140,11 @@ jobs:
           echo "📋 Immagini Docker disponibili:"
           docker images | grep atliteg || echo "Nessuna immagine atliteg trovata"
       
-      # Step 5: Restart dei container
+      # Step 6: Restart dei container
       - name: 🔄 Restart dei container
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🔄 STEP 4: Restarting application containers"
+          echo "🔄 STEP 5: Restarting application containers"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           
           cd ${{ secrets.DEPLOY_PATH }}
