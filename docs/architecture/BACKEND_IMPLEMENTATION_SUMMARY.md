@@ -15,7 +15,7 @@ Created a complete Node.js/Express backend in `lemmario-dashboard/server/` with:
   - `/api/admin/upload` - CSV upload (JWT protected)
   - `/api/admin/status/:jobId` - Check upload status (JWT protected)
   - `/health` - Health check endpoint
-
+ 
 ### 2. Security & Authentication
 - **API Key Auth**: Frontend uses `X-API-Key` header (configured in `.env`)
 - **JWT Auth**: Admin endpoints require Bearer token
