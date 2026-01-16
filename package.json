@@ -1,5 +1,12 @@
 {
+  "name": "atliteg-map",
+  "version": "1.0.0",
+  "description": "AtLiTeG Map - Italian Gastronomic Language Atlas",
+  "scripts": {
+    "generate-password-hash": "node scripts/generate-password-hash.js"
+  },
   "devDependencies": {
+    "bcrypt": "^5.1.1",
     "csv-parser": "^3.2.0",
     "csv-writer": "^1.6.0"
   }
