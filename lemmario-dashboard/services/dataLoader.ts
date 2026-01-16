@@ -13,7 +13,9 @@ export async function loadCSVData(): Promise<Lemma[]> {
     const response = await fetch(`${API_BASE_URL}/api/lemmi`, {
       headers: {
         'X-API-Key': API_KEY
-      }
+      },
+      cache: 'no-store', // Disabilita cache per avere sempre dati aggiornati
+      next: { revalidate: 0 } // Next.js: rivalidazione immediata
     });
 
     if (!response.ok) {
@@ -41,7 +43,9 @@ export async function loadGeoJSON(): Promise<GeoArea[]> {
     const response = await fetch(`${API_BASE_URL}/api/geojson`, {
       headers: {
         'X-API-Key': API_KEY
-      }
+      },
+      cache: 'no-store', // Disabilita cache
+      next: { revalidate: 0 } // Next.js: rivalidazione immediata
     });
 
     if (!response.ok) {

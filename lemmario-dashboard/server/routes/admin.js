@@ -34,7 +34,17 @@ router.post('/login', async (req, res) => {
       });
     }
     
-    const validPassword = await bcrypt.compare(password, config.adminPasswordHash);
+    // Supporta sia password in chiaro che hash bcrypt
+    let validPassword = false;
+    
+    if (config.adminPassword) {
+      // Se c'è ADMIN_PASSWORD (in chiaro), confronta direttamente
+      validPassword = (password === config.adminPassword);
+    } else {
+      // Altrimenti usa l'hash bcrypt (ADMIN_PASSWORD_HASH)
+      validPassword = await bcrypt.compare(password, config.adminPasswordHash);
+    }
+    
     if (!validPassword) {
       logger.warn('Login failed: invalid password', { username, ip: req.ip });
       return res.status(401).json({ 
