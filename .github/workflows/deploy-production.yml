@@ -94,6 +94,14 @@ jobs:
 
       # Step 4: Build dell'applicazione
       - name: 🏗️ Build dell'applicazione
+        env:
+          FRONTEND_API_KEYS: ${{ secrets.FRONTEND_API_KEYS }}
+          NEXT_PUBLIC_API_KEY: ${{ secrets.NEXT_PUBLIC_API_KEY }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          NEXT_PUBLIC_API_URL: http://backend:3001
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🏗️  STEP 3: Building application containers"
@@ -110,6 +118,14 @@ jobs:
       
       # Step 5: Restart dei container
       - name: 🔄 Restart dei container
+        env:
+          FRONTEND_API_KEYS: ${{ secrets.FRONTEND_API_KEYS }}
+          NEXT_PUBLIC_API_KEY: ${{ secrets.NEXT_PUBLIC_API_KEY }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          NEXT_PUBLIC_API_URL: http://backend:3001
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🔄 STEP 4: Restarting application containers"
