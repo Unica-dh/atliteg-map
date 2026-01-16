@@ -10,7 +10,18 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
 export async function loadCSVData(): Promise<Lemma[]> {
   try {
     const startTime = performance.now();
-    const response = await fetch(`${API_BASE_URL}/api/lemmi`, {
+    
+    // Add cache-busting parameter if present in URL
+    let apiUrl = `${API_BASE_URL}/api/lemmi`;
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const version = urlParams.get('v');
+      if (version) {
+        apiUrl += `?v=${version}`;
+      }
+    }
+    
+    const response = await fetch(apiUrl, {
       headers: {
         'X-API-Key': API_KEY
       },

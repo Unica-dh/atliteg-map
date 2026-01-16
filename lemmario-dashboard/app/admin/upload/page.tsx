@@ -157,6 +157,14 @@ export default function AdminUploadPage() {
           setTimeout(poll, 2000); // Poll every 2 seconds
         } else {
           setIsCheckingStatus(false);
+          
+          // If completed successfully, redirect to homepage after 3 seconds with cache invalidation
+          if (data.status === 'completed') {
+            setTimeout(() => {
+              // Add timestamp to force cache refresh
+              window.location.href = '/?v=' + Date.now();
+            }, 3000);
+          }
         }
       } catch (error) {
         setUploadError('Errore nel controllo dello stato');
