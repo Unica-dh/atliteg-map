@@ -109,7 +109,7 @@ jobs:
           export ADMIN_PASSWORD_HASH=""
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           export ALLOWED_ORIGINS="${{ secrets.ALLOWED_ORIGINS }}"
-          export NEXT_PUBLIC_API_URL="http://backend:3001"
+          export NEXT_PUBLIC_API_URL=""
           
           echo "📋 Environment variables configured (values hidden for security)"
           
@@ -139,7 +139,7 @@ jobs:
           export ADMIN_PASSWORD_HASH=""
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           export ALLOWED_ORIGINS="${{ secrets.ALLOWED_ORIGINS }}"
-          export NEXT_PUBLIC_API_URL="http://backend:3001"
+          export NEXT_PUBLIC_API_URL=""
           
           cd ${{ secrets.DEPLOY_PATH }}
           
