@@ -237,3 +237,47 @@ lemmario-dashboard/server/node_modules/
 .env.local
 .env.production
 !.env.example
+
+# ========================================
+# DATI SENSIBILI - NON TRACCIARE MAI!
+# ========================================
+
+# File lemmi (dati sensibili)
+**/lemmi.json
+**/Lemmi_*.csv
+**/*lemmi*.csv
+**/*lemmi*.json
+
+# Directory dati sensibili
+data/*.csv
+data/*.json
+!data/*.geojson
+!data/limits_IT_regions.geojson
+
+# Backend data (solo server runtime)
+lemmario-dashboard/server/data/*.json
+lemmario-dashboard/server/data/*.csv
+!lemmario-dashboard/server/data/.gitkeep
+!lemmario-dashboard/server/data/geojson.json
+
+# Public data (non dovrebbero esistere)
+lemmario-dashboard/public/data/*.csv
+lemmario-dashboard/public/data/lemmi.json
+lemmario-dashboard/public/data/Lemmi_*.csv
+
+# Upload e backup (runtime only)
+lemmario-dashboard/server/uploads/*
+!lemmario-dashboard/server/uploads/.gitkeep
+
+# Build output con dati
+lemmario-dashboard/out/data/
+
+# Test files
+test_*.csv
+*_test.csv
+*_TEST.csv
+playwright_test.csv
+
+# Deleted files
+deleted/
+
