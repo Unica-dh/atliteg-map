@@ -89,7 +89,7 @@ curl http://your-domain/server/data/lemmi.json   # ❌
 # Questo DEVE funzionare (con API key):
 curl -H "X-API-Key: $KEY" http://your-domain/api/lemmi  # ✅
 ```
-
+ 
 ## 📤 Upload CSV Admin
 
 L'applicazione include un'interfaccia admin per caricare nuovi dati:
