@@ -4,34 +4,58 @@
 	<img src="docs/logo-atliteg.png" alt="ATLITEG Dashboard Banner" width="20%"/>
 </p>
 
-# **Menu**
+<!-- MENU STICKY -->
+<p align="center">
+  <strong>
+    <a href="#scopo-e-funzionalita">Funzionalità</a> |
+    <a href="#destinatari-e-collaborazioni">Partner</a> |
+    <a href="#anteprima-visiva">Anteprima</a> |
+    <a href="#principali-funzionalita-utente">Feature</a> |
+    <a href="#procedura-corretta-per-aggiornare-i-dati-geografici">Procedura</a> |
+    <a href="#dati-e-fonti">Dati</a> |
+    <a href="#documentazione">Documentazione</a> |
+    <a href="#faq">FAQ</a> |
+    <a href="#licenza">Licenza</a>
+  </strong>
+</p>
 
-**[Scopo e Funzionalità](#scopo-e-funzionalità) | [Destinatari e Collaborazioni](#destinatari-e-collaborazioni) | [Anteprima Visiva](#anteprima-visiva) | [Principali funzionalità utente](#principali-funzionalità-utente) | [Frontend, Deployment, Dati](#frontend-deployment-dati) | [Requisiti](#requisiti) | [Procedura Corretta per Aggiornare i Dati Geografici](#procedura-corretta-per-aggiornare-i-dati-geografici) | [Documentazione](#documentazione) | [Dati e Fonti](#dati-e-fonti) | [Personalizzazione](#personalizzazione) | [Ottimizzazione SEO](#ottimizzazione-seo) | [Licenza](#licenza)**
+<!-- BADGE -->
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/Unica-dh/atliteg-map?label=version" alt="Version"/>
+  <img src="https://img.shields.io/badge/SEO-100%25-brightgreen" alt="SEO Score"/>
+</p>
 
 # Dashboard Linguistico ATLITEG
 
-
 <p align="center">
-	<img src="docs/homepage.png" alt="Screenshot della dashboard ATLITEG" width="80%"/>
-	<br/>
-	<em>Screenshot della dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
+  <img src="docs/homepage.png" alt="Screenshot dashboard ATLITEG: mappa, timeline, filtri" width="80%"/>
+  <br/>
+  <em>Dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
 </p>
 
 **Atliteg** (Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità) è un progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana (dal Medioevo all'Unità d'Italia).
 
 ## 📚 Scopo e Funzionalità
 
-- **Esplorazione lessicografica**: Interfaccia visuale e interattiva per esplorare i dati del "Vocabolario storico della lingua italiana della gastronomia (VoSLIG)".
-- **Mappe interattive**: Visualizzazione della diffusione geografica di termini gastronomici (piatti, ingredienti, tecniche di cottura) in diverse epoche.
-- **Timeline storica avanzata**: Visualizzazione cronologica con istogrammi aggregati per quarti di secolo (periodi di 25 anni), mostrando la distribuzione temporale delle occorrenze con somma totale indipendente dalla località geografica.
-- **Analisi testuale**: Esplorazione di testi storici (ricettari, trattati di cucina) che costituiscono le fonti della cultura gastronomica italiana.
-- **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche.
-- **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati.
+| Funzionalità | Descrizione |
+|--------------|-------------|
+| Esplorazione lessicografica | Visualizza e filtra i dati VoSLIG |
+| Mappe interattive | Diffusione geografica di termini gastronomici |
+| Timeline storica | Istogrammi aggregati per quarti di secolo |
+| Analisi testuale | Esplora fonti storiche (ricettari, trattati) |
+| Treemap categorie | Gerarchia lemmi per categorie linguistiche |
+| Tabelle dettagliate | Filtri avanzati su dati specifici |
 
 ## 👥 Destinatari e Collaborazioni 
 
-- Progetto sviluppato in collaborazione con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre), laboratorio specializzato in geografia e cartografia.
-- Finanziato dal **PRIN 2017** (Progetti di Ricerca di Interesse Nazionale), responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
+> **Partner istituzionali**
+>
+> <img src="data/logo/Logo_Roma_Tre.jpg" alt="Università Roma Tre" height="70"/>  
+> <img src="data/logo/unistrasi.jpg" alt="Università per Stranieri di Siena" height="70"/>  
+> <img src="data/logo/DH_logo+type1@256px_[RGB_black].png" alt="DH Unica" height="70"/>  
+> <img src="data/logo/Logo_lungo_RGB_d0.png" alt="AtLiTeG Project" height="70"/>
+
+Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e finanziato dal **PRIN 2017**. Responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
 
 ## ✨ Anteprima Visiva
 
@@ -153,35 +177,37 @@ Per dettagli su architettura e dataset, vedi [docs/architecture/system-architect
 
 ## 📂 Dati e Fonti
 
-- **CSV**: Lemmi, forme, coordinate e metadati (es. `Lemmi_forme_atliteg_updated.csv`)
-- **GeoJSON**: Aree geografiche poligonali (es. `Ambiti geolinguistici newline.json`)
+| Tipo | File | Descrizione |
+|------|------|-------------|
+| CSV | Lemmi_forme_atliteg_updated.csv | Lemmi, forme, coordinate, metadati |
+| GeoJSON | Ambiti geolinguistici newline.json | Aree geografiche poligonali |
 
 ---
 
 ## ✅ Procedura Corretta per Aggiornare i Dati Geografici
 
-**Rigenera i file JSON:**
-
-```bash
-cd lemmario-dashboard
+> **Procedura operativa**
+>
+> <br/>
+> <b>Rigenera i file JSON:</b>
+> <pre><code>cd lemmario-dashboard
 node scripts/preprocess-data.js
 # Verifica che venga stampato: "✅ CSV processato: XXXX record"
-```
-
-### 🎯 Esempio Pratico: Aggiungere una Nuova Regione
-
-Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
-
-1. Nel CSV, assicurati che i lemmi abbiano:
-   - `Coll.Geografica`: "Nome Regione"
-   - `Latitudine`: `#N/A`
-   - `Longitudine`: `#N/A`
-   - `Tipo coll.Geografica`: `Regione`
-   - `reg_istat_code`: Codice ISTAT della regione (es. "06" per Friuli)
-
-2. Segui la procedura sopra per rigenerare e copiare i file
-
-3. La regione apparirà colorata in giallo sulla mappa
+</code></pre>
+>
+> <b>Esempio: aggiungere una nuova regione</b>
+> <ol>
+> <li>Nel CSV, assicurati che i lemmi abbiano:<br/>
+> <ul>
+> <li><code>Coll.Geografica</code>: "Nome Regione"</li>
+> <li><code>Latitudine</code>: <code>#N/A</code></li>
+> <li><code>Longitudine</code>: <code>#N/A</code></li>
+> <li><code>Tipo coll.Geografica</code>: <code>Regione</code></li>
+> <li><code>reg_istat_code</code>: Codice ISTAT della regione (es. "06" per Friuli)</li>
+> </ul></li>
+> <li>Segui la procedura sopra per rigenerare e copiare i file</li>
+> <li>La regione apparirà colorata in giallo sulla mappa</li>
+> </ol>
 
 ---
 
@@ -319,7 +345,24 @@ Il footer include i loghi dei partner con markup semantico appropriato:
 
 ---
 
+## ❓ FAQ
+
+**Come posso contribuire?**  
+Consulta la guida [CONTRIBUTING](docs/project/CONTRIBUTING.md) e apri una issue o una pull request.
+
+**Come risolvo problemi di caricamento dati?**  
+Vedi [Upload Troubleshooting](docs/guides/upload-troubleshooting.md).
+
+**Dove trovo la documentazione tecnica?**  
+Tutta la documentazione è in [docs/](docs/README.md).
+
+**Come verifico la salute del deployment?**  
+Controlla i log Docker e lo stato del runner GitHub Actions.
+
+---
+
 ## 📝 Licenza
 
-Vedi il file LICENSE nella root del progetto.
+<img src="https://img.shields.io/github/license/Unica-dh/atliteg-map?color=blue" alt="License"/>  
+Vedi il file [LICENSE](LICENSE) nella root del progetto.
 
