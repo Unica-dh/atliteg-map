@@ -23,6 +23,13 @@
 <p align="center">
   <img src="https://img.shields.io/github/v/tag/Unica-dh/atliteg-map?label=version" alt="Version"/>
   <img src="https://img.shields.io/badge/SEO-100%25-brightgreen" alt="SEO Score"/>
+  <img src="https://img.shields.io/github/last-commit/Unica-dh/atliteg-map" alt="Last Commit"/>
+  <br/>
+  <img src="https://img.shields.io/badge/Next.js-black?logo=next.js&logoColor=white" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/React-blue?logo=react&logoColor=61DAFB" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker"/>
 </p>
 
 # Dashboard Linguistico ATLITEG
