@@ -248,7 +248,7 @@ Build & Deploy:
 ## Data Management
 
 ### Sorgenti Dati
-- **CSV**: `Lemmi_forme_atliteg_updated.csv`
+- **CSV**: `Lemmi_forme_atliteg_updated.csv` Caricato tramite backend
 - **GeoJSON**: `Ambiti geolinguistici newline.json`
 
 ### Gestione
@@ -260,7 +260,6 @@ Build & Deploy:
 - ✅ Gestione file newline-delimited JSON
 
 ### Note Importanti
-- Il CSV deve essere in `/public/data/Lemmi_forme_atliteg_updated.csv`
 - Il GeoJSON deve essere in `/public/data/Ambiti geolinguistici newline.json`
 - Gli header del CSV vengono trasformati (es. "Coll.Geografica" → "CollGeografica")
 

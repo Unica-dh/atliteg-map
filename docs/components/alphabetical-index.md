@@ -1,7 +1,7 @@
 # Componente AlphabeticalIndex
 
 **Versione:** 1.0  
-**Ultima Modifica:** 2024-01-15  
+**Ultima Modifica:** 2026-01-15  
 **Stato:** Stabile
 
 ---
