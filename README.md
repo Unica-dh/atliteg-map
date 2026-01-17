@@ -1,5 +1,6 @@
 
 
+<a name="readme-top"></a>
 <p align="center">
 	<img src="docs/logo-atliteg.png" alt="ATLITEG Dashboard Banner" width="20%"/>
 </p>
@@ -42,7 +43,23 @@
 
 **Atliteg** (Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità) è un progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana (dal Medioevo all'Unità d'Italia).
 
+---
+
+## 🐛 Segnalazione Bug e Feature
+
+<a href="https://github.com/Unica-dh/atliteg-map/issues/new/choose">
+  <img src="https://img.shields.io/badge/Apri%20una%20Issue-GitHub-2ea44f?style=for-the-badge&logo=github" alt="Apri Issue su GitHub"/>
+</a>
+
+Per segnalare bug o richiedere nuove funzionalità, utilizza il sistema di **Issues** su GitHub selezionando il template appropriato.
+
+---
+
 ## 📚 Scopo e Funzionalità
+
+> **Contesto Scientifico**
+>
+> Questo strumento digitale e interattivo permette il recupero, la valorizzazione e la fruizione dei dati storico-linguistici, offrendo nuove prospettive di analisi sulle denominazioni gastronomiche italiane. Attraverso l'uso di tecnologie moderne, il progetto colma il divario tra ricerca umanistica tradizionale e visualizzazione dati, rendendo accessibile un patrimonio lessicale altrimenti complesso da consultare.
 
 | Funzionalità | Descrizione |
 |--------------|-------------|
@@ -53,16 +70,28 @@
 | Treemap categorie | Gerarchia lemmi per categorie linguistiche |
 | Tabelle dettagliate | Filtri avanzati su dati specifici |
 
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
+
 ## 👥 Destinatari e Collaborazioni 
 
-> **Partner istituzionali**
->
-> <img src="data/logo/Logo_Roma_Tre.jpg" alt="Università Roma Tre" height="70"/>  
-> <img src="data/logo/unistrasi.jpg" alt="Università per Stranieri di Siena" height="70"/>  
-> <img src="data/logo/DH_logo+type1@256px_[RGB_black].png" alt="DH Unica" height="70"/>  
-> <img src="data/logo/Logo_lungo_RGB_d0.png" alt="AtLiTeG Project" height="70"/>
+<table>
+  <tr>
+    <td align="center"><img src="data/logo/Logo_Roma_Tre.jpg" alt="Università Roma Tre" width="100"/></td>
+    <td align="center"><img src="data/logo/unistrasi.jpg" alt="Università per Stranieri di Siena" width="100"/></td>
+    <td align="center"><img src="data/logo/DH_logo+type1@256px_[RGB_black].png" alt="DH Unica" width="100"/></td>
+    <td align="center"><img src="data/logo/Logo_lungo_RGB_d0.png" alt="AtLiTeG Project" width="100"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Università Roma Tre</b><br/>Labgeo "Giuseppe Caraci"</td>
+    <td align="center"><b>Unistrasi</b><br/>Resp. Scientifica</td>
+    <td align="center"><b>DH Unica</b><br/>Digital Humanities</td>
+    <td align="center"><b>AtLiTeG</b><br/>Progetto PRIN 2017</td>
+  </tr>
+</table>
 
 Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e finanziato dal **PRIN 2017**. Responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
+
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 ## ✨ Anteprima Visiva
 
@@ -79,6 +108,8 @@ Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e
 	<br/>
 	<em>A sinistra: filtri globali per categoria e periodo. A destra: treemap delle categorie linguistiche.</em>
 </p>
+
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 ---
 
@@ -99,10 +130,14 @@ Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e
 
 ---
 
-- **Frontend**: Next.js 16 (App Router), React 18.3, TypeScript, Tailwind CSS, React-Leaflet, PapaParse
-- **Deployment**: Docker, Docker Compose, Nginx
-- **Dati**: Tutti i dati sono statici e accessibili via `public/data/` (no backend API)
+### 💻 Stack Tecnologico
 
+| Componente | Tecnologie |
+|------------|------------|
+| **Frontend** | ![Next JS](https://img.shields.io/badge/Next-black?logo=next.js&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white) |
+| **Mappe & Viz** | ![Leaflet](https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white) `react-leaflet` `chart.js` |
+| **DevOps** | ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white) |
+| **Data** | CSV statici, GeoJSON, PapaParse (No Backend API) |
 
 ### Requisiti
 
@@ -162,21 +197,22 @@ Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy auto
 - ⚙️ [install-github-runner.sh](install-github-runner.sh) - Script installazione runner
 - 📄 [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml) - Workflow
 
-```text
+```bash
 atliteg-map/
-├── data/                # Dati geografici sorgente (JSON)
-├── docs/                # Documentazione tecnica e scientifica
-├── lemmario-dashboard/  # Web app Next.js/React
-│   ├── app/             # Pagine/layout Next.js
-│   ├── components/      # Componenti React UI
-│   ├── services/        # Data loader/parsing
-│   ├── types/           # Tipi TypeScript
-│   ├── public/data/     # Dati statici per frontend
+├── 📂 data/                 # Dati geografici sorgente (JSON) e preprocessati
+├── 📚 docs/                 # Documentazione tecnica e scientifica
+├── 💻 lemmario-dashboard/   # Web app Next.js/React
+│   ├── 📄 app/              # Pagine/layout Next.js (App Router)
+│   ├── 🧩 components/       # Componenti React UI (Mappe, Filtri, Grafici)
+│   ├── 🔌 services/         # Data loader e parsing logica
+│   ├── 🏷️ types/            # Definizioni TypeScript (Interfaces)
+│   ├── 🗃️ public/data/      # Dati statici serviti al frontend
 │   └── ...
-├── process_data.py      # Script Python per preprocessing dati
+├── 🐍 process_data.py       # Script Python (legacy) per preprocessing
 └── ...
 ```
 
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 Per dettagli su architettura e dataset, vedi [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md) e [docs/architecture/dataset-specification.md](docs/architecture/dataset-specification.md).
 
@@ -350,6 +386,8 @@ Il footer include i loghi dei partner con markup semantico appropriato:
 
 **Punteggio SEO**: 100/100
 
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
+
 ---
 
 ## ❓ FAQ
@@ -371,5 +409,5 @@ Controlla i log Docker e lo stato del runner GitHub Actions.
 ## 📝 Licenza
 
 <img src="https://img.shields.io/github/license/Unica-dh/atliteg-map?color=blue" alt="License"/>  
-Vedi il file [LICENSE](LICENSE) nella root del progetto.
+Vedi il file [LICENSE] nella root del progetto.
 
