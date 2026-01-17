@@ -36,7 +36,7 @@
 # Dashboard Linguistico ATLITEG
 
 <p align="center">
-  <img src="docs/homepage.png" alt="Screenshot dashboard ATLITEG: mappa, timeline, filtri" width="80%"/>
+  <video src="docs/atliteg.webm" width="100%" controls autoplay loop muted></video>
   <br/>
   <em>Dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
 </p>
