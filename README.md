@@ -4,6 +4,10 @@
 	<img src="docs/logo-atliteg.png" alt="ATLITEG Dashboard Banner" width="20%"/>
 </p>
 
+# **Menu**
+
+**[Scopo e Funzionalità](#scopo-e-funzionalità) | [Destinatari e Collaborazioni](#destinatari-e-collaborazioni) | [Anteprima Visiva](#anteprima-visiva) | [Principali funzionalità utente](#principali-funzionalità-utente) | [Frontend, Deployment, Dati](#frontend-deployment-dati) | [Requisiti](#requisiti) | [Procedura Corretta per Aggiornare i Dati Geografici](#procedura-corretta-per-aggiornare-i-dati-geografici) | [Documentazione](#documentazione) | [Dati e Fonti](#dati-e-fonti) | [Personalizzazione](#personalizzazione) | [Ottimizzazione SEO](#ottimizzazione-seo) | [Licenza](#licenza)**
+
 # Dashboard Linguistico ATLITEG
 
 
@@ -28,91 +32,6 @@
 
 - Progetto sviluppato in collaborazione con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre), laboratorio specializzato in geografia e cartografia.
 - Finanziato dal **PRIN 2017** (Progetti di Ricerca di Interesse Nazionale), responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
-
-## 📂 Dati e Fonti
-
-- **CSV**: Lemmi, forme, coordinate e metadati (es. `Lemmi_forme_atliteg_updated.csv`)
-- **GeoJSON**: Aree geografiche poligonali (es. `Ambiti geolinguistici newline.json`)
-
----
-
-## ⚠️ IMPORTANTE: Procedura Aggiornamento Dati CSV
-
-> **ATTENZIONE**: L'applicazione usa un volume mount Docker che richiede una procedura specifica per aggiornare i dati!
-
-### 🔴 Problema Comune
-
-Se modifichi i file CSV e ricostruisci Docker ma le modifiche non appaiono, è perché:
-
-- Docker Compose monta la directory `./data/` dall'host che **sovrascrive** i file generati durante la build
-- I file JSON vengono pre-processati durante la build ma poi sostituiti dai file montati
-
-### ✅ Procedura Corretta per Aggiornare i Dati
-
-**1. Modifica il CSV nella directory corretta:**
-
-```bash
-# Modifica il CSV in lemmario-dashboard/public/data/
-nano lemmario-dashboard/public/data/Lemmi_forme_atliteg_updated.csv
-```
-
-**2. Rigenera i file JSON:**
-
-```bash
-cd lemmario-dashboard
-node scripts/preprocess-data.js
-# Verifica che venga stampato: "✅ CSV processato: XXXX record"
-```
-
-**3. Copia TUTTI i file nella directory montata da Docker:**
-
-```bash
-# Dalla root del progetto
-cp lemmario-dashboard/public/data/Lemmi_forme_atliteg_updated.csv data/
-cp lemmario-dashboard/public/data/lemmi.json data/
-cp lemmario-dashboard/public/data/geojson.json data/
-```
-
-**4. Riavvia il container Docker:**
-
-```bash
-docker compose restart lemmario-dashboard
-```
-
-### 📝 Note Importanti
-
-- **NON** modificare direttamente i file in `data/` - le modifiche verranno sovrascritte
-- **SEMPRE** rigenerare `lemmi.json` dopo aver modificato il CSV
-- **SEMPRE** copiare tutti i file (CSV + JSON) in `data/` per sincronizzare
-- Per sviluppo locale (senza Docker), i file in `lemmario-dashboard/public/data/` sono sufficienti
-
-### 🧪 Verifica dell'Aggiornamento
-
-Dopo il riavvio, verifica che i dati siano corretti:
-
-```bash
-# Controlla il numero di record nel JSON
-docker compose exec lemmario-dashboard sh -c \
-  'cat /usr/share/nginx/html/data/lemmi.json' | \
-  python3 -c "import json, sys; data=json.load(sys.stdin); print(f'Record totali: {len(data)}')"
-```
-
-### 🎯 Esempio Pratico: Aggiungere una Nuova Regione
-
-Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
-
-1. Nel CSV, assicurati che i lemmi abbiano:
-   - `Coll.Geografica`: "Nome Regione"
-   - `Latitudine`: `#N/A`
-   - `Longitudine`: `#N/A`
-   - `Tipo coll.Geografica`: `Regione`
-   - `reg_istat_code`: Codice ISTAT della regione (es. "06" per Friuli)
-
-2. Segui la procedura sopra per rigenerare e copiare i file
-
-3. La regione apparirà colorata in giallo sulla mappa
-
----
 
 ## ✨ Anteprima Visiva
 
@@ -195,12 +114,6 @@ docker-compose up -d
 
 Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy automatico sul server di produzione (protetto da VPN).
 
-**Vantaggi del self-hosted runner:**
-- ✅ Funziona dietro VPN/firewall (niente problemi di connettività)
-- ✅ Deploy più veloce (esecuzione locale)
-- ✅ Configurazione semplificata (1 solo secret necessario!)
-- ✅ Più sicuro (nessuna esposizione porte SSH)
-
 **Trigger automatici:**
 - Push o merge su branch `master`
 - Esecuzione manuale tramite GitHub Actions
@@ -218,30 +131,9 @@ Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy auto
 - ⚙️ [install-github-runner.sh](install-github-runner.sh) - Script installazione runner
 - 📄 [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml) - Workflow
 
-
----
-
-1. Aggiungi/aggiorna file in `data/`
-2. Copia in `lemmario-dashboard/public/data/`
-
----
-
-
-## 📸 Aggiornamento e gestione immagini
-
-- Le immagini e gli screenshot vanno posizionati nella cartella `docs/` (es. `docs/screenshot-dashboard.png`).
-- Per aggiornare le immagini, sostituisci i file nella cartella `docs/` mantenendo lo stesso nome, oppure aggiorna i riferimenti nel README.
-- Per generare nuovi screenshot:
-	1. Avvia l'app localmente (`npm run dev`)
-	2. Cattura le schermate delle funzionalità principali
-	3. Salva le immagini in `docs/` e aggiorna i riferimenti se necessario
-
----
-
-
 ```text
 atliteg-map/
-├── data/                # Dati sorgente (CSV, JSON)
+├── data/                # Dati geografici sorgente (JSON)
 ├── docs/                # Documentazione tecnica e scientifica
 ├── lemmario-dashboard/  # Web app Next.js/React
 │   ├── app/             # Pagine/layout Next.js
@@ -258,6 +150,41 @@ atliteg-map/
 Per dettagli su architettura e dataset, vedi [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md) e [docs/architecture/dataset-specification.md](docs/architecture/dataset-specification.md).
 
 ---
+
+## 📂 Dati e Fonti
+
+- **CSV**: Lemmi, forme, coordinate e metadati (es. `Lemmi_forme_atliteg_updated.csv`)
+- **GeoJSON**: Aree geografiche poligonali (es. `Ambiti geolinguistici newline.json`)
+
+---
+
+## ✅ Procedura Corretta per Aggiornare i Dati Geografici
+
+**Rigenera i file JSON:**
+
+```bash
+cd lemmario-dashboard
+node scripts/preprocess-data.js
+# Verifica che venga stampato: "✅ CSV processato: XXXX record"
+```
+
+### 🎯 Esempio Pratico: Aggiungere una Nuova Regione
+
+Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
+
+1. Nel CSV, assicurati che i lemmi abbiano:
+   - `Coll.Geografica`: "Nome Regione"
+   - `Latitudine`: `#N/A`
+   - `Longitudine`: `#N/A`
+   - `Tipo coll.Geografica`: `Regione`
+   - `reg_istat_code`: Codice ISTAT della regione (es. "06" per Friuli)
+
+2. Segui la procedura sopra per rigenerare e copiare i file
+
+3. La regione apparirà colorata in giallo sulla mappa
+
+---
+
 
 ## 📚 Documentazione
 
