@@ -1567,7 +1567,271 @@ docker-compose restart backend
 
 ---
 
-## 12. Domande per Chiarimenti
+## 12. Stato Implementazione
+
+### 12.1 Componenti Completati ✅
+
+#### Backend API Server (Express.js)
+Server completo implementato in `lemmario-dashboard/server/`:
+
+- **Entry Point**: `index.js` - Server principale con health checks, CORS, logging
+- **Configuration**: `config/config.js` - Configurazione centralizzata con variabili ambiente
+- **Routes implementate**:
+  - `/api/lemmi` - Recupero dati lemmi (protetto con API key)
+  - `/api/geojson` - Recupero dati GeoJSON (protetto con API key)
+  - `/api/regions` - Recupero regioni italiane (protetto con API key)
+  - `/api/admin/login` - Autenticazione admin (genera JWT)
+  - `/api/admin/upload` - Upload CSV (protetto con JWT)
+  - `/api/admin/status/:jobId` - Verifica stato processamento (protetto con JWT)
+  - `/health` - Health check endpoint
+
+#### Sicurezza e Autenticazione
+- **API Key Auth**: Frontend usa header `X-API-Key` (configurabile in `.env`)
+- **JWT Auth**: Endpoint admin richiedono Bearer token
+- **Rate Limiting**:
+  - Data API: 100 richieste / 15 minuti
+  - Upload API: 5 upload / ora
+- **Winston Logging**: Tutte le operazioni registrate in `server/logs/`
+- **bcrypt**: Hashing password per credenziali admin
+
+#### Processamento CSV
+- **csvProcessor.js**: Gestisce upload CSV → generazione JSON
+- **Processamento Asincrono**: Upload ritorna jobId immediatamente, processamento in background
+- **Backup**: CSV originale salvato in `server/uploads/backup/`
+- **Validazione**: Validazione base (controllo file vuoto)
+- **Tracking Stato**: Job tracking in-memory con status/progress
+
+#### Integrazione Frontend
+Frontend aggiornato per usare backend API invece di file statici:
+
+- **dataLoader.ts**: Chiama `/api/lemmi` e `/api/geojson`
+- **useRegions.ts**: Chiama `/api/regions`
+- **Variabili Ambiente**: Aggiunti `NEXT_PUBLIC_API_URL` e `NEXT_PUBLIC_API_KEY`
+- **Rimossi Fallback**: Nessun accesso diretto ai file, solo chiamate API
+
+#### Configurazione Docker
+- **Setup Multi-container**: `backend` + `lemmario-dashboard` (nginx)
+- **Backend Dockerfile**: `server/Dockerfile` - Container Node.js
+- **Frontend Dockerfile**: Aggiornato per accettare build args per API URL/key
+- **Nginx Proxy**: `nginx.conf` aggiornato per:
+  - Bloccare completamente directory `/data/` (403 Forbidden)
+  - Bloccare file `.csv` ovunque
+  - Proxy richieste `/api/` al backend:3001
+- **docker-compose.yml**: Orchestrazione entrambi i servizi con health checks
+
+#### Protezione Dati
+- **Blocchi Nginx**:
+  - ❌ `/data/*` → 403 Forbidden
+  - ❌ `*.csv` → 403 Forbidden
+  - ✅ `/api/*` → Proxy a backend (con autenticazione)
+- **Dati Server**: File iniziali copiati in `server/data/` (directory privata)
+- **Nessun Accesso Pubblico**: File CSV e JSON non accessibili agli utenti finali
+
+### 12.2 Test Completati ✅
+
+#### Test Backend Locali (Tutti Riusciti)
+```bash
+# Health check
+curl http://localhost:3001/health
+# ✅ Ritorna: {"status":"ok", ...}
+
+# API Lemmi senza chiave
+curl http://localhost:3001/api/lemmi
+# ✅ Ritorna: {"error":"Unauthorized", "message":"Missing API key"}
+
+# API Lemmi con chiave valida
+curl -H "X-API-Key: default_dev_key" http://localhost:3001/api/lemmi
+# ✅ Ritorna: 6236 record lemmi
+
+# Login admin
+curl -X POST http://localhost:3001/api/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin"}'
+# ✅ Ritorna: Token JWT
+
+# Upload CSV
+curl -X POST http://localhost:3001/api/admin/upload \
+  -H "Authorization: Bearer <token>" \
+  -F "file=@test.csv"
+# ✅ Ritorna: {"success":true, "jobId":"...", ...}
+
+# Stato Job
+curl http://localhost:3001/api/admin/status/<jobId> \
+  -H "Authorization: Bearer <token>"
+# ✅ Ritorna: {"status":"completed", "recordCount":1, ...}
+```
+
+### 12.3 Configurazione Ambiente
+
+#### Variabili Ambiente (.env)
+```bash
+# Backend API
+FRONTEND_API_KEYS=default_dev_key
+NEXT_PUBLIC_API_KEY=default_dev_key
+
+# Admin (password default: "admin")
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=$2b$10$wqM4/4h7tknyFoihM8wLCuLTv9Ndbs3V1rQ70hsSQtOwa2k47wnQW
+
+# JWT
+JWT_SECRET=your_jwt_secret_change_in_production_min_32_chars
+
+# CORS
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:9000
+
+# API URL
+NEXT_PUBLIC_API_URL=http://backend:3001
+```
+
+#### Setup Produzione
+Per deployment in produzione, aggiornare `.env` con:
+
+1. **API Keys forti**: Generare con `openssl rand -hex 16`
+2. **JWT Secret forte**: Generare con `openssl rand -hex 32`
+3. **Password Admin forte**:
+   ```bash
+   node -e "require('bcrypt').hash('YOUR_PASSWORD', 10).then(h => console.log(h))"
+   ```
+4. **Domini effettivi** per ALLOWED_ORIGINS
+
+### 12.4 Struttura File Implementata
+
+```
+lemmario-dashboard/
+├── server/                    # Backend API
+│   ├── index.js              # Server entry point
+│   ├── config/config.js      # Configurazione
+│   ├── routes/
+│   │   ├── data.js          # Endpoint dati API
+│   │   └── admin.js         # Endpoint admin
+│   ├── middleware/
+│   │   ├── auth.js          # Autenticazione API key
+│   │   ├── adminAuth.js     # Autenticazione JWT
+│   │   ├── rateLimit.js     # Rate limiting
+│   │   └── errorHandler.js  # Gestione errori
+│   ├── services/
+│   │   ├── csvProcessor.js  # Processamento CSV
+│   │   └── logger.js        # Winston logger
+│   ├── data/                # 🔒 Dati privati (non accessibili da web)
+│   │   ├── lemmi.json
+│   │   ├── geojson.json
+│   │   └── limits_IT_regions.geojson
+│   ├── uploads/             # 🔒 Upload CSV
+│   │   └── backup/          # Backup CSV
+│   ├── logs/                # 🔒 Log audit
+│   ├── package.json
+│   └── Dockerfile
+├── services/dataLoader.ts    # Modificato per usare API
+├── hooks/useRegions.ts       # Modificato per usare API
+├── nginx.conf               # Aggiornato con blocchi + proxy
+├── Dockerfile               # Aggiornato con build args
+├── .env.local               # Variabili ambiente locali
+└── .env.example             # File esempio ambiente
+```
+
+### 12.5 Attività Rimanenti ⏳
+
+#### Verifica Docker Completa
+```bash
+# Build container
+cd /home/runner/work/atliteg-map/atliteg-map
+docker compose build
+
+# Avvio container
+docker compose up -d
+
+# Verifica servizi
+docker compose ps
+curl http://localhost:9000/health     # Nginx
+curl http://localhost:3001/health     # Backend
+```
+
+#### Verifica Sicurezza
+```bash
+# Test blocco CSV
+curl -I http://localhost:9000/data/Lemmi_forme_atliteg_updated.csv
+# Atteso: HTTP/1.1 403 Forbidden
+
+# Test blocco JSON
+curl -I http://localhost:9000/data/lemmi.json
+# Atteso: HTTP/1.1 403 Forbidden
+
+# Test API tramite nginx
+curl -H "X-API-Key: default_dev_key" http://localhost:9000/api/lemmi | jq '. | length'
+# Atteso: 6236
+```
+
+#### Test Applicazione
+1. Aprire browser: http://localhost:9000
+2. Verificare caricamento mappa con tutti i marker lemmi
+3. Verificare funzionamento filtri
+4. Verificare funzionalità ricerca
+5. Verificare assenza errori nella console browser
+6. Catturare screenshot
+
+#### Test Upload CSV
+1. Login come admin per ottenere JWT token
+2. Upload nuovo file CSV
+3. Verificare stato job
+4. Verificare nuovi dati nell'applicazione
+5. Verificare creazione backup in `server/uploads/backup/`
+
+### 12.6 Problemi Noti / TODO
+
+1. **Build Docker Frontend**: Build in corso quando interrotto il lavoro
+2. **Test Frontend**: Necessario verificare caricamento corretto applicazione con dati API
+3. **Configurazione Produzione**: Necessario impostare password e chiavi forti per produzione
+4. **SSL/HTTPS**: Non configurato (nginx.conf ha placeholder per HTTPS produzione)
+5. **Persistenza Job**: Job memorizzati in-memory (persi al restart). Considerare Redis per produzione
+6. **UI Admin**: Nessuna interfaccia admin creata (usare curl/Postman per ora)
+
+### 12.7 Esempi Utilizzo API
+
+#### Recupero Dati Lemmi
+```javascript
+const response = await fetch('http://localhost:9000/api/lemmi', {
+  headers: { 'X-API-Key': 'your_api_key' }
+});
+const lemmi = await response.json();
+```
+
+#### Upload CSV (come admin)
+```javascript
+// 1. Login
+const loginRes = await fetch('http://localhost:9000/api/admin/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'admin', password: 'admin' })
+});
+const { token } = await loginRes.json();
+
+// 2. Upload
+const formData = new FormData();
+formData.append('file', csvFile);
+
+const uploadRes = await fetch('http://localhost:9000/api/admin/upload', {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${token}` },
+  body: formData
+});
+const { jobId } = await uploadRes.json();
+
+// 3. Verifica stato
+const statusRes = await fetch(`http://localhost:9000/api/admin/status/${jobId}`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+const status = await statusRes.json();
+```
+
+### 12.8 Riferimenti
+
+- Design API Backend: Questo documento (sezioni 1-11)
+- Issue Originale: [problem statement in PR description]
+- File Esempio Ambiente: `.env.example`
+
+---
+
+## 13. Domande per Chiarimenti
 
 Prima di procedere all'implementazione, confermare:
 
