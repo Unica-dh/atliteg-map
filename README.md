@@ -1,118 +1,97 @@
 
 
+<a name="readme-top"></a>
 <p align="center">
 	<img src="docs/logo-atliteg.png" alt="ATLITEG Dashboard Banner" width="20%"/>
 </p>
 
+<!-- MENU STICKY -->
+<p align="center">
+  <strong>
+    <a href="#scopo-e-funzionalita">Funzionalità</a> |
+    <a href="#destinatari-e-collaborazioni">Partner</a> |
+    <a href="#anteprima-visiva">Anteprima</a> |
+    <a href="#principali-funzionalita-utente">Feature</a> |
+    <a href="#procedura-corretta-per-aggiornare-i-dati-geografici">Procedura</a> |
+    <a href="#dati-e-fonti">Dati</a> |
+    <a href="#documentazione">Documentazione</a> |
+    <a href="#faq">FAQ</a> |
+    <a href="#licenza">Licenza</a>
+  </strong>
+</p>
+
+<!-- BADGE -->
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/Unica-dh/atliteg-map?label=version" alt="Version"/>
+  <img src="https://img.shields.io/badge/SEO-100%25-brightgreen" alt="SEO Score"/>
+  <img src="https://img.shields.io/github/last-commit/Unica-dh/atliteg-map" alt="Last Commit"/>
+  <br/>
+  <img src="https://img.shields.io/badge/Next.js-black?logo=next.js&logoColor=white" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/React-blue?logo=react&logoColor=61DAFB" alt="React"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
+  <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker"/>
+</p>
+
 # Dashboard Linguistico ATLITEG
 
-
 <p align="center">
-	<img src="docs/homepage.png" alt="Screenshot della dashboard ATLITEG" width="80%"/>
-	<br/>
-	<em>Screenshot della dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
+  <video src="docs/atliteg.webm" width="100%" controls autoplay loop muted></video>
+  <br/>
+  <em>Dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
 </p>
 
 **Atliteg** (Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità) è un progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana (dal Medioevo all'Unità d'Italia).
 
+---
+
+## 🐛 Segnalazione Bug e Feature
+
+<a href="https://github.com/Unica-dh/atliteg-map/issues/new/choose">
+  <img src="https://img.shields.io/badge/Apri%20una%20Issue-GitHub-2ea44f?style=for-the-badge&logo=github" alt="Apri Issue su GitHub"/>
+</a>
+
+Per segnalare bug o richiedere nuove funzionalità, utilizza il sistema di **Issues** su GitHub selezionando il template appropriato.
+
+---
+
 ## 📚 Scopo e Funzionalità
 
-- **Esplorazione lessicografica**: Interfaccia visuale e interattiva per esplorare i dati del "Vocabolario storico della lingua italiana della gastronomia (VoSLIG)".
-- **Mappe interattive**: Visualizzazione della diffusione geografica di termini gastronomici (piatti, ingredienti, tecniche di cottura) in diverse epoche.
-- **Timeline storica avanzata**: Visualizzazione cronologica con istogrammi aggregati per quarti di secolo (periodi di 25 anni), mostrando la distribuzione temporale delle occorrenze con somma totale indipendente dalla località geografica.
-- **Analisi testuale**: Esplorazione di testi storici (ricettari, trattati di cucina) che costituiscono le fonti della cultura gastronomica italiana.
-- **Treemap delle categorie**: Organizzazione gerarchica dei lemmi per categorie linguistiche.
-- **Tabelle dettagliate**: Accesso ai dati specifici dei lemmi con filtri avanzati.
+> **Contesto Scientifico**
+>
+> Questo strumento digitale e interattivo permette il recupero, la valorizzazione e la fruizione dei dati storico-linguistici, offrendo nuove prospettive di analisi sulle denominazioni gastronomiche italiane. Attraverso l'uso di tecnologie moderne, il progetto colma il divario tra ricerca umanistica tradizionale e visualizzazione dati, rendendo accessibile un patrimonio lessicale altrimenti complesso da consultare.
+
+| Funzionalità | Descrizione |
+|--------------|-------------|
+| Esplorazione lessicografica | Visualizza e filtra i dati VoSLIG |
+| Mappe interattive | Diffusione geografica di termini gastronomici |
+| Timeline storica | Istogrammi aggregati per quarti di secolo |
+| Analisi testuale | Esplora fonti storiche (ricettari, trattati) |
+| Treemap categorie | Gerarchia lemmi per categorie linguistiche |
+| Tabelle dettagliate | Filtri avanzati su dati specifici |
+
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 ## 👥 Destinatari e Collaborazioni 
 
-- Progetto sviluppato in collaborazione con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre), laboratorio specializzato in geografia e cartografia.
-- Finanziato dal **PRIN 2017** (Progetti di Ricerca di Interesse Nazionale), responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
+<table>
+  <tr>
+    <td align="center"><img src="data/logo/Logo_Roma_Tre.jpg" alt="Università Roma Tre" width="100"/></td>
+    <td align="center"><img src="data/logo/unistrasi.jpg" alt="Università per Stranieri di Siena" width="100"/></td>
+    <td align="center"><img src="data/logo/DH_logo+type1@256px_[RGB_black].png" alt="DH Unica" width="100"/></td>
+    <td align="center"><img src="data/logo/Logo_lungo_RGB_d0.png" alt="AtLiTeG Project" width="100"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Università Roma Tre</b><br/>Labgeo "Giuseppe Caraci"</td>
+    <td align="center"><b>Unistrasi</b><br/>Resp. Scientifica</td>
+    <td align="center"><b>DH Unica</b><br/>Digital Humanities</td>
+    <td align="center"><b>AtLiTeG</b><br/>Progetto PRIN 2017</td>
+  </tr>
+</table>
 
-## 📂 Dati e Fonti
+Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e finanziato dal **PRIN 2017**. Responsabile scientifico: prof.ssa Giovanna Frosini (Università per Stranieri di Siena).
 
-- **CSV**: Lemmi, forme, coordinate e metadati (es. `Lemmi_forme_atliteg_updated.csv`)
-- **GeoJSON**: Aree geografiche poligonali (es. `Ambiti geolinguistici newline.json`)
-
----
-
-## ⚠️ IMPORTANTE: Procedura Aggiornamento Dati CSV
-
-> **ATTENZIONE**: L'applicazione usa un volume mount Docker che richiede una procedura specifica per aggiornare i dati!
-
-### 🔴 Problema Comune
-
-Se modifichi i file CSV e ricostruisci Docker ma le modifiche non appaiono, è perché:
-
-- Docker Compose monta la directory `./data/` dall'host che **sovrascrive** i file generati durante la build
-- I file JSON vengono pre-processati durante la build ma poi sostituiti dai file montati
-
-### ✅ Procedura Corretta per Aggiornare i Dati
-
-**1. Modifica il CSV nella directory corretta:**
-
-```bash
-# Modifica il CSV in lemmario-dashboard/public/data/
-nano lemmario-dashboard/public/data/Lemmi_forme_atliteg_updated.csv
-```
-
-**2. Rigenera i file JSON:**
-
-```bash
-cd lemmario-dashboard
-node scripts/preprocess-data.js
-# Verifica che venga stampato: "✅ CSV processato: XXXX record"
-```
-
-**3. Copia TUTTI i file nella directory montata da Docker:**
-
-```bash
-# Dalla root del progetto
-cp lemmario-dashboard/public/data/Lemmi_forme_atliteg_updated.csv data/
-cp lemmario-dashboard/public/data/lemmi.json data/
-cp lemmario-dashboard/public/data/geojson.json data/
-```
-
-**4. Riavvia il container Docker:**
-
-```bash
-docker compose restart lemmario-dashboard
-```
-
-### 📝 Note Importanti
-
-- **NON** modificare direttamente i file in `data/` - le modifiche verranno sovrascritte
-- **SEMPRE** rigenerare `lemmi.json` dopo aver modificato il CSV
-- **SEMPRE** copiare tutti i file (CSV + JSON) in `data/` per sincronizzare
-- Per sviluppo locale (senza Docker), i file in `lemmario-dashboard/public/data/` sono sufficienti
-
-### 🧪 Verifica dell'Aggiornamento
-
-Dopo il riavvio, verifica che i dati siano corretti:
-
-```bash
-# Controlla il numero di record nel JSON
-docker compose exec lemmario-dashboard sh -c \
-  'cat /usr/share/nginx/html/data/lemmi.json' | \
-  python3 -c "import json, sys; data=json.load(sys.stdin); print(f'Record totali: {len(data)}')"
-```
-
-### 🎯 Esempio Pratico: Aggiungere una Nuova Regione
-
-Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
-
-1. Nel CSV, assicurati che i lemmi abbiano:
-   - `Coll.Geografica`: "Nome Regione"
-   - `Latitudine`: `#N/A`
-   - `Longitudine`: `#N/A`
-   - `Tipo coll.Geografica`: `Regione`
-   - `reg_istat_code`: Codice ISTAT della regione (es. "06" per Friuli)
-
-2. Segui la procedura sopra per rigenerare e copiare i file
-
-3. La regione apparirà colorata in giallo sulla mappa
-
----
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 ## ✨ Anteprima Visiva
 
@@ -129,6 +108,8 @@ Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
 	<br/>
 	<em>A sinistra: filtri globali per categoria e periodo. A destra: treemap delle categorie linguistiche.</em>
 </p>
+
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 ---
 
@@ -149,10 +130,14 @@ Se aggiungi lemmi di una nuova regione (es. Friuli-Venezia Giulia):
 
 ---
 
-- **Frontend**: Next.js 16 (App Router), React 18.3, TypeScript, Tailwind CSS, React-Leaflet, PapaParse
-- **Deployment**: Docker, Docker Compose, Nginx
-- **Dati**: Tutti i dati sono statici e accessibili via `public/data/` (no backend API)
+### 💻 Stack Tecnologico
 
+| Componente | Tecnologie |
+|------------|------------|
+| **Frontend** | ![Next JS](https://img.shields.io/badge/Next-black?logo=next.js&logoColor=white) ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white) |
+| **Mappe & Viz** | ![Leaflet](https://img.shields.io/badge/Leaflet-199900?logo=leaflet&logoColor=white) `react-leaflet` `chart.js` |
+| **DevOps** | ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white) |
+| **Data** | CSV statici, GeoJSON, PapaParse (No Backend API) |
 
 ### Requisiti
 
@@ -195,12 +180,6 @@ docker-compose up -d
 
 Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy automatico sul server di produzione (protetto da VPN).
 
-**Vantaggi del self-hosted runner:**
-- ✅ Funziona dietro VPN/firewall (niente problemi di connettività)
-- ✅ Deploy più veloce (esecuzione locale)
-- ✅ Configurazione semplificata (1 solo secret necessario!)
-- ✅ Più sicuro (nessuna esposizione porte SSH)
-
 **Trigger automatici:**
 - Push o merge su branch `master`
 - Esecuzione manuale tramite GitHub Actions
@@ -218,46 +197,63 @@ Il progetto utilizza un **GitHub Actions Self-Hosted Runner** per il deploy auto
 - ⚙️ [install-github-runner.sh](install-github-runner.sh) - Script installazione runner
 - 📄 [.github/workflows/deploy-production.yml](.github/workflows/deploy-production.yml) - Workflow
 
-
----
-
-1. Aggiungi/aggiorna file in `data/`
-2. Copia in `lemmario-dashboard/public/data/`
-
----
-
-
-## 📸 Aggiornamento e gestione immagini
-
-- Le immagini e gli screenshot vanno posizionati nella cartella `docs/` (es. `docs/screenshot-dashboard.png`).
-- Per aggiornare le immagini, sostituisci i file nella cartella `docs/` mantenendo lo stesso nome, oppure aggiorna i riferimenti nel README.
-- Per generare nuovi screenshot:
-	1. Avvia l'app localmente (`npm run dev`)
-	2. Cattura le schermate delle funzionalità principali
-	3. Salva le immagini in `docs/` e aggiorna i riferimenti se necessario
-
----
-
-
-```text
+```bash
 atliteg-map/
-├── data/                # Dati sorgente (CSV, JSON)
-├── docs/                # Documentazione tecnica e scientifica
-├── lemmario-dashboard/  # Web app Next.js/React
-│   ├── app/             # Pagine/layout Next.js
-│   ├── components/      # Componenti React UI
-│   ├── services/        # Data loader/parsing
-│   ├── types/           # Tipi TypeScript
-│   ├── public/data/     # Dati statici per frontend
+├── 📂 data/                 # Dati geografici sorgente (JSON) e preprocessati
+├── 📚 docs/                 # Documentazione tecnica e scientifica
+├── 💻 lemmario-dashboard/   # Web app Next.js/React
+│   ├── 📄 app/              # Pagine/layout Next.js (App Router)
+│   ├── 🧩 components/       # Componenti React UI (Mappe, Filtri, Grafici)
+│   ├── 🔌 services/         # Data loader e parsing logica
+│   ├── 🏷️ types/            # Definizioni TypeScript (Interfaces)
+│   ├── 🗃️ public/data/      # Dati statici serviti al frontend
 │   └── ...
-├── process_data.py      # Script Python per preprocessing dati
+├── 🐍 process_data.py       # Script Python (legacy) per preprocessing
 └── ...
 ```
 
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
 
 Per dettagli su architettura e dataset, vedi [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md) e [docs/architecture/dataset-specification.md](docs/architecture/dataset-specification.md).
 
 ---
+
+## 📂 Dati e Fonti
+
+| Tipo | File | Descrizione |
+|------|------|-------------|
+| CSV | Lemmi_forme_atliteg_updated.csv | Lemmi, forme, coordinate, metadati |
+| GeoJSON | Ambiti geolinguistici newline.json | Aree geografiche poligonali |
+
+---
+
+## ✅ Procedura Corretta per Aggiornare i Dati Geografici
+
+> **Procedura operativa**
+>
+> <br/>
+> <b>Rigenera i file JSON:</b>
+> <pre><code>cd lemmario-dashboard
+node scripts/preprocess-data.js
+# Verifica che venga stampato: "✅ CSV processato: XXXX record"
+</code></pre>
+>
+> <b>Esempio: aggiungere una nuova regione</b>
+> <ol>
+> <li>Nel CSV, assicurati che i lemmi abbiano:<br/>
+> <ul>
+> <li><code>Coll.Geografica</code>: "Nome Regione"</li>
+> <li><code>Latitudine</code>: <code>#N/A</code></li>
+> <li><code>Longitudine</code>: <code>#N/A</code></li>
+> <li><code>Tipo coll.Geografica</code>: <code>Regione</code></li>
+> <li><code>reg_istat_code</code>: Codice ISTAT della regione (es. "06" per Friuli)</li>
+> </ul></li>
+> <li>Segui la procedura sopra per rigenerare e copiare i file</li>
+> <li>La regione apparirà colorata in giallo sulla mappa</li>
+> </ol>
+
+---
+
 
 ## 📚 Documentazione
 
@@ -390,9 +386,28 @@ Il footer include i loghi dei partner con markup semantico appropriato:
 
 **Punteggio SEO**: 100/100
 
+<p align="right">(<a href="#readme-top">torna su</a>)</p>
+
+---
+
+## ❓ FAQ
+
+**Come posso contribuire?**  
+Consulta la guida [CONTRIBUTING](docs/project/CONTRIBUTING.md) e apri una issue o una pull request.
+
+**Come risolvo problemi di caricamento dati?**  
+Vedi [Upload Troubleshooting](docs/guides/upload-troubleshooting.md).
+
+**Dove trovo la documentazione tecnica?**  
+Tutta la documentazione è in [docs/](docs/README.md).
+
+**Come verifico la salute del deployment?**  
+Controlla i log Docker e lo stato del runner GitHub Actions.
+
 ---
 
 ## 📝 Licenza
 
-Vedi il file LICENSE nella root del progetto.
+<img src="https://img.shields.io/github/license/Unica-dh/atliteg-map?color=blue" alt="License"/>  
+Vedi il file [LICENSE] nella root del progetto.
 
