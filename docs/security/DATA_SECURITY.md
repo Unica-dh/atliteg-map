@@ -140,9 +140,10 @@ docker compose restart backend
 
 ## 📚 Documentazione Aggiuntiva
 
-- [Piano Sicurezza Dati](docs/security/LEMMI_DATA_SECURITY_PLAN.md)
-- [Guida Upload CSV](docs/guides/upload-refresh-guide.md)
-- [Test Report Backend-Only](docs/guides/backend-only-test-report.md)
+- [Configurazione Sicurezza](SECURITY_CONFIG.md) - Setup Nginx, JWT, API keys
+- [Sommario Esecutivo Sicurezza](SECURITY_EXEC_SUMMARY.md) - Panoramica per stakeholder
+- [Guida Upload CSV](../guides/upload-refresh-guide.md)
+- [Test Report Backend-Only](../guides/backend-only-test-report.md)
 
 ---
 
