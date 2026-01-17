@@ -82,10 +82,10 @@ Per segnalare bug o richiedere nuove funzionalità, utilizza il sistema di **Iss
 
 <table>
   <tr>
-    <td align="center"><img src="data/logo/Logo_Roma_Tre.jpg" alt="Università Roma Tre" width="100"/></td>
-    <td align="center"><img src="data/logo/unistrasi.jpg" alt="Università per Stranieri di Siena" width="100"/></td>
-    <td align="center"><img src="data/logo/DH_logo+type1@256px_[RGB_black].png" alt="DH Unica" width="100"/></td>
-    <td align="center"><img src="data/logo/Logo_lungo_RGB_d0.png" alt="AtLiTeG Project" width="100"/></td>
+    <td align="center"><img src="docs/logos/Logo_Roma_Tre.jpg" alt="Università Roma Tre" width="100"/></td>
+    <td align="center"><img src="docs/logos/unistrasi.jpg" alt="Università per Stranieri di Siena" width="100"/></td>
+    <td align="center"><img src="docs/logos/dh_unica.png" alt="DH Unica" width="100"/></td>
+    <td align="center"><img src="docs/logos/atliteg_logo_long.png" alt="AtLiTeG Project" width="100"/></td>
   </tr>
   <tr>
     <td align="center"><b>Università Roma Tre</b><br/>Labgeo "Giuseppe Caraci"</td>

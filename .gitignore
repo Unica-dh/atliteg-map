@@ -8,7 +8,7 @@ logs
 .vscode/
 
 # Playwright reports
-.playwright-mcp
+.playwright-mcp/
 
 
 
