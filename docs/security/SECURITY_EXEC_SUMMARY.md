@@ -19,15 +19,16 @@
 
 ### Documentazione Creata
 
-1. **[LEMMI_DATA_SECURITY_PLAN.md](docs/security/LEMMI_DATA_SECURITY_PLAN.md)**
-   - Piano completo in 6 fasi
-   - Timeline: ~70 minuti
-   - Checklist esecuzione
-
-2. **[DATA_SECURITY.md](DATA_SECURITY.md)**
-   - Guida setup per sviluppatori
+1. **[DATA_SECURITY.md](DATA_SECURITY.md)**
+   - Piano completo setup sicurezza dati
+   - Guida setup per sviluppatori  
    - Best practices sicurezza
    - Troubleshooting
+
+2. **[SECURITY_CONFIG.md](SECURITY_CONFIG.md)**
+   - Configurazione Nginx per protezione file
+   - Setup JWT e API keys
+   - Configurazioni ambiente produzione
 
 ### Script Automatizzati
 
@@ -175,4 +176,4 @@ mv .git.backup .git
 
 **Prossimo Step**: Eseguire `./scripts/remove-lemmi-from-git.sh`
 
-**Domande?** Consulta [LEMMI_DATA_SECURITY_PLAN.md](docs/security/LEMMI_DATA_SECURITY_PLAN.md)
+**Domande?** Consulta [DATA_SECURITY.md](DATA_SECURITY.md) per dettagli completi sul setup sicurezza.
