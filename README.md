@@ -261,12 +261,84 @@ Per dettagli su architettura e dataset, vedi [docs/architecture/system-architect
 
 ## 📚 Documentazione
 
-La documentazione completa è disponibile nella cartella [`docs/`](docs/README.md).
+La documentazione completa è disponibile nella cartella [`docs/`](docs/README.md) ed è organizzata per argomento.
 
-- **[Indice Completo](docs/README.md)**: Elenco di tutti i documenti disponibili.
-- **[Architecture](docs/architecture/system-architecture.md)**: Design e specifiche tecniche.
-- **[User Guide](docs/guides/user-guide.md)**: Manuale utente.
-- **[Quick Start](docs/guides/quick-start.md)**: Guida rapida.
+### 📖 Indice Completo Documentazione
+
+**[→ Indice Generale (docs/README.md)](docs/README.md)** - Navigazione completa di tutta la documentazione
+
+#### 🏗️ Architecture - Design e Specifiche Tecniche
+- [System Architecture](docs/architecture/system-architecture.md) - Panoramica architettura sistema
+- [Backend API Design](docs/architecture/backend-api-design.md) - Design e implementazione API backend
+- [Dataset Specification](docs/architecture/dataset-specification.md) - Specifiche dati e formati
+- [Requirements](docs/architecture/requirements.md) - Requisiti funzionali (30 requisiti)
+- [Performance](docs/architecture/performance.md) - Analisi e ottimizzazione performance
+- [Motion System](docs/architecture/motion-system.md) - Sistema animazioni e transizioni
+- [Dynamic Graphics](docs/architecture/dynamic-graphics.md) - Grafica dinamica e visualizzazioni
+
+#### 📘 Guides - Manuali e Guide Operative
+
+**Guide Principali:**
+- [Quick Start](docs/guides/quick-start.md) - Guida rapida per iniziare
+- [User Guide](docs/guides/user-guide.md) - Manuale utente completo
+- [Deployment Guide](docs/guides/deployment-guide.md) - Guida deployment in produzione
+- [Testing Guide](docs/guides/testing.md) - Guida esecuzione test
+- [Test Checklist](docs/guides/test-checklist.md) - Checklist testing manuale (189 test)
+
+**Guide Tecniche:**
+- [GitHub Actions](docs/guides/github-actions.md) - Configurazione CI/CD
+- [SEO Implementation](docs/guides/seo-implementation.md) - Strategia SEO/AEO/GEO
+- [API Reference](docs/guides/api-reference.md) - Riferimento API
+- [Quick Commands](docs/guides/quick-commands.md) - Comandi frequenti
+- [Region Codes](docs/guides/region-codes.md) - Codici regionali ISTAT
+
+**Guide Dati:**
+- [CSV Upload Guide](docs/guides/CSV_UPLOAD_GUIDE.md) - Guida caricamento CSV
+- [Data Sync](docs/guides/data-sync.md) - Procedure sincronizzazione dati
+- [Upload Refresh](docs/guides/upload-refresh-guide.md) - Procedura refresh dati
+- [Upload Troubleshooting](docs/guides/upload-troubleshooting.md) - Risoluzione problemi
+- [Regions Feature](docs/guides/regions-feature.md) - Integrazione codici regionali ISTAT
+
+#### 🧩 Components - Componenti Sistema
+
+**Componenti Principali:**
+- [Lemmario Dashboard](docs/components/lemmario-dashboard.md) - Documentazione tecnica frontend Next.js
+- [Dashboard Features](docs/components/dashboard-features.md) - Funzionalità e componenti dashboard
+- [Map Clustering](docs/components/map-clustering-behavior.md) - Clustering mappa geografica
+- [Timeline Component](docs/components/timeline-component.md) - Timeline storica
+- [Popup System](docs/components/popup-system.md) - Sistema popup con accordion
+
+**Componenti UI:**
+- [Header](docs/components/header.md) - Header navigazione e branding
+- [Filters](docs/components/filters.md) - Filtri categoria/periodo multi-select
+- [Search Bar](docs/components/search-bar.md) - Ricerca autocompletante
+- [Alphabetical Index](docs/components/alphabetical-index.md) - Indice alfabetico A-Z
+- [Lemma Detail](docs/components/lemma-detail.md) - Pannello dettaglio forme
+- [Metrics Summary](docs/components/metrics-summary.md) - Metriche aggregate
+
+#### ⚙️ Project - Meta-documentazione
+
+- [Roadmap](docs/project/ROADMAP.md) - Piano sviluppo futuro (37 items, 6 release)
+- [Changelog](docs/project/CHANGELOG.md) - Registro modifiche
+- [Contributing](docs/project/CONTRIBUTING.md) - Linee guida contribuzione
+- [Bugs and Features](docs/project/bugs-and-features.md) - Tracking bug e funzionalità
+
+#### 🔒 Security - Sicurezza e Protezione Dati
+
+- [Data Security](docs/security/DATA_SECURITY.md) - Setup protezione dati e file sensibili
+- [Security Config](docs/security/SECURITY_CONFIG.md) - Configurazione security (Nginx, JWT, API keys)
+- [Security Executive Summary](docs/security/SECURITY_EXEC_SUMMARY.md) - Sommario esecutivo
+
+#### 🔍 Navigazione Rapida per Ruolo
+
+**Per Utenti Finali:**
+- [Quick Start](docs/guides/quick-start.md) → [User Guide](docs/guides/user-guide.md)
+
+**Per Sviluppatori:**
+- [System Architecture](docs/architecture/system-architecture.md) → [Components](docs/components/lemmario-dashboard.md) → [Quick Commands](docs/guides/quick-commands.md)
+
+**Per DevOps:**
+- [Deployment Guide](docs/guides/deployment-guide.md) → [GitHub Actions](docs/guides/github-actions.md) → [Security Config](docs/security/SECURITY_CONFIG.md)
 
 ---
 
