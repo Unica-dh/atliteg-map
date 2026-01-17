@@ -36,15 +36,19 @@
 # Dashboard Linguistico ATLITEG
 
 <p align="center">
-  <video src="docs/atliteg.webm" width="100%" controls autoplay loop muted></video>
+  <!-- Immagine di fallback con link al video per compatibilità GitHub -->
+  <a href="docs/atliteg.webm" target="_blank">
+    <img src="docs/homepage.png" alt="Guarda il video demo della dashboard ATLITEG" width="80%"/>
+  </a>
   <br/>
-  <em>Dashboard principale: esplorazione interattiva dei dati lessicografici e geografici.</em>
+  <em>Dashboard principale: esplorazione interattiva. Clicca sull'immagine per vedere il video demo.</em>
 </p>
 
 **Atliteg** (Atlante della lingua e dei testi della cultura gastronomica italiana dall'età medievale all'Unità) è un progetto di ricerca accademico che mappa e visualizza l'evoluzione storica e la distribuzione geografica della lingua e dei testi legati alla cultura gastronomica italiana (dal Medioevo all'Unità d'Italia).
 
 ---
 
+<a name="bug-e-feature"></a>
 ## 🐛 Segnalazione Bug e Feature
 
 <a href="https://github.com/Unica-dh/atliteg-map/issues/new/choose">
@@ -55,6 +59,7 @@ Per segnalare bug o richiedere nuove funzionalità, utilizza il sistema di **Iss
 
 ---
 
+<a name="scopo-e-funzionalita"></a>
 ## 📚 Scopo e Funzionalità
 
 > **Contesto Scientifico**
@@ -72,6 +77,7 @@ Per segnalare bug o richiedere nuove funzionalità, utilizza il sistema di **Iss
 
 <p align="right">(<a href="#readme-top">torna su</a>)</p>
 
+<a name="destinatari-e-collaborazioni"></a>
 ## 👥 Destinatari e Collaborazioni 
 
 <table>
@@ -93,6 +99,7 @@ Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e
 
 <p align="right">(<a href="#readme-top">torna su</a>)</p>
 
+<a name="anteprima-visiva"></a>
 ## ✨ Anteprima Visiva
 
 <p align="center">
@@ -113,6 +120,7 @@ Progetto sviluppato con il **Labgeo "Giuseppe Caraci"** (Università Roma Tre) e
 
 ---
 
+<a name="principali-funzionalita-utente"></a>
 ## 🗺️ Principali funzionalità utente
 
 - Filtri globali per categoria e periodo, con badge visivi e reset rapido
@@ -227,34 +235,20 @@ Per dettagli su architettura e dataset, vedi [docs/architecture/system-architect
 
 ---
 
-## ✅ Procedura Corretta per Aggiornare i Dati Geografici
+<a name="dati-e-fonti"></a>
+## 📂 Dati e Fonti
 
-> **Procedura operativa**
->
-> <br/>
-> <b>Rigenera i file JSON:</b>
-> <pre><code>cd lemmario-dashboard
-node scripts/preprocess-data.js
-# Verifica che venga stampato: "✅ CSV processato: XXXX record"
-</code></pre>
->
-> <b>Esempio: aggiungere una nuova regione</b>
-> <ol>
-> <li>Nel CSV, assicurati che i lemmi abbiano:<br/>
-> <ul>
-> <li><code>Coll.Geografica</code>: "Nome Regione"</li>
-> <li><code>Latitudine</code>: <code>#N/A</code></li>
-> <li><code>Longitudine</code>: <code>#N/A</code></li>
-> <li><code>Tipo coll.Geografica</code>: <code>Regione</code></li>
-> <li><code>reg_istat_code</code>: Codice ISTAT della regione (es. "06" per Friuli)</li>
-> </ul></li>
-> <li>Segui la procedura sopra per rigenerare e copiare i file</li>
-> <li>La regione apparirà colorata in giallo sulla mappa</li>
-> </ol>
+| Tipo | File | Descrizione |
+|------|------|-------------|
+| CSV | Lemmi_forme_atliteg_updated.csv | Lemmi, forme, coordinate, metadati |
+| GeoJSON | Ambiti geolinguistici newline.json | Aree geografiche poligonali |
 
 ---
 
+<a name="procedura-corretta-per-aggiornare-i-dati-geografici"></a>
+## ✅ Procedura Corretta per Aggiornare i Dati Geografici
 
+<a name="documentazione"></a>
 ## 📚 Documentazione
 
 La documentazione completa è disponibile nella cartella [`docs/`](docs/README.md) ed è organizzata per argomento.
@@ -390,6 +384,7 @@ Il footer include i loghi dei partner con markup semantico appropriato:
 
 ---
 
+<a name="faq"></a>
 ## ❓ FAQ
 
 **Come posso contribuire?**  
@@ -406,6 +401,7 @@ Controlla i log Docker e lo stato del runner GitHub Actions.
 
 ---
 
+<a name="licenza"></a>
 ## 📝 Licenza
 
 <img src="https://img.shields.io/github/license/Unica-dh/atliteg-map?color=blue" alt="License"/>  
