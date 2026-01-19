@@ -134,4 +134,4 @@ Questo diagramma sintetizza il processo decisionale documentato in:
 - `MAPCN_INTEGRATION_ANALYSIS.md` (analisi completa)
 - `MAPCN_INTEGRATION_SUMMARY.md` (executive summary)
 
-Per dettagli vedere documentazione completa in `/docs/`.
+Per dettagli vedere documentazione completa in `/docs/improvement/`.

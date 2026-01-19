@@ -338,7 +338,7 @@ mapcn è una libreria **promettente** ma:
 
 **Contatti:**
 - Repository: https://github.com/Unica-dh/atliteg-map
-- Documentazione: /docs/
+- Documentazione: /docs/improvement/
 - Issue: [Inserire link issue relativa]
 
 ---
