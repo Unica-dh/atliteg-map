@@ -110,6 +110,7 @@ jobs:
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           export ALLOWED_ORIGINS="${{ secrets.ALLOWED_ORIGINS }}"
           export NEXT_PUBLIC_API_URL=""
+          export NEXT_PUBLIC_SITE_URL="${{ secrets.NEXT_PUBLIC_SITE_URL }}"
           
           echo "📋 Environment variables configured (values hidden for security)"
           
@@ -140,6 +141,7 @@ jobs:
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           export ALLOWED_ORIGINS="${{ secrets.ALLOWED_ORIGINS }}"
           export NEXT_PUBLIC_API_URL=""
+          export NEXT_PUBLIC_SITE_URL="${{ secrets.NEXT_PUBLIC_SITE_URL }}"
           
           cd ${{ secrets.DEPLOY_PATH }}
           
@@ -180,12 +182,12 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🔍 Verifica finale del deployment"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          
+
           cd ${{ secrets.DEPLOY_PATH }}
-          
+
           echo "📊 Container in esecuzione:"
           docker compose ps
-          
+
           # Verifica health check
           CONTAINER_NAME="atliteg-lemmario-dashboard"
           if docker inspect --format='{{.State.Health.Status}}' $CONTAINER_NAME 2>/dev/null | grep -q "healthy\|starting"; then
@@ -195,17 +197,46 @@ jobs:
           else
             echo "⚠️  Warning: Could not verify container health status"
           fi
-          
+
           echo ""
           echo "📝 Log recenti (ultime 20 righe):"
           docker compose logs --tail=20
-          
+
           echo ""
           echo "💾 Utilizzo disco:"
           df -h | grep -E '(Filesystem|/$)'
-          
+
           echo "✅ Verifica completata"
-      
+
+      # Step 7.5: Test multi-dominio (opzionale)
+      - name: 🧪 Test accessibilità multi-dominio
+        if: ${{ vars.RUN_DOMAIN_TESTS == 'true' }}
+        continue-on-error: true
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🧪 Test accessibilità multi-dominio"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          cd ${{ secrets.DEPLOY_PATH }}
+
+          # Verifica che lo script esista
+          if [ ! -f "test-deployment.sh" ]; then
+            echo "⚠️  Script test-deployment.sh non trovato, skip test"
+            exit 0
+          fi
+
+          # Rendi eseguibile se necessario
+          chmod +x test-deployment.sh
+
+          # Esegui test
+          echo "🚀 Esecuzione test su entrambi i domini..."
+          ./test-deployment.sh || {
+            echo "⚠️  Alcuni test sono falliti, ma il deploy continuerà"
+            echo "💡 Controlla i log sopra per dettagli"
+          }
+
+          echo "✅ Test multi-dominio completato"
+
       # Step 8: Notifica risultato
       - name: 🎉 Deploy completato
         run: |

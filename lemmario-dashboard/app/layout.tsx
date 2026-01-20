@@ -12,16 +12,19 @@ export const viewport: Viewport = {
   themeColor: "#0B5FA5",
 };
 
+// Supporto multi-dominio: priorità ai domini in produzione, fallback al dominio primario
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://atlante.atliteg.org';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://atlante.atliteg.org'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AtLiTeG - Atlante Gastronomico Italiano",
     template: "%s | AtLiTeG"
   },
   description: "Esplora l'evoluzione della lingua gastronomica italiana dal Medioevo all'Unità. Mappe interattive, lemmario storico e visualizzazioni geolinguistiche del progetto VoSLIG.",
   keywords: [
-    "AtLiTeG", "Atlante Gastronomico", "Lingua Italiana", "Storia della Gastronomia", 
-    "VoSLIG", "Geolinguistica", "Mappe Storiche", "Vocabolario Storico", 
+    "AtLiTeG", "Atlante Gastronomico", "Lingua Italiana", "Storia della Gastronomia",
+    "VoSLIG", "Geolinguistica", "Mappe Storiche", "Vocabolario Storico",
     "Cucina Medievale", "Cucina Rinascimentale"
   ],
   authors: [
@@ -44,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AtLiTeG - Atlante Gastronomico Italiano",
     description: "Esplora l'evoluzione della lingua gastronomica italiana dal Medioevo all'Unità con mappe interattive e dati storici.",
-    url: "https://atlante.atliteg.org",
+    url: SITE_URL,
     siteName: "AtLiTeG",
     locale: "it_IT",
     type: "website",
@@ -64,7 +67,7 @@ export const metadata: Metadata = {
     images: ["/immagine-testata.jpg"],
   },
   alternates: {
-    canonical: "https://atlante.atliteg.org",
+    canonical: SITE_URL,
   },
 };
 

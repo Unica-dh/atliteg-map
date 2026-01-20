@@ -39,6 +39,46 @@ docker compose down
 docker compose up --build -d
 ```
 
+### Multi-Domain Support
+
+L'applicazione supporta l'accesso da entrambi i domini:
+
+- **Primario**: `https://atlante.atliteg.org`
+- **Secondario**: `https://linguistica.dh.unica.it/atliteg`
+
+**Configurazione Multi-Dominio**:
+
+1. **Nginx** ([lemmario-dashboard/nginx.conf](lemmario-dashboard/nginx.conf:4)): `server_name` include entrambi i domini
+2. **Next.js Metadata** ([app/layout.tsx](lemmario-dashboard/app/layout.tsx:16)): Usa `NEXT_PUBLIC_SITE_URL` per impostare `metadataBase` dinamicamente
+3. **CORS Backend** ([.env](.env:21)): `ALLOWED_ORIGINS` include entrambi i domini
+
+**Cambio Dominio Primario**:
+
+Per cambiare il dominio utilizzato nei metadata SEO, modificare la variabile d'ambiente:
+
+```bash
+# In .env o nelle variabili d'ambiente Docker
+NEXT_PUBLIC_SITE_URL=https://linguistica.dh.unica.it/atliteg
+```
+
+### Testing Remote Deployment
+
+Dopo il deploy, eseguire lo script di test per verificare l'accessibilità:
+
+```bash
+./test-deployment.sh           # Test base
+./test-deployment.sh --verbose # Output dettagliato
+```
+
+Lo script verifica:
+
+- HTTP status codes (200 OK)
+- Content-Type headers
+- Presenza di meta tags SEO
+- Certificati SSL
+- Performance (response time)
+- Accessibilità assets statici
+
 ### Data Preprocessing
 ```bash
 cd lemmario-dashboard
